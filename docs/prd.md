@@ -378,7 +378,7 @@ The recommended tooling is OpenSpec with its **Stores** feature (beta). See OQ-1
 
 | ID | Description |
 |---|---|
-| TC-1 | Backend: Kotlin, Spring Boot 3.x, JVM 21, Maven (with wrapper `mvnw`), Postgres 16, Flyway. |
+| TC-1 | Backend: Kotlin, Spring Boot 4.x (amended from 3.x by ADR-0003), JVM 21, Maven (with wrapper `mvnw`), Postgres 16, Flyway. |
 | TC-2 | Frontend: React, Vite, TypeScript (strict). |
 | TC-3 | OpenAPI 3.x contract in the docs repo. Server interfaces and TS client are generated from it. |
 | TC-4 | Three repositories: docs, backend, frontend. The contract is consumed via a pinned git submodule. |

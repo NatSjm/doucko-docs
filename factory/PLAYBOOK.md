@@ -51,7 +51,7 @@ wrong answers are never punished (FR-38) and never red (design system).
 
 ## Phase 0 — Intake, stack, environment (G0) — per repo
 
-1. **Stack** is decided by the PRD (TC-1..TC-5): Kotlin + Spring Boot 3 +
+1. **Stack** is decided by the PRD (TC-1..TC-5): Kotlin + Spring Boot 4 (ADR-0003) +
    JVM 21 + Maven + Postgres 16 + Flyway; React + Vite + TS strict; OpenSpec
    stores; Docker Compose. Record the swap from upstream's Next.js default as
    ADR-0001 (done) and the multi-repo harness as ADR-0002 (done).

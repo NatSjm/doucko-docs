@@ -10,7 +10,7 @@ submodule and reference it read-only from OpenSpec:
 | Repo | Stack |
 |---|---|
 | `docs` (this) | OpenSpec store `doucko` + delivery harness source (`factory/`) |
-| `backend` | Kotlin · Spring Boot 3 · JVM 21 · Maven · Postgres 16 · Flyway |
+| `backend` | Kotlin · Spring Boot 4 · JVM 21 · Maven · Postgres 16 · Flyway |
 | `frontend` | React · Vite · TypeScript (strict) · Doučko design system |
 
 Delivery follows an adapted [Project Factory](https://github.com/koldovsky/project-factory)

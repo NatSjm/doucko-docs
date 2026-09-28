@@ -1,6 +1,6 @@
 # ADR-0001: Stack — Kotlin/Spring Boot/Maven backend + React/Vite frontend (swap from the Project Factory default)
 
-- **Status:** Accepted
+- **Status:** Accepted — Spring Boot version amended to 4.x by ADR-0003
 - **Date:** 2026-09-28
 - **Deciders:** product owner (parent)
 
