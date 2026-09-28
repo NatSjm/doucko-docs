@@ -1,12 +1,28 @@
 {
   "generatedBy": "scripts/check-trajectory.mjs",
-  "slices": [],
+  "slices": [
+    {
+      "slice": "2026-09-28-improve-PD-1",
+      "reviewEvidence": "missing",
+      "trailerCommits": 0,
+      "libDomains": [],
+      "processComplete": false
+    }
+  ],
   "overlaps": [],
   "failures": [],
   "warnings": [
     {
-      "check": "slices",
-      "msg": "no archived slices found under openspec/changes/archive/ (nothing to audit yet)"
+      "check": "review-evidence",
+      "msg": "2026-09-28-improve-PD-1: review-findings.json is missing (review must have run clean before archive)"
+    },
+    {
+      "check": "process",
+      "msg": "2026-09-28-improve-PD-1: archived change is missing design.md and/or tasks.md"
+    },
+    {
+      "check": "trailer",
+      "msg": "2026-09-28-improve-PD-1: no commit carries a \"Slice: improve-PD-1\" trailer"
     }
   ]
 }
