@@ -5,7 +5,7 @@ requirements/spec/test/recording change; CI runs `--check-fresh`.
 
 Repo: docs (contract: self).
 Scope: 0 MVP functional requirements (product chain; per-repo tests are joined in workspace-traceability-report.md).
-Result: PASS, 2 warning(s)
+Result: PASS, 7 warning(s)
 
 | FR | Spec | Plan | Owner repo(s) | Test trace here | Recording here |
 |---|---|---|---|---|---|
@@ -19,3 +19,8 @@ None.
 
 - **requirements**: docs/requirements.md not found - FR chain checks skipped (expected before Phase 1; mandatory at --release)
 - **plan-ownership**: docs/mvp-capability-plan.md not found - ownership check skipped (expected before Phase 3; mandatory at --release)
+- **active-changes**: active change "improve-PD-1" is not archived
+- **active-changes**: active change "improve-PD-2" is not archived
+- **active-changes**: active change "improve-PD-3" is not archived
+- **active-changes**: active change "improve-PD-4" is not archived
+- **active-changes**: active change "improve-PD-5" is not archived

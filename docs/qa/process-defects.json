@@ -1,0 +1,283 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-28T13:00:00Z",
+  "generatedAtNote": "Approximate. The auditor has no shell or clock; the true write time is after COR-1 (2026-09-28T12:51:52.745Z) on 2026-09-28.",
+  "auditedBy": "process-auditor (plain subagent)",
+  "trigger": "on-demand",
+  "triggerNote": "On-demand audit at the end of Phase 0 (scaffolding of both apps). This replaces the deterministic fallback skeleton (0 defects) that ledger-report wrote at 2026-09-28T12:51:35.905Z.",
+  "inputs": [
+    ".claude/agents/process-auditor.md",
+    "docs/qa/process-health.md",
+    "trace/process-health.json",
+    "docs/qa/process-defects.json",
+    "docs/qa/automated-verification-latest.md",
+    "docs/qa/traceability-report.md",
+    "docs/qa/trajectory-report.md",
+    "docs/qa/evidence/pd-mvnw-shim-proof.md",
+    "retro/corrections/001-harness-maven-launcher-fails-in-agent-shells-wit.correction.json",
+    "factory/templates/retro/process-defects.schema.json",
+    "factory/templates/retro/improvement.template.md",
+    "factory/scripts/mvnw.mjs"
+  ],
+  "inputsNote": "The first entry is the auditor role definition. The last three entries were read only for shape (schema, template) and to verify the diff quoted in docs/qa/evidence/pd-mvnw-shim-proof.md (factory/scripts/mvnw.mjs). docs/qa/waivers/ was listed but not read: it holds only .gitkeep, so there are no waivers. No product source, no backend/frontend file, no other factory file was read.",
+  "defects": [
+    {
+      "id": "PD-1",
+      "class": "wrong-claim",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/mvnw.mjs:3",
+          "quote": "the same command works in cmd.exe/PowerShell (mvnw.cmd), Git Bash and CI",
+          "note": "The harness claims the launcher is portable. COR-1 names this line as the contradicted claim."
+        },
+        {
+          "pointer": "factory/scripts/mvnw.mjs:10",
+          "quote": "const wrapper = win ? \"mvnw.cmd\" : \"./mvnw\";",
+          "note": "A bare name spawned with shell:true (line 21) makes cmd.exe resolve mvnw.cmd through PATH lookup. With NoDefaultCurrentDirectoryInExePath set, cmd.exe skips the current directory, so the lookup fails."
+        },
+        {
+          "pointer": "retro/corrections/001-harness-maven-launcher-fails-in-agent-shells-wit.correction.json:4",
+          "quote": "node scripts/mvnw.mjs exits 1 with 'mvnw.cmd is not recognized as an internal or external command', so agent-run pre-commit/post-edit hooks and qa-verify cannot run Maven",
+          "note": "Human-filed correction. gateThatShouldHaveCaught: G0. No G0 check runs the launcher under the agent-shell environment. Integrity and drift checks compare hashes, not behaviour."
+        },
+        {
+          "pointer": "docs/qa/evidence/pd-mvnw-shim-proof.md:15",
+          "quote": "`qa-verify` sees the RED behaviour",
+          "note": "The failure is loud (exit 1), so this is a false RED, not a false PASS. The risk is pressure to bypass hooks in every agent session, so this is P1, not P0."
+        },
+        {
+          "pointer": "docs/qa/evidence/pd-mvnw-shim-proof.md:34-45",
+          "quote": "$ NoDefaultCurrentDirectoryInExePath=1 node <proposed> -v    # GREEN",
+          "note": "Executed red->green proof of the proposed one-line diff. The auditor checked the diff context against factory/scripts/mvnw.mjs lines 7-13 and it matches. Two things were not checked: that the backend installed copy is byte-identical (the maker asserts it), and whether a fixture test exists (none does)."
+        }
+      ],
+      "metric": {
+        "name": "openCorrections",
+        "current": "1 on disk (COR-1, disposition null). The digest reports 0 because it is stale (see PD-6).",
+        "expectedMovement": "1 -> 0 when the Refs: PD-1 commit lands and COR-1 is dispositioned. Backend Maven-backed hook/qa-verify members in agent shells: exit 1 -> exit 0."
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/mvnw.mjs",
+        "sketch": "On Windows, spawn the wrapper by the explicit relative path .\\mvnw.cmd, so cmd.exe does not depend on a current-directory PATH search. Then re-install the copy into ../backend.",
+        "proposalDir": "openspec/changes/improve-PD-1/"
+      },
+      "status": "proposed",
+      "correctionIds": ["COR-1"]
+    },
+    {
+      "id": "PD-2",
+      "class": "missing-check",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "trace/process-health.json:9",
+          "quote": "\"productCodePresent\": false,",
+          "note": "Digest generated 2026-09-28T12:51:35.905Z, after the backend scaffold had reached Phase 0 step 4 (COR-1). The digest only sees the docs repo, which by design never holds product code, so its vacuous-pass detector can never fire."
+        },
+        {
+          "pointer": "docs/qa/process-health.md:29-42",
+          "quote": "| qa-verify | 1 | 1 | 0 | - | **yes** |",
+          "note": "All 14 ledger events are docs-repo checks and hooks. None is a backend or frontend check, although the Phase 0 work (scaffolding both apps) happened in those repos."
+        },
+        {
+          "pointer": "retro/corrections/001-harness-maven-launcher-fails-in-agent-shells-wit.correction.json:4",
+          "quote": "Observed by the orchestrator in backend on 2026-09-28 (scaffold, Phase 0 step 4)",
+          "note": "A backend hook/qa-verify failure reached the audit only because the orchestrator copied it into docs/qa/evidence by hand. No ledger or digest in the read set records it."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:72",
+          "quote": "the cross-repo join starts at G3 (pending, NOT a pass)",
+          "note": "The only cross-repo mechanism, check-workspace, stays SKIP-pending until G3. Nothing joins the code repos' gate runs into the phase-boundary audit for G0-G2."
+        }
+      ],
+      "metric": {
+        "name": "ledger.eventCount (repos joined)",
+        "current": "14 events, docs repo only; productCodePresent false",
+        "expectedMovement": "Repos joined 1 -> 3 (docs, backend, frontend). productCodePresent false -> true once backend src/main/ or frontend src/ holds product code. Backend Maven failures (COR-1) become visible in retriesPerCheck."
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/ledger-report.mjs (presumed source of scripts/ledger-report.mjs; path not verified)",
+        "sketch": "Workspace mode for the docs-repo digest: when ../backend/trace/ledger.jsonl and ../frontend/trace/ledger.jsonl exist, join them (tagged by repo) and compute productCodePresent from the configured productCode paths across all three repos. If a sibling ledger is absent after G0, print it as NOT-EARNED, never silently omit it.",
+        "proposalDir": "openspec/changes/improve-PD-2/"
+      },
+      "status": "proposed",
+      "correctionIds": []
+    },
+    {
+      "id": "PD-3",
+      "class": "label-drift",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:16",
+          "quote": "| process-ratchet | `node scripts/check-process-ratchet.mjs` | NOT-EARNED | 0 |",
+          "note": "NOT-EARNED with exit code 0. Any consumer that keys on exit code alone (a hook, a CI && chain) reads this as green."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:83-86",
+          "quote": "Scope: 1 guard(s) (phase 0, product code: no)",
+          "note": "Both guards listed on lines 83-84 are SKIP-pending (pre-phase, no product code), yet the aggregate is NOT-EARNED. Scope says 1 guard while 2 are listed."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:87",
+          "quote": "Result: NOT-EARNED (pending baseline — earn it with --update after a truthful green run)",
+          "note": "At Phase 0 no truthful green run is possible because every other scoped member is SKIP-pending. The only way to earn it is to write a ratchet baseline over empty scope, a vacuous baseline. Otherwise qa-verify stays red through the phase boundary."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:8",
+          "quote": "Overall result: NOT-EARNED (1 member(s) unearned)",
+          "note": "The only unearned member of the docs battery at the end of Phase 0 is this pre-phase ratchet."
+        }
+      ],
+      "metric": {
+        "name": "notEarned.count / qa-verify stillRed",
+        "current": "notEarned 1; qa-verify stillRed true",
+        "expectedMovement": "Pre-product: notEarned 1 -> 0 (the member becomes SKIP-pending) and stillRed true -> false. Post-product with no baseline: NOT-EARNED with a non-zero exit. --update refused while any guard is SKIP-pending."
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-process-ratchet.mjs (presumed source of scripts/check-process-ratchet.mjs; path not verified)",
+        "sketch": "When product code is absent and every guard is SKIP-pending, print Result: SKIP-pending. Print NOT-EARNED only when product code exists, and then exit non-zero. Make --update refuse to write a baseline while any guard is SKIP-pending or at scope 0, and make the Scope count equal the number of guards evaluated.",
+        "proposalDir": "openspec/changes/improve-PD-3/"
+      },
+      "status": "proposed",
+      "correctionIds": []
+    },
+    {
+      "id": "PD-4",
+      "class": "check-too-weak",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:19",
+          "quote": "| openspec-all | `npx openspec validate --all --strict` | PASS | 0 |",
+          "note": "Rendered PASS."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:116-120",
+          "quote": "No items found to validate.",
+          "note": "The PASS covers zero items. Every other member prints a Scope: N line (e.g. line 94, Scope: 20); the openspec rows print none (line 116: Status: PASS (exit code: 0)). The zero-scope classifier and the ledger's vacuous-pass counter cannot see this emptiness."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:20",
+          "quote": "| openspec-active-list | `npx openspec list` | PASS | 0 |",
+          "note": "Output is 'No active changes found.' (line 130). A listing is not a check, and rendering it PASS inflates the PASS count."
+        }
+      ],
+      "metric": {
+        "name": "zero-scope members rendered PASS (feeds vacuousPasses once product code exists)",
+        "current": "2 (openspec-all, openspec-active-list); invisible to vacuousPasses",
+        "expectedMovement": "2 -> 0. openspec-all over 0 items becomes SKIP-pending pre-product, NOT-EARNED post-product. openspec-active-list becomes INFO and is never counted as PASS."
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/qa-verify.mjs (presumed source of scripts/qa-verify.mjs; path not verified)",
+        "sketch": "Give the openspec members a scope: parse 'No items found to validate.' as Scope: 0 and classify it through the same zero-scope rule as other members. Render `openspec list` as INFO, outside the PASS fold. Land this before or with PD-3, otherwise fixing PD-3 lets these PASS-over-nothing rows dominate the docs battery.",
+        "proposalDir": "openspec/changes/improve-PD-4/"
+      },
+      "status": "proposed",
+      "correctionIds": []
+    },
+    {
+      "id": "PD-5",
+      "class": "label-drift",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "docs/qa/traceability-report.md:7-8",
+          "quote": "Result: PASS, 2 warning(s)",
+          "note": "Written under 'Scope: 0 MVP functional requirements'. The committed report headline says PASS over nothing."
+        },
+        {
+          "pointer": "docs/qa/trajectory-report.md:8-9",
+          "quote": "Result: PASS, 1 warning(s)",
+          "note": "Written under 'Scope: 0 archived slice(s).' The same PASS-over-zero headline also appears in the raw member output at docs/qa/automated-verification-latest.md:49."
+        },
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:61",
+          "quote": "Result: SKIP-pending",
+          "note": "Contrast: acceptance-existence and workspace-join already print SKIP-pending at scope 0. traceability and trajectory rely on the qa-verify wrapper to relabel them (lines 12-13), so any reader of the report files or trace/*.json gets PASS."
+        }
+      ],
+      "metric": {
+        "name": "committed reports headlined PASS at Scope 0",
+        "current": "2 (docs/qa/traceability-report.md, docs/qa/trajectory-report.md)",
+        "expectedMovement": "2 -> 0 (SKIP-pending pre-product, NOT-EARNED post-product)"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-traceability.mjs and factory/scripts/check-trajectory.mjs (presumed sources; paths not verified)",
+        "sketch": "At Scope 0, both scripts print and write 'Result: SKIP-pending' pre-product and 'Result: NOT-EARNED' with a non-zero exit post-product, matching the scripts that already conform. They stop depending on the qa-verify wrapper to correct their own headline.",
+        "proposalDir": "openspec/changes/improve-PD-5/"
+      },
+      "status": "proposed",
+      "correctionIds": []
+    },
+    {
+      "id": "PD-6",
+      "class": "stale-evidence",
+      "severity": "P2",
+      "evidence": [
+        {
+          "pointer": "docs/qa/process-health.md:15",
+          "quote": "| Open corrections | 0 of 0 |",
+          "note": "Also line 54: 'Corrections: 0 file(s) under retro/corrections/'."
+        },
+        {
+          "pointer": "trace/process-health.json:2",
+          "quote": "\"generatedAt\": \"2026-09-28T12:51:35.905Z\",",
+          "note": "The digest handed to the auditor as freshly generated predates COR-1 by about 17 s."
+        },
+        {
+          "pointer": "retro/corrections/001-harness-maven-launcher-fails-in-agent-shells-wit.correction.json:3",
+          "quote": "\"ts\": \"2026-09-28T12:51:52.745Z\",",
+          "note": "COR-1 was written after the digest, so the digest under-reports open corrections (0 vs 1) at the phase boundary."
+        }
+      ],
+      "metric": {
+        "name": "openCorrections (digest vs disk)",
+        "current": "digest 0, disk 1",
+        "expectedMovement": "divergence 1 -> 0"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/ledger-report.mjs (presumed; path not verified)",
+        "sketch": "Either make `npm run correct` regenerate the digest after writing a correction, or give ledger-report a --check-fresh mode that fails when any retro/corrections/*.correction.json ts is later than digest generatedAt. The auditor dispatch should run that check before handing over the digest.",
+        "proposalDir": ""
+      },
+      "status": "open",
+      "correctionIds": []
+    },
+    {
+      "id": "PD-7",
+      "class": "stale-evidence",
+      "severity": "P2",
+      "evidence": [
+        {
+          "pointer": "docs/qa/automated-verification-latest.md:6",
+          "quote": "- Finished: 2026-09-28T11:48:40.923Z",
+          "note": "The only qa-verify run in the ledger window, about 63 min before the Phase 0 boundary digest (12:51:35Z)."
+        },
+        {
+          "pointer": "docs/qa/process-health.md:41-42",
+          "quote": "| pre-commit | 2 | 0 | 0 | - | no |",
+          "note": "Two commits happened after the only battery run, and the battery was not re-run for the phase boundary."
+        },
+        {
+          "pointer": "docs/qa/process-health.md:17",
+          "quote": "53m 45s (14 event(s) since 2026-09-28T11:48:34.682Z)",
+          "note": "The trailing dirty streak covers the whole ledger (14 of 14 events), so the working tree was never clean across both commits. Part of this may be the uncommitted COR-1 and evidence files; confirming it needs git status (no shell)."
+        }
+      ],
+      "metric": {
+        "name": "uncommittedWork.ageMs / qa-verify report age at boundary",
+        "current": "ageMs 3225243 (14/14 events dirty); battery report about 63 min older than the boundary digest",
+        "expectedMovement": "At a phase boundary, battery report Finished is after the last commit, and the dirty streak is 0 once audit artifacts are committed."
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/gate-status.mjs (presumed; path not verified)",
+        "sketch": "Declaring a phase boundary requires a qa-verify report whose Finished timestamp is later than HEAD's commit time. Otherwise the gate renders the frontier as NOT-EARNED (stale battery).",
+        "proposalDir": ""
+      },
+      "status": "open",
+      "correctionIds": []
+    }
+  ]
+}

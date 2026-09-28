@@ -1,0 +1,13 @@
+{
+  "id": "COR-1",
+  "ts": "2026-09-28T12:51:52.745Z",
+  "utterance": "Harness Maven launcher fails in agent shells: with NoDefaultCurrentDirectoryInExePath=1 (set by the Claude Code shell on Windows), node scripts/mvnw.mjs exits 1 with 'mvnw.cmd is not recognized as an internal or external command', so agent-run pre-commit/post-edit hooks and qa-verify cannot run Maven. Observed by the orchestrator in backend on 2026-09-28 (scaffold, Phase 0 step 4); product owner chose the process-auditor PD route. Executed proof: docs/qa/evidence/pd-mvnw-shim-proof.md",
+  "contradictedClaim": "factory/scripts/mvnw.mjs:3",
+  "mappedReqIds": [],
+  "gateThatShouldHaveCaught": "G0",
+  "failureMode": "wrong-claim",
+  "failureModeSource": "explicit",
+  "source": "human",
+  "autoKey": null,
+  "disposition": null
+}

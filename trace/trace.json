@@ -13,6 +13,26 @@
     {
       "check": "plan-ownership",
       "msg": "docs/mvp-capability-plan.md not found - ownership check skipped (expected before Phase 3; mandatory at --release)"
+    },
+    {
+      "check": "active-changes",
+      "msg": "active change \"improve-PD-1\" is not archived"
+    },
+    {
+      "check": "active-changes",
+      "msg": "active change \"improve-PD-2\" is not archived"
+    },
+    {
+      "check": "active-changes",
+      "msg": "active change \"improve-PD-3\" is not archived"
+    },
+    {
+      "check": "active-changes",
+      "msg": "active change \"improve-PD-4\" is not archived"
+    },
+    {
+      "check": "active-changes",
+      "msg": "active change \"improve-PD-5\" is not archived"
     }
   ]
 }

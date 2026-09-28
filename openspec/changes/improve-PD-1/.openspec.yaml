@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-09-28
+# Harness/process change (factory tooling): no product-spec deltas.
+skip_specs: true
