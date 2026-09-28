@@ -2,7 +2,7 @@
 
 - **Defect:** PD-1 (`docs/qa/process-defects.json`). The harness Maven launcher fails in agent shells: with `NoDefaultCurrentDirectoryInExePath=1`, cmd.exe cannot find the bare `mvnw.cmd`, so agent-run hooks and `qa-verify` cannot run Maven (COR-1).
 - **Class / severity:** wrong-claim / P1
-- **Status:** draft
+- **Status:** approved (landed in the commit carrying `Refs: PD-1`)
 
 ## Scope
 
@@ -136,7 +136,7 @@ exit 0
 
 ## Approval & trailer convention
 
-- Human approver: `<name>` · Date: `<YYYY-MM-DD>`
+- Human approver: product owner (NatSjm), approved in chat with the orchestrator · Date: 2026-09-28
 - Commit message MUST end with the trailer line: `Refs: PD-1`
 - On landing, set COR-1's `disposition` and flip PD-1 `status` to
   `resolved` only after the next digest shows the metric moved.
