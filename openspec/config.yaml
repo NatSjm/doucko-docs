@@ -1,0 +1,27 @@
+schema: spec-driven
+
+# The Doučko docs STORE (id: doucko). Product-level truth for a 3-repo
+# delivery: backend + frontend reference this store read-only
+# (`references: [doucko]`) and pin it as their contract/ submodule.
+context: |
+  Product: Doučko — a home math tutor for one Czech grade-6 pupil (ZŠ).
+  MVP: deterministic answer checking (no AI), 2 attempts then reveal, hints,
+  Czech UI with optional Ukrainian task text, missions + XP + ranks in an
+  original "hero academy" skin. Admin (the parent) enters tasks next to a
+  workbook PDF. Runs on the home laptop via Docker Compose.
+  Source requirements: docs/prd.md -> docs/requirements.md (FR/NFR/TC/BC ids
+  are permanent and cited across three repos).
+  This store holds PRODUCT-LEVEL behavior only: what the child/admin sees and
+  the API boundary (api/openapi.yaml). Implementation plans live in the code
+  repos (backend: Kotlin/Spring Boot/Maven; frontend: React/Vite/TS).
+  Delivery harness: factory/ (adapted Project Factory) — gates in factory/GATES.md.
+
+rules:
+  specs:
+    - Cite the FR/NFR ids each requirement implements (e.g. "(FR-14)") — the traceability gate reads them.
+    - Describe observable behavior at the product or API boundary; never name Kotlin classes, React components or tables.
+    - Child-facing copy in scenarios is Czech and never punishing ("Skoro! Zkus to znovu."); admin copy is English.
+    - Include error-path scenarios (unparseable input, unauthorized admin access, graphic tasks never served).
+  proposal:
+    - State which repos the change affects (backend, frontend) and whether api/openapi.yaml changes.
+    - Never include workbook content (NFR-4) or the child's personal data (NFR-3).

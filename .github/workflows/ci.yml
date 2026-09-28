@@ -1,0 +1,38 @@
+# Doučko docs-store CI. Guards the contract both code repos pin: OpenSpec
+# strict validation, the product-level traceability chain (FR -> spec ->
+# plan ownership), the acceptance-method existence audit, and harness drift
+# (factory/ is the source, scripts/ the installed copy).
+#
+# The cross-repo join (scripts/check-workspace.mjs) needs the member repos
+# checked out next to this one; run it locally in the workset, or add
+# checkout steps for backend + frontend here once the remotes exist.
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Harness drift (factory/ source vs installed scripts/)
+        run: node factory/install.mjs --repo=docs --check
+      - name: Traceability (freshness)
+        run: node scripts/check-traceability.mjs --check-fresh
+      - name: OpenSpec strict validation
+        run: npx openspec validate --all --strict
+      - name: Traceability (product chain)
+        run: node scripts/check-traceability.mjs
+      - name: Integrity lock
+        run: node scripts/check-factory-integrity.mjs

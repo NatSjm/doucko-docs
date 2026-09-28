@@ -1,0 +1,27 @@
+{
+  "name": "doucko-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "qa:verify": "node scripts/qa-verify.mjs",
+    "gate:status": "node scripts/gate-status.mjs",
+    "check:trace": "node scripts/check-traceability.mjs",
+    "check:trajectory": "node scripts/check-trajectory.mjs",
+    "check:acceptance": "node scripts/check-acceptance-methods.mjs --mode=existence",
+    "check:acceptance:artifact": "node scripts/check-acceptance-methods.mjs --mode=artifact",
+    "check:process": "node scripts/check-process-ratchet.mjs",
+    "check:integrity": "node scripts/check-factory-integrity.mjs",
+    "correct": "node scripts/correct.mjs",
+    "retro:digest": "node scripts/ledger-report.mjs",
+    "check": "npm run qa:verify",
+    "check:workspace": "node scripts/check-workspace.mjs",
+    "factory:check": "node factory/install.mjs --repo=docs --check",
+    "factory:install": "node factory/install.mjs --repo=docs"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.13.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

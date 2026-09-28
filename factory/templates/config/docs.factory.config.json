@@ -1,0 +1,65 @@
+{
+  "_comment": [
+    "Doučko factory config for the DOCS repo — the OpenSpec store `doucko` and the contract both code repos pin.",
+    "It holds requirements, the capability plan (with the Repo(s) ownership column), product-level specs, ADRs and api/openapi.yaml.",
+    "It proves no acceptance method itself; scripts/check-workspace.mjs joins the member repos' committed evidence.",
+    "GATE-BEARING: this file is hashed into factory-lock.json."
+  ],
+  "project": "doucko",
+  "repo": "docs",
+  "store": "doucko",
+  "contract": null,
+  "paths": {
+    "requirements": "docs/requirements.md",
+    "plan": "docs/mvp-capability-plan.md",
+    "storeSpecs": null,
+    "specsDir": "openspec/specs",
+    "changesDir": "openspec/changes",
+    "openapi": "api/openapi.yaml"
+  },
+  "productCode": { "dirs": [], "exclude": [] },
+  "tests": { "dirs": [], "pattern": "$^" },
+  "featureCodePattern": "^api/",
+  "moduleScope": { "pattern": "^openspec/specs/([^/]+)/", "shared": [] },
+  "acceptanceMethods": [],
+  "gateKeysExcluded": ["recordings", "evals", "visual", "coverage"],
+  "workspace": { "members": { "backend": "../backend", "frontend": "../frontend" } },
+  "battery": [
+    { "name": "traceability", "command": "node", "args": ["scripts/check-traceability.mjs"] },
+    { "name": "trajectory", "command": "node", "args": ["scripts/check-trajectory.mjs"] },
+    { "name": "acceptance-existence", "command": "node", "args": ["scripts/check-acceptance-methods.mjs", "--mode=existence"] },
+    { "name": "workspace-join", "command": "node", "args": ["scripts/check-workspace.mjs"] },
+    { "name": "process-ratchet", "command": "node", "args": ["scripts/check-process-ratchet.mjs"] },
+    { "name": "factory-integrity", "command": "node", "args": ["scripts/check-factory-integrity.mjs"] },
+    { "name": "harness-drift", "command": "node", "args": ["factory/install.mjs", "--repo=docs", "--check"] },
+    { "name": "openspec-all", "command": "npx", "args": ["openspec", "validate", "--all", "--strict"] },
+    { "name": "openspec-active-list", "command": "npx", "args": ["openspec", "list"] }
+  ],
+  "precommit": [
+    {
+      "name": "openspec",
+      "when": "^openspec/",
+      "requires": "node_modules/.bin/openspec",
+      "run": "npx openspec validate --all --strict",
+      "hint": "npm install (pins @fission-ai/openspec)"
+    },
+    {
+      "name": "harness-drift",
+      "when": "^(factory/|scripts/|\\.githooks/|\\.claude/)",
+      "run": "node factory/install.mjs --repo=docs --check",
+      "hint": "factory/ is the source; scripts/ are installed copies"
+    }
+  ],
+  "postEdit": [],
+  "forbidden": [
+    {
+      "pattern": "\\.pdf$",
+      "allow": "(^|/)fixtures/self-authored/",
+      "reason": "NFR-4: workbook PDFs are copyrighted and are never committed."
+    },
+    {
+      "pattern": "(^|/)(uploads|storage|pgdata|backups?)/|\\.(dump|sql\\.gz)$",
+      "reason": "NFR-3/NFR-4: runtime data never enters a repository."
+    }
+  ]
+}
