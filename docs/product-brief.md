@@ -43,6 +43,9 @@ engineering.
    translation [FR-4, FR-6..FR-8]. Before publishing, the parent tries
    answers in an **answer tester** to confirm the answer key behaves [FR-10].
    Tasks are grouped into 10-task **missions** within one topic [FR-9, FR-12].
+   Content can be edited at any time; it can be deleted only while nothing
+   has been attempted, and a mission goes live only when all its tasks are
+   published [FR-55..FR-57].
 2. **The child practices.** She opens the app on the laptop. There is no
    login; she lands on her **HQ** [FR-24, FR-25]. She picks or continues a
    mission and solves tasks one at a time [FR-26, NFR-7].
@@ -60,7 +63,8 @@ engineering.
    academy. Topics are powers she trains, and missions earn XP that raises
    her hero rank [FR-34..FR-37]. Nothing is ever taken away: no lost XP,
    timers, streak penalties or leaderboards [FR-38]. The whole theme is one
-   swappable skin [FR-39].
+   swappable skin [FR-39], in dark and light themes that follow the OS
+   setting [FR-58].
 6. **Mistakes in the answer key get fixed.** If she thinks she was right, she
    reports it [FR-30]. The parent sees the report in a flag queue, fixes the
    answer spec, and re-evaluates the attempt, so she gets the XP she earned
@@ -73,8 +77,8 @@ engineering.
 
 | Actor | Goal | Key requirements |
 |---|---|---|
-| **Child** (primary user) | Short, satisfying sessions; clear feedback; a visible sense of progress; visuals that feel grown-up | FR-24..FR-39, NFR-6, NFR-7, NFR-13 |
-| **Parent / admin** (content author) | Enter a workbook chapter fast; trust the answer key before publishing; know whether practice happens | FR-1..FR-13, FR-40..FR-42, NFR-1, NFR-8 |
+| **Child** (primary user) | Short, satisfying sessions; clear feedback; a visible sense of progress; visuals that feel grown-up | FR-24..FR-39, FR-58, NFR-6, NFR-7, NFR-13 |
+| **Parent / admin** (content author) | Enter a workbook chapter fast; trust the answer key before publishing; know whether practice happens | FR-1..FR-13, FR-40..FR-42, FR-55..FR-57, NFR-1, NFR-8, NFR-15..NFR-17 |
 | **Father** (helper) | Read the task in Ukrainian next to the Czech original while practicing together | FR-8, FR-29, FR-43 |
 
 ## 5. Success metric

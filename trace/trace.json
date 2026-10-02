@@ -16,6 +16,9 @@
     "FR-11": "MVP",
     "FR-12": "MVP",
     "FR-13": "MVP",
+    "FR-55": "MVP",
+    "FR-56": "MVP",
+    "FR-57": "MVP",
     "FR-14": "MVP",
     "FR-15": "MVP",
     "FR-16": "MVP",
@@ -42,6 +45,7 @@
     "FR-37": "MVP",
     "FR-38": "MVP",
     "FR-39": "MVP",
+    "FR-58": "MVP",
     "FR-40": "MVP",
     "FR-41": "MVP",
     "FR-42": "MVP",
@@ -71,6 +75,9 @@
     "NFR-12": "MVP",
     "NFR-13": "MVP",
     "NFR-14": "Future",
+    "NFR-15": "MVP",
+    "NFR-16": "MVP",
+    "NFR-17": "MVP",
     "TC-1": "MVP",
     "TC-2": "MVP",
     "TC-3": "MVP",
@@ -195,6 +202,33 @@
     },
     {
       "id": "FR-13",
+      "owners": [],
+      "ownedHere": null,
+      "specs": [],
+      "planned": null,
+      "tests": [],
+      "recordings": []
+    },
+    {
+      "id": "FR-55",
+      "owners": [],
+      "ownedHere": null,
+      "specs": [],
+      "planned": null,
+      "tests": [],
+      "recordings": []
+    },
+    {
+      "id": "FR-56",
+      "owners": [],
+      "ownedHere": null,
+      "specs": [],
+      "planned": null,
+      "tests": [],
+      "recordings": []
+    },
+    {
+      "id": "FR-57",
       "owners": [],
       "ownedHere": null,
       "specs": [],
@@ -437,6 +471,15 @@
       "recordings": []
     },
     {
+      "id": "FR-58",
+      "owners": [],
+      "ownedHere": null,
+      "specs": [],
+      "planned": null,
+      "tests": [],
+      "recordings": []
+    },
+    {
       "id": "FR-40",
       "owners": [],
       "ownedHere": null,
@@ -535,6 +578,18 @@
     {
       "check": "spec-mention",
       "msg": "FR-13 is not cited by any spec under openspec/specs/ (no specs authored yet - expected before Phase 2)"
+    },
+    {
+      "check": "spec-mention",
+      "msg": "FR-55 is not cited by any spec under openspec/specs/ (no specs authored yet - expected before Phase 2)"
+    },
+    {
+      "check": "spec-mention",
+      "msg": "FR-56 is not cited by any spec under openspec/specs/ (no specs authored yet - expected before Phase 2)"
+    },
+    {
+      "check": "spec-mention",
+      "msg": "FR-57 is not cited by any spec under openspec/specs/ (no specs authored yet - expected before Phase 2)"
     },
     {
       "check": "spec-mention",
@@ -639,6 +694,10 @@
     {
       "check": "spec-mention",
       "msg": "FR-39 is not cited by any spec under openspec/specs/ (no specs authored yet - expected before Phase 2)"
+    },
+    {
+      "check": "spec-mention",
+      "msg": "FR-58 is not cited by any spec under openspec/specs/ (no specs authored yet - expected before Phase 2)"
     },
     {
       "check": "spec-mention",

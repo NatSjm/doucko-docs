@@ -7,9 +7,9 @@ Phase 1. The business narrative is in `docs/product-brief.md`.*
 
 | | |
 |---|---|
-| **Status** | Phase 1 draft — awaiting scope sign-off (checkpoint 1, §6) |
+| **Status** | Scope signed off at checkpoint 1 (2026-10-02) — record in `docs/qa/checkpoint-1-scope-signoff.md`; decisions in §6 |
 | **Source** | `docs/prd.md` v0.2 (2026-09-28) |
-| **Id policy** | Every FR/NFR/TC/BC/OQ id is carried over from the PRD unchanged. Ids are never renumbered; new ones are appended. |
+| **Id policy** | Every FR/NFR/TC/BC/OQ id is carried over from the PRD unchanged. Ids are never renumbered; new ones are appended. Rows added or amended at checkpoint 1 are marked *(CP1)*. |
 
 ## 1 Business Overview
 
@@ -71,6 +71,9 @@ threshold-passing evidence artifact.
 | FR-11 | MVP | Content | Admin filters and searches tasks by grade, topic, source, page, modality, and status. | e2e |
 | FR-12 | MVP | Content | Tasks have status `DRAFT` or `PUBLISHED`. Only published tasks in published missions are served to the child. | local-verifiable |
 | FR-13 | MVP | Content | Given any task, admin can see where it came from (source title, edition, page, task number) and open the PDF at that page. | e2e |
+| FR-55 | MVP | Content | *(CP1, OQ-18)* Admin edits existing sources, tasks (every field, including answer specs, hints, translations and images) and missions. | e2e |
+| FR-56 | MVP | Content | *(CP1, OQ-18)* Admin can delete a source, task or mission only when no attempt references it (directly or through its tasks); otherwise the delete is refused and the admin can unpublish instead. | local-verifiable |
+| FR-57 | MVP | Content | *(CP1, OQ-19)* A mission can be published only when every task in it is `PUBLISHED` with modality `TEXT`. A task in a published mission cannot return to `DRAFT` until that mission is unpublished. | local-verifiable |
 
 ### 2.2 Answer checking (deterministic checker)
 
@@ -116,6 +119,7 @@ and raw input, it returns a per-part verdict (`CORRECT` / `WRONG` /
 | FR-37 | MVP | Game | HQ shows the current rank, an XP bar to the next rank, and total solved tasks. | e2e, vision-verify |
 | FR-38 | MVP | Game | No negative mechanics: XP is never lost, and there are no timers, streak penalties, or leaderboards. | local-verifiable |
 | FR-39 | MVP | Game | The theme (names, ranks, copy, illustrations, colors) is one swappable **skin**. See `docs/prd.md` §9 for the direction. | local-verifiable |
+| FR-58 | MVP | Game | *(CP1, OQ-25)* The app follows the OS `prefers-color-scheme` setting with a dark and a light theme; there is no in-app toggle in MVP. | a11y, e2e |
 
 ### 2.5 Progress and stats (admin/parent)
 
@@ -162,17 +166,21 @@ and raw input, it returns a per-part verdict (`CORRECT` / `WRONG` /
 | NFR-5 | MVP | Performance | Answer check round-trip is < 300 ms p95 on the laptop. Task screen loads in < 1.5 s. | local-verifiable, e2e |
 | NFR-6 | MVP | Compatibility | Current Chrome, Edge, and Firefox on a laptop, ≥ 1280×720. Mobile is not required. | e2e |
 | NFR-7 | MVP | Usability | The child can start or continue a mission within 2 clicks from HQ. The task screen is fully keyboard-operable (Enter submits). | e2e |
-| NFR-8 | MVP | Usability | Admin can enter a typical single-part task in ≤ 60 s (keyboard-first form, sticky source and page fields). | eval |
+| NFR-8 | MVP | Usability | Admin can enter a typical single-part task in ≤ 60 s (keyboard-first form, sticky source and page fields). *(CP1, OQ-27: verification retagged from `eval` to `recording`, a timed clip of entering a typical single-part task.)* | recording |
 | NFR-9 | MVP | Localization | All UI strings are externalized. The child UI is Czech; the admin UI is English (OQ-6). Adding a task locale needs configuration and data only. | local-verifiable |
-| NFR-10 | MVP | Reliability | Postgres data lives in a Docker volume. A `make backup` (pg_dump) script exists and is documented. Progress survives container restarts. | local-verifiable |
+| NFR-10 | MVP | Reliability | Postgres data lives in a Docker volume. A documented, cross-platform backup command (`npm run backup`, running pg_dump through `docker compose exec`) exists and works on Windows. Progress survives container restarts. *(CP1, OQ-26: was "`make backup`"; `make` is not standard on Windows.)* | local-verifiable |
 | NFR-11 | MVP | Maintainability | The backend is a modular monolith. Module boundaries are verified by tests (Spring Modulith verify or ArchUnit). | local-verifiable |
 | NFR-12 | MVP | API | The OpenAPI contract is the single source of truth. Generated code is never hand-edited, and a build fails if the implementation drifts from the contract. | local-verifiable |
 | NFR-13 | MVP | Accessibility | WCAG AA contrast. Animations respect `prefers-reduced-motion`. | a11y |
 | NFR-14 | Future | AI | OpenAI calls are made from the backend only. The key is never exposed to the frontend. There is a monthly budget cap, and prompts contain no PII. Prompts and responses are logged for review. | local-verifiable |
+| NFR-15 | MVP | Security | *(CP1, OQ-23)* Admin uses form login with a session cookie that is HttpOnly and SameSite=Strict, CSRF protection is on for admin mutations, and the session expires after 8 h of inactivity. No lockout (LAN only, NFR-2). | local-verifiable |
+| NFR-16 | MVP | Security | *(CP1, OQ-23)* The admin password supplied by env must be at least 12 characters; the backend refuses to start otherwise, with a clear message. | local-verifiable |
+| NFR-17 | MVP | Reliability | *(CP1, OQ-24)* Uploads are limited to PDF ≤ 50 MB for sources and PNG/JPG ≤ 5 MB per image; anything else is rejected with a clear message. Files are stored on the local storage volume, never in a repository. | local-verifiable |
 
 > The PRD's NFR table had no Phase column; it is added here so the gate
 > scripts can tell MVP from Future rows. NFR-14 was categorized "AI (Future)"
-> in the PRD and is now Phase `Future`, category `AI`. No other row changed.
+> in the PRD and is now Phase `Future`, category `AI`. At checkpoint 1,
+> NFR-8 and NFR-10 were amended and NFR-15..NFR-17 appended (marked *(CP1)*).
 
 ## 4 Constraints
 
@@ -203,10 +211,11 @@ and raw input, it returns a per-part verdict (`CORRECT` / `WRONG` /
 
 ## 5 Assumptions & Notes
 
-- **Scope summary.** MVP = FR-1..FR-44 and NFR-1..NFR-13: content entry
-  beside the PDF, the deterministic checker, the child practice flow,
-  missions/XP/ranks, admin stats and flag queue, and the settings/`TutorPort`
-  seams. Future = FR-45..FR-54 and NFR-14: AI tutoring, AI-assisted content,
+- **Scope summary.** MVP = FR-1..FR-44, FR-55..FR-58, NFR-1..NFR-13 and
+  NFR-15..NFR-17: content entry beside the PDF (with edit/delete and
+  publishing rules), the deterministic checker, the child practice flow,
+  missions/XP/ranks with a dark/light theme, admin stats and flag queue, the
+  settings/`TutorPort` seams, and admin session/password/upload rules. Future = FR-45..FR-54 and NFR-14: AI tutoring, AI-assisted content,
   child accounts, graphic answers, spaced repetition, more grades/locales.
 - **Ids carried verbatim.** FR/NFR/TC/BC wording is the PRD's except where
   noted inline: the cross-references in FR-6, FR-39, FR-40 and NFR-9 now
@@ -218,7 +227,7 @@ and raw input, it returns a per-part verdict (`CORRECT` / `WRONG` /
   They are kept as single ids to avoid churn in a PRD whose ids are already
   cited; specs in Phase 2 should state each behavior as its own scenario.
 - **Verification mechanisms.** Rows tagged `vision-verify` (FR-36, FR-37),
-  `recording` (FR-32), `a11y` (NFR-13) and `eval` (NFR-8) need a real,
+  `recording` (FR-32, NFR-8), `a11y` (NFR-13, FR-58) need a real,
   non-stub mechanism in an owner repo before Phase 4 (lesson
   declared-method-needs-mechanism). `e2e` assumes Playwright against the
   compose stack in the frontend repo.
@@ -232,15 +241,23 @@ and raw input, it returns a per-part verdict (`CORRECT` / `WRONG` /
   capstone repo. It is currently a standalone OpenSpec store; whether it
   must become that fork is tracked in `docs/current-state.md`.
 
-## 6 Open Questions for Scope Sign-off (checkpoint 1)
+## 6 Scope Decisions (checkpoint 1)
 
-Each question has a recommended default; answering "use defaults" accepts all
-of them. Accepted answers that add scope become **new appended ids**
-(FR-55+, NFR-15+) after sign-off; nothing below is in scope until then.
+Signed off 2026-10-02: the product owner accepted every recommended default
+("use defaults"). Record: `docs/qa/checkpoint-1-scope-signoff.md`.
+
+- Decisions that add scope became appended ids: OQ-18 → FR-55, FR-56;
+  OQ-19 → FR-57; OQ-25 → FR-58; OQ-23 → NFR-15, NFR-16; OQ-24 → NFR-17.
+- Decisions that amend a row are marked *(CP1)* on it: OQ-26 → NFR-10,
+  OQ-27 → NFR-8.
+- The rest clarify existing requirements. They are binding for the Phase 2
+  specs, which must state each one as a scenario on the FR it refines.
+- OQ-26 asked which OS the home laptop runs; it was not answered, so the
+  cross-platform default stands.
 
 ### 6.1 Carried over from the PRD
 
-| # | Question | Recommended default |
+| # | Question | Decision (accepted default) |
 |---|---|---|
 | OQ-1 | Theme names: school name, mentor character, rank names | Ship placeholder original names in the skin config now (FR-39); co-design the real names with the child before D6. Not blocking. |
 | OQ-2 | Topic taxonomy: own, or aligned to workbook chapters? | Own taxonomy aligned to RVP ZV grade-6 thematic areas. Workbook location is carried by `sourceRef` (FR-13). |
@@ -255,7 +272,7 @@ of them. Accepted answers that add scope become **new appended ids**
 
 ### 6.2 New: practice-flow behavior
 
-| # | Question | Recommended default |
+| # | Question | Decision (accepted default) |
 |---|---|---|
 | OQ-11 | Multi-part tasks: on the 2nd attempt, are parts that were already correct locked? When is the task correct? | Correct parts lock and stay shown as correct; the child re-enters only the wrong parts. The task is correct only when every part is correct. |
 | OQ-12 | If one part is `UNPARSEABLE` and the others parse, what happens? | The whole submission is refused with a format tip on that part. No attempt is consumed and nothing is stored as an attempt (FR-22). |
@@ -267,7 +284,7 @@ of them. Accepted answers that add scope become **new appended ids**
 
 ### 6.3 New: content-management gaps
 
-| # | Question | Recommended default |
+| # | Question | Decision (accepted default) |
 |---|---|---|
 | OQ-18 | The PRD only says "create". Can the admin edit and delete sources, tasks and missions? | Yes, edit everything. Delete only content with no attempts; otherwise unpublish. If accepted → **FR-55** (edit) and **FR-56** (delete rules). |
 | OQ-19 | Publishing rules between tasks and missions | A mission can be published only when all its tasks are `PUBLISHED` and `TEXT`. A task in a published mission cannot go back to `DRAFT` until the mission is unpublished. If accepted → **FR-57**. |
@@ -277,7 +294,7 @@ of them. Accepted answers that add scope become **new appended ids**
 
 ### 6.4 New: missing non-functional requirements
 
-| # | Question | Recommended default |
+| # | Question | Decision (accepted default) |
 |---|---|---|
 | OQ-23 | Admin session and password rules (not in the PRD) | Form login with an HttpOnly, SameSite=Strict session cookie and CSRF protection, 8 h idle timeout. The admin password must be ≥ 12 characters; the backend refuses to start otherwise. No lockout (LAN only). If accepted → **NFR-15** (session) and **NFR-16** (password policy). |
 | OQ-24 | Upload limits | PDF ≤ 50 MB; PNG/JPG images ≤ 5 MB each; anything else is rejected with a clear message. Files go to the local storage volume. If accepted → **NFR-17**. |

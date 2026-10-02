@@ -7,25 +7,25 @@
 ## Last Updated
 
 - **Date and time:** 2026-10-02 (Europe/Prague)
-- **Current phase:** Phase 1
-- **Last completed gate:** G0
-- **Active change:** none (Phase 1 work is on branch `phase1-framing`)
-- **Progress:** Phase 0 merged: `main` fast-forwarded to `phase0-scaffold`
-  in all three repos (backend and frontend scaffolds, ADR-0003). Phase 1
-  draft written: `docs/product-brief.md` and `docs/requirements.md` split
-  from `docs/prd.md`, all 80 FR/NFR/TC/BC ids carried over unchanged; the
-  NFR table gained a Phase column (NFR-14 → Future). 27 open questions with
-  defaults are in `docs/requirements.md` §6 (OQ-1..OQ-10 from the PRD,
-  OQ-11..OQ-27 new).
-- **Next task:** Checkpoint 1 — the product owner answers §6 ("use defaults"
-  or per item). Then append the accepted scope as new ids (FR-55+, NFR-15+),
-  record the sign-off, commit, and merge `phase1-framing` → `main`.
-  After that: Phase 2 (product specs).
+- **Current phase:** Phase 2
+- **Last completed gate:** G1
+- **Active change:** none
+- **Progress:** Phase 1 signed off at checkpoint 1 on 2026-10-02 (evidence:
+  `docs/qa/checkpoint-1-scope-signoff.md`). `docs/product-brief.md` and
+  `docs/requirements.md` are the source of truth for scope; `docs/prd.md`
+  stays as the vision/UX/architecture record. All 27 defaults (OQ-1..OQ-27)
+  were accepted: appended FR-55..FR-58 and NFR-15..NFR-17, amended NFR-8
+  (now `recording`) and NFR-10 (cross-platform `npm run backup`).
+  48 MVP FRs (evidence: `node scripts/check-traceability.mjs`).
+- **Next task:** Phase 2 — derive 5–8 capabilities, run the `spec-pipeline`
+  workflow with `requirementsPath: "docs/requirements.md"` to write
+  `openspec/specs/<cap>/spec.md`, and draft `api/openapi.yaml` v0 as a
+  contract change (factory/PLAYBOOK.md). Specs must state the §6 decisions
+  as scenarios on the FRs they refine.
 - **Claims:**
   - Harness installed and not drifted — evidence: `node factory/install.mjs --repo=docs --check`
-  - G0 PASS, G1 needs sign-off — evidence: `node scripts/gate-status.mjs`
-  - 44 MVP FRs parsed from requirements.md — evidence: `node scripts/check-traceability.mjs` ("Scope: 44 MVP FR(s)")
-  - Known harness issue: gate-status shows G2 PASS with 0 of 44 MVP FRs cited by a spec (no specs exist yet); this is NOT a G2 pass
+  - G0 PASS; G1 signed off — evidence: `node scripts/gate-status.mjs` + `docs/qa/checkpoint-1-scope-signoff.md`
+  - Known harness issue: gate-status shows G2 PASS with 0 of 48 MVP FRs cited by a spec (no specs exist yet); this is NOT a G2 pass
 
 > This header is machine-read: keep the exact formats `Phase <N>` and `G<N>`.
 
@@ -46,7 +46,6 @@
 - PRD §11.1: the docs repo was meant to be a fork of the course capstone
   repo; here it is a standalone store. If it must become that fork, the
   store can live at the fork root (see factory/README.md).
-- Checkpoint 1: OQ-1..OQ-27 in `docs/requirements.md` §6 carry recommended defaults — awaiting the product owner's answers.
 
 ## Validation
 
