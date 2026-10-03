@@ -5,7 +5,7 @@ requirements/spec/test/recording change; CI runs `--check-fresh`.
 
 Repo: docs (contract: self).
 Scope: 48 MVP functional requirements (product chain; per-repo tests are joined in workspace-traceability-report.md).
-Result: PASS, 53 warning(s)
+Result: SKIP-pending (no product spec yet - the FR -> spec chain is unchecked), 53 warning(s)
 
 | FR | Spec | Plan | Owner repo(s) | Test trace here | Recording here |
 |---|---|---|---|---|---|

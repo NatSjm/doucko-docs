@@ -63,7 +63,9 @@
         "proposalDir": "openspec/changes/improve-PD-1/"
       },
       "status": "proposed",
-      "correctionIds": ["COR-1"]
+      "correctionIds": [
+        "COR-1"
+      ]
     },
     {
       "id": "PD-2",
@@ -278,6 +280,48 @@
       },
       "status": "open",
       "correctionIds": []
+    },
+    {
+      "id": "PD-8",
+      "class": "vacuous-pass",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/check-traceability.mjs:253",
+          "quote": "Result: ${failures.length === 0 ? \"PASS\" : `FAIL (...)`}",
+          "note": "Pre-fix line. With zero specs every uncited MVP FR is only a warning, so the verdict was PASS over 0 specs."
+        },
+        {
+          "pointer": "scripts/gate-status.mjs:174-175",
+          "quote": "else if (scopeN === 0 || ...) status = \"SKIP-pending\"; else status = \"PASS\";",
+          "note": "check-traceability printed no Result: line and Scope = MVP FR count (48), so runCheck classified it PASS; G2 and G8 rendered PASS."
+        },
+        {
+          "pointer": "retro/corrections/002-gate-status-reports-g2-baseline-specs-pass-while.correction.json",
+          "quote": "gate-status reports G2 (baseline specs) PASS while no product spec exists",
+          "note": "Human-directed correction (product owner asked for the fix, 2026-10-03)."
+        },
+        {
+          "pointer": "docs/qa/evidence/pd-8-g2-vacuous-pass-proof.md",
+          "quote": "G2  SKIP-pending   baseline specs  [traceability]",
+          "note": "Executed red -> green in all three repos."
+        }
+      ],
+      "metric": {
+        "name": "G2 status with 0 spec files",
+        "current": "PASS (docs, backend, frontend)",
+        "expectedMovement": "PASS -> SKIP-pending (docs) / NOT-EARNED (backend, frontend: product code exists)"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-traceability.mjs",
+        "sketch": "Declare 'Result: SKIP-pending' (stdout and generated report) when no spec file exists and --release is not set; declare PASS/FAIL explicitly otherwise. Exit codes unchanged.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [
+        "COR-2"
+      ],
+      "note": "Entry written by the orchestrator (maker), not the process-auditor; status left for the next auditor run, as with PD-1."
     }
   ]
 }

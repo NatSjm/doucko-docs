@@ -1,0 +1,13 @@
+{
+  "id": "COR-2",
+  "ts": "2026-10-03T03:37:19.918Z",
+  "utterance": "gate-status reports G2 (baseline specs) PASS while no product spec exists: 0 of 48 MVP FRs are cited by any spec. check-traceability downgrades uncited FRs to warnings before the first spec and still declares 'Result: PASS' with Scope = MVP FR count, and gate-status trusts the declared PASS (also G8). Product owner asked to fix it on 2026-10-03.",
+  "contradictedClaim": "scripts/check-traceability.mjs:253",
+  "mappedReqIds": [],
+  "gateThatShouldHaveCaught": "G2",
+  "failureMode": "vacuous-pass",
+  "failureModeSource": "explicit",
+  "source": "human",
+  "autoKey": null,
+  "disposition": null
+}
