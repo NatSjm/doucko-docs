@@ -1,0 +1,108 @@
+{
+  "requirementsPath": "docs/requirements.md",
+  "capabilities": [
+    {
+      "name": "content-authoring",
+      "frIds": [
+        "FR-1",
+        "FR-2",
+        "FR-3",
+        "FR-4",
+        "FR-5",
+        "FR-6",
+        "FR-7",
+        "FR-8",
+        "FR-9",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-55",
+        "FR-56",
+        "FR-57"
+      ]
+    },
+    {
+      "name": "answer-checking",
+      "frIds": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20",
+        "FR-21",
+        "FR-22",
+        "FR-23"
+      ]
+    },
+    {
+      "name": "practice-flow",
+      "frIds": [
+        "FR-24",
+        "FR-25",
+        "FR-26",
+        "FR-27",
+        "FR-28",
+        "FR-29",
+        "FR-30",
+        "FR-31",
+        "FR-32",
+        "FR-33",
+        "FR-44"
+      ]
+    },
+    {
+      "name": "gamification",
+      "frIds": [
+        "FR-34",
+        "FR-35",
+        "FR-36",
+        "FR-37",
+        "FR-38",
+        "FR-39",
+        "FR-58"
+      ]
+    },
+    {
+      "name": "progress-stats",
+      "frIds": [
+        "FR-40",
+        "FR-41",
+        "FR-42"
+      ]
+    },
+    {
+      "name": "child-profile",
+      "frIds": [
+        "FR-43"
+      ]
+    },
+    {
+      "name": "admin-access",
+      "frIds": []
+    }
+  ],
+  "previous": {
+    "gaps": [
+      "NFR-9 (cross-cutting, admin half) is effectively owned only by content-authoring. The only externalization check, content-authoring:605-614 'Externalized admin strings', renders only 'the source list, task editor, mission editor and preview'. Other admin UI is English but has no externalization requirement in any spec: the sign-in form (admin-access:73-77, 'Admin UI copy is English' at admin-access:23), the stats page and the flag queue (progress-stats:11). The deliberate exclusion list covers only the child-UI half of NFR-9, so this admin half is silently partial. Either widen the content-authoring scenario to every admin screen, or list admin-UI externalization outside authoring as a Phase 3 owner item.",
+      "Traceability defect in content-authoring:42 (CA-D20 justification). It reads 'answer-checking..answer-checking: admin and child notation then agree'. This looks like a stale or garbled requirement-range reference and does not point at a resolvable requirement. It should name the answer-checking requirements it means (e.g. 'Numeric notation', 'Decimal input')."
+    ],
+    "duplicates": [],
+    "contradictions": [
+      "Oversized child request body: the status code is inconsistent. practice-flow:343-346 (requirement text) says the API SHALL refuse with HTTP 400 '... and any child request body over 16 KB'. practice-flow's own scenario 'Request body too large' (practice-flow:387-391) requires HTTP 413 for a body over 16 KB. answer-checking:875-877 also lists 'oversized request bodies' among the HTTP 400 cases. The specs disagree on 400 vs 413. Pick one (413 is the conventional status) and align practice-flow:346 and answer-checking:876 with it.",
+      "Expected-value range: content-authoring vs practice-flow. content-authoring:420-421 (CA-D20, line 42) and its scenario at content-authoring:466-470 refuse to save any numeric expected value with absolute value ≥ 10^12, explicitly including `99999999999999999999`. practice-flow:375-379 ('Huge integer that is the expected answer') requires a stored, child-served INTEGER part 'expecting `100000000000000000000`'. An admin cannot author that, so the practice-flow e2e scenario is unreachable. answer-checking:156-160 uses the same kind of value, but there it is a pure-checker or golden case and does not depend on stored content, so it is not in conflict. Fix: change practice-flow:375-379 to an expected value below 10^12 with a submitted value written with grouping separators (e.g. `999 999 999 999` vs expected `999999999999`), or state there that the part is seeded directly, bypassing authoring validation."
+    ]
+  },
+  "deferred": [
+    "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+    "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+    "NFR-10 Docker volume and cross-platform backup command",
+    "NFR-11 module boundaries verified by tests",
+    "NFR-12 contract drift check in the build",
+    "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+    "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+    "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+  ]
+}

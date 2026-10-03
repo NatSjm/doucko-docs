@@ -1,0 +1,213 @@
+{
+  "workflow": "spec-crosscheck",
+  "file": "./.claude/workflows/spec-crosscheck.js",
+  "description": "Independent cross-capability check of the baseline OpenSpec specs (the Cross-check phase of spec-pipeline on its own), plus verification that previously reported findings are resolved.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T06:00:54.911Z",
+  "finishedAt": "2026-10-03T06:02:08.765Z",
+  "args": {
+    "requirementsPath": "docs/requirements.md",
+    "capabilities": [
+      {
+        "name": "content-authoring",
+        "frIds": [
+          "FR-1",
+          "FR-2",
+          "FR-3",
+          "FR-4",
+          "FR-5",
+          "FR-6",
+          "FR-7",
+          "FR-8",
+          "FR-9",
+          "FR-10",
+          "FR-11",
+          "FR-12",
+          "FR-13",
+          "FR-55",
+          "FR-56",
+          "FR-57"
+        ]
+      },
+      {
+        "name": "answer-checking",
+        "frIds": [
+          "FR-14",
+          "FR-15",
+          "FR-16",
+          "FR-17",
+          "FR-18",
+          "FR-19",
+          "FR-20",
+          "FR-21",
+          "FR-22",
+          "FR-23"
+        ]
+      },
+      {
+        "name": "practice-flow",
+        "frIds": [
+          "FR-24",
+          "FR-25",
+          "FR-26",
+          "FR-27",
+          "FR-28",
+          "FR-29",
+          "FR-30",
+          "FR-31",
+          "FR-32",
+          "FR-33",
+          "FR-44"
+        ]
+      },
+      {
+        "name": "gamification",
+        "frIds": [
+          "FR-34",
+          "FR-35",
+          "FR-36",
+          "FR-37",
+          "FR-38",
+          "FR-39",
+          "FR-58"
+        ]
+      },
+      {
+        "name": "progress-stats",
+        "frIds": [
+          "FR-40",
+          "FR-41",
+          "FR-42"
+        ]
+      },
+      {
+        "name": "child-profile",
+        "frIds": [
+          "FR-43"
+        ]
+      },
+      {
+        "name": "admin-access",
+        "frIds": []
+      }
+    ],
+    "previous": {
+      "gaps": [
+        "NFR-9 (cross-cutting, admin half) is effectively owned only by content-authoring. The only externalization check, content-authoring:605-614 'Externalized admin strings', renders only 'the source list, task editor, mission editor and preview'. Other admin UI is English but has no externalization requirement in any spec: the sign-in form (admin-access:73-77, 'Admin UI copy is English' at admin-access:23), the stats page and the flag queue (progress-stats:11). The deliberate exclusion list covers only the child-UI half of NFR-9, so this admin half is silently partial. Either widen the content-authoring scenario to every admin screen, or list admin-UI externalization outside authoring as a Phase 3 owner item.",
+        "Traceability defect in content-authoring:42 (CA-D20 justification). It reads 'answer-checking..answer-checking: admin and child notation then agree'. This looks like a stale or garbled requirement-range reference and does not point at a resolvable requirement. It should name the answer-checking requirements it means (e.g. 'Numeric notation', 'Decimal input')."
+      ],
+      "duplicates": [],
+      "contradictions": [
+        "Oversized child request body: the status code is inconsistent. practice-flow:343-346 (requirement text) says the API SHALL refuse with HTTP 400 '... and any child request body over 16 KB'. practice-flow's own scenario 'Request body too large' (practice-flow:387-391) requires HTTP 413 for a body over 16 KB. answer-checking:875-877 also lists 'oversized request bodies' among the HTTP 400 cases. The specs disagree on 400 vs 413. Pick one (413 is the conventional status) and align practice-flow:346 and answer-checking:876 with it.",
+        "Expected-value range: content-authoring vs practice-flow. content-authoring:420-421 (CA-D20, line 42) and its scenario at content-authoring:466-470 refuse to save any numeric expected value with absolute value ≥ 10^12, explicitly including `99999999999999999999`. practice-flow:375-379 ('Huge integer that is the expected answer') requires a stored, child-served INTEGER part 'expecting `100000000000000000000`'. An admin cannot author that, so the practice-flow e2e scenario is unreachable. answer-checking:156-160 uses the same kind of value, but there it is a pure-checker or golden case and does not depend on stored content, so it is not in conflict. Fix: change practice-flow:375-379 to an expected value below 10^12 with a submitted value written with grouping separators (e.g. `999 999 999 999` vs expected `999999999999`), or state there that the part is seeded directly, bypassing authoring validation."
+      ]
+    },
+    "deferred": [
+      "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+      "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+      "NFR-10 Docker volume and cross-platform backup command",
+      "NFR-11 module boundaries verified by tests",
+      "NFR-12 contract drift check in the build",
+      "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+      "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+      "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 5,
+    "maxTotalUsd": 6,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 1.1071,
+  "steps": [
+    {
+      "label": "coverage-check",
+      "phase": "Cross-check",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 4647,
+      "durationMs": 73849,
+      "sessionId": "cf34f360-fb0d-4a85-8bcc-546a2dc1e74e",
+      "costUsd": 1.1071457999999998,
+      "numTurns": 12,
+      "result": {
+        "allCovered": true,
+        "gaps": [],
+        "duplicates": [],
+        "contradictions": [
+          "CHOICE_SINGLE with several accepted keys: content-authoring vs answer-checking. content-authoring:435 (Answer spec authoring table, CHOICE_SINGLE row) requires 'exactly one option marked correct'. The same row refuses 'more than one correct option', and the scenario 'Invalid single-choice spec' at content-authoring:520-524 refuses options A and B both marked correct. answer-checking:572-573 ('Accepted alternatives': 'For CHOICE_SINGLE every accepted key is an alternative') and its scenario 'Single choice with two accepted keys' at answer-checking:593-597 (accepted keys A and D, input D gives CORRECT) define checker behavior for a spec that authoring forbids. That checker scenario is also a mandatory golden case (answer-checking:832-834). Under FR-20 ('A part can list several accepted alternatives') the content-authoring rule is a narrowing. Yet no derived decision in the CA-D table (content-authoring:21-43) records it, unlike the other narrowings (CA-D3, CA-D4, CA-D13). Fix: either add a CA-D decision that narrows FR-20 for CHOICE_SINGLE and drop or reframe answer-checking:572-573/593-597, or let content-authoring accept several correct options for CHOICE_SINGLE."
+        ],
+        "previousFindings": [
+          {
+            "id": "G1",
+            "resolved": true,
+            "evidence": "The deliberate-exclusion list now names 'NFR-9 externalization of ... admin UI strings outside the authoring screens (sign-in, stats, flag queue)' as a Phase 3 owner item, so the admin half is no longer silently partial. content-authoring:605-614 still scopes its check to 'the source list, task editor, mission editor and preview' (line 613), which matches that split. No other spec contradicts it: admin-access:23 ('Admin UI copy is English') and progress-stats:11 ('the admin UI is English') only state the language and claim no externalization ownership."
+          },
+          {
+            "id": "G2",
+            "resolved": true,
+            "evidence": "content-authoring:42 (CA-D20 justification) now reads 'answer-checking (integer, decimal, fraction and unit input): admin and child notation then agree, ...'. This resolves to the answer-checking requirements 'Integer input' (answer-checking:168), 'Decimal input' (:221), 'Fraction input' (:263) and 'Numbers with units' (:361). The garbled 'answer-checking..answer-checking' range is gone."
+          },
+          {
+            "id": "C1",
+            "resolved": true,
+            "evidence": "practice-flow:342-347 now says the API refuses only malformed request shapes with HTTP 400, and that 'Any child request body over 16 KB SHALL be refused with HTTP 413 (the contract's `TooLarge` response)'. This matches its scenario 'Request body too large' at practice-flow:388-392 (413). answer-checking:875-877 now reads 'Malformed request shapes ... are HTTP 400 and request bodies over 16 KB are HTTP 413'. All three places agree on 413. child-profile:321-326 (a 10,240-character locale value gives 400) stays under 16 KB, so it does not conflict."
+          },
+          {
+            "id": "C2",
+            "resolved": true,
+            "evidence": "practice-flow:376-380 ('Huge integer that is the expected answer') now expects `999999999999`, explicitly 'the largest value an admin can author, content-authoring CA-D20', and submits `999 999 999 999` with no-break spaces. That value is below 10^12, so content-authoring:420-421 and :466-470 accept it, and the scenario is reachable. The remaining huge-number cases do not need authored content: practice-flow:370-374 expects `12` and only submits a huge input, and answer-checking:156-160 is a pure checker/golden case."
+          }
+        ]
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Cross-check",
+      "message": "Cross-check clean: all MVP FRs owned exactly once, no open findings."
+    }
+  ],
+  "returned": {
+    "coverage": {
+      "allCovered": true,
+      "gaps": [],
+      "duplicates": [],
+      "contradictions": [
+        "CHOICE_SINGLE with several accepted keys: content-authoring vs answer-checking. content-authoring:435 (Answer spec authoring table, CHOICE_SINGLE row) requires 'exactly one option marked correct'. The same row refuses 'more than one correct option', and the scenario 'Invalid single-choice spec' at content-authoring:520-524 refuses options A and B both marked correct. answer-checking:572-573 ('Accepted alternatives': 'For CHOICE_SINGLE every accepted key is an alternative') and its scenario 'Single choice with two accepted keys' at answer-checking:593-597 (accepted keys A and D, input D gives CORRECT) define checker behavior for a spec that authoring forbids. That checker scenario is also a mandatory golden case (answer-checking:832-834). Under FR-20 ('A part can list several accepted alternatives') the content-authoring rule is a narrowing. Yet no derived decision in the CA-D table (content-authoring:21-43) records it, unlike the other narrowings (CA-D3, CA-D4, CA-D13). Fix: either add a CA-D decision that narrows FR-20 for CHOICE_SINGLE and drop or reframe answer-checking:572-573/593-597, or let content-authoring accept several correct options for CHOICE_SINGLE."
+      ],
+      "previousFindings": [
+        {
+          "id": "G1",
+          "resolved": true,
+          "evidence": "The deliberate-exclusion list now names 'NFR-9 externalization of ... admin UI strings outside the authoring screens (sign-in, stats, flag queue)' as a Phase 3 owner item, so the admin half is no longer silently partial. content-authoring:605-614 still scopes its check to 'the source list, task editor, mission editor and preview' (line 613), which matches that split. No other spec contradicts it: admin-access:23 ('Admin UI copy is English') and progress-stats:11 ('the admin UI is English') only state the language and claim no externalization ownership."
+        },
+        {
+          "id": "G2",
+          "resolved": true,
+          "evidence": "content-authoring:42 (CA-D20 justification) now reads 'answer-checking (integer, decimal, fraction and unit input): admin and child notation then agree, ...'. This resolves to the answer-checking requirements 'Integer input' (answer-checking:168), 'Decimal input' (:221), 'Fraction input' (:263) and 'Numbers with units' (:361). The garbled 'answer-checking..answer-checking' range is gone."
+        },
+        {
+          "id": "C1",
+          "resolved": true,
+          "evidence": "practice-flow:342-347 now says the API refuses only malformed request shapes with HTTP 400, and that 'Any child request body over 16 KB SHALL be refused with HTTP 413 (the contract's `TooLarge` response)'. This matches its scenario 'Request body too large' at practice-flow:388-392 (413). answer-checking:875-877 now reads 'Malformed request shapes ... are HTTP 400 and request bodies over 16 KB are HTTP 413'. All three places agree on 413. child-profile:321-326 (a 10,240-character locale value gives 400) stays under 16 KB, so it does not conflict."
+        },
+        {
+          "id": "C2",
+          "resolved": true,
+          "evidence": "practice-flow:376-380 ('Huge integer that is the expected answer') now expects `999999999999`, explicitly 'the largest value an admin can author, content-authoring CA-D20', and submits `999 999 999 999` with no-break spaces. That value is below 10^12, so content-authoring:420-421 and :466-470 accept it, and the scenario is reachable. The remaining huge-number cases do not need authored content: practice-flow:370-374 expects `12` and only submits a huge input, and answer-checking:156-160 is a pure checker/golden case."
+        }
+      ]
+    },
+    "unresolvedPrevious": []
+  }
+}

@@ -1,0 +1,662 @@
+{
+  "workflow": "contract-review",
+  "file": "./.claude/workflows/contract-review.js",
+  "description": "Independent review of api/openapi.yaml against the baseline OpenSpec specs: one read-only reviewer per capability, each reporting concrete mismatches between what its spec requires at the API boundary and what the contract defines.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T06:00:56.927Z",
+  "finishedAt": "2026-10-03T06:03:29.455Z",
+  "args": {
+    "contractPath": "api/openapi.yaml",
+    "capabilities": [
+      {
+        "name": "content-authoring"
+      },
+      {
+        "name": "answer-checking"
+      },
+      {
+        "name": "practice-flow"
+      },
+      {
+        "name": "gamification"
+      },
+      {
+        "name": "progress-stats"
+      },
+      {
+        "name": "child-profile"
+      },
+      {
+        "name": "admin-access"
+      }
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 1.5,
+    "maxTotalUsd": 8,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 2.8276,
+  "steps": [
+    {
+      "label": "review:content-authoring",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1237,
+      "durationMs": 152521,
+      "sessionId": "9b31948c-99a9-4f31-93bf-5aecd562cfc4",
+      "costUsd": 0.7540614,
+      "numTurns": 4,
+      "result": {
+        "capability": "content-authoring",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/content-authoring/spec.md:38",
+            "contractRef": "api/openapi.yaml:1424-1440 (ReferenceData)",
+            "issue": "CA-D16 says allowed grades and subjects come from configuration, and the upload/edit scenarios (spec.md:121-126, 146-150, 255-263) need the admin form to offer and list them. The only configuration endpoint, getReferenceData, returns topics and taskLocales but no grades or subjects. The frontend would have to hard-code 6/math, which breaks the configuration-driven rule. Meanwhile SourceMetadata.grade and TaskInput.grade carry a fixed 1-9 range (1448, 1551) that is unrelated to configuration.",
+            "suggestedFix": "Add required `grades: integer[]` and `subjects: string[]` to ReferenceData, and describe them as the configured values (MVP [6] and [\"math\"])."
+          },
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/content-authoring/spec.md:63-66, 363-365, 391-407, 425-427, 458, 539",
+            "contractRef": "api/openapi.yaml:997-1001 (BadRequest), 1043-1050 (Problem.errors[].field)",
+            "issue": "The spec requires an inline message on a specific field: the prompt, a part's label, part b's missing type or expected value, one expected value, one hint, the duplicate label, or one option. The contract defines a field-path grammar only for child attempts (`answers.<partKey>`, line 31). For admin bodies such as TaskInput, MissionInput, SourceMetadata and SourceUpload, `errors[].field` is a free string. Backend and frontend are generated independently and would have to guess the path syntax (for example `parts[1].spec.accepted[0]`, `parts.b.spec.type` or `hints[2]`) to place the messages.",
+            "suggestedFix": "Document the admin field-path convention in BadRequest/Problem.errors.field: JSON-pointer-like dotted paths with zero-based array indexes matching the request body (e.g. `prompt`, `sourceRef.page`, `parts[1].label`, `parts[1].spec.accepted[0]`, `parts[0].spec.options[2].text`, `hints[0]`, `translations.uk.prompt`, `position`, `taskIds`, `file`)."
+          },
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/content-authoring/spec.md:134-138, 942, 959-969",
+            "contractRef": "api/openapi.yaml:369-391 (updateSource PATCH), 1441-1449 (SourceMetadata)",
+            "issue": "updateSource is a PATCH, but its body is the full SourceMetadata schema with title, grade and subject required. Optional publisher and edition are nullable but not required. The contract does not say whether an omitted publisher or edition means 'keep' or 'clear', or whether null clears it. ProfileSettingsPatch, by contrast, explicitly declares merge-patch. To support the spec's clearing of optional metadata and editing a single field (edition 1→2), the implementer has to guess the semantics.",
+            "suggestedFix": "Either change updateSource to PUT with full-replacement semantics (absent publisher/edition = cleared), or keep PATCH and declare it like ProfileSettingsPatch: json-merge-patch, no required fields, null clears publisher/edition, null title/grade/subject → 400."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:977-981",
+            "contractRef": "api/openapi.yaml:369-391 (updateSource consumes application/json only), 406-421 (/file GET only)",
+            "issue": "The spec requires an API attempt to send a new file for an existing source to be refused with 400 or 405. With the generated server, a multipart PATCH to /api/admin/sources/{id} is answered 415 because the operation only consumes JSON. A JSON PATCH carrying an extra `file` property is silently ignored (200), since SourceMetadata does not forbid additional properties. Neither outcome matches the spec, and updateSource does not declare 405 or 415.",
+            "suggestedFix": "Declare `additionalProperties: false` on the updateSource body (unknown `file` → 400), state in updateSource that multipart bodies are refused, and either declare 415 there and widen the spec to '400, 405 or 415', or require the backend to map that case to 400."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:181-185",
+            "contractRef": "api/openapi.yaml:342-352 (uploadSource responses)",
+            "issue": "A file with the PDF signature that is encrypted, truncated or unreadable must be refused with a fixed message. uploadSource declares 400, 413 and 415, but the contract does not say which one carries this case (400 or 415), so the backend and the frontend's error handling may disagree.",
+            "suggestedFix": "In uploadSource, document that an unreadable or encrypted PDF (CA-D2) is answered 400 (or 415, whichever is chosen) with that `detail`, and that 415 is used for content that is not a PDF (CA-D1)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:358, 397-401, 435-437, 539",
+            "contractRef": "api/openapi.yaml:1518 (PartInput.label), 1486-1488 (AnswerSpec.accepted items), 1504 (options[].text)",
+            "issue": "The spec makes a part label, an option text and a TEXT expected answer required and non-empty. The contract sets `minLength: 1` on prompt, hints, title and taskNo, but not on PartInput.label, AnswerSpec.accepted items or options[].text, so an empty string passes schema validation inconsistently with the other required texts.",
+            "suggestedFix": "Add `minLength: 1` to PartInput.label, AnswerSpec.accepted.items and AnswerSpec.options.items.text. The server still applies the trimmed-empty rule."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:435-436, 514-518",
+            "contractRef": "api/openapi.yaml:1496-1506 (AnswerSpec.options[].key), 1485",
+            "issue": "The spec says choice options are lettered A, B, C … in order, and the correct answer is stored as a letter. The contract makes the client send an arbitrary `key` and does not say whether the server assigns the letters, or validates that they are A, B, C in display order.",
+            "suggestedFix": "Document on options[].key that keys are `A`, `B`, `C` … in display order (server-assigned, or validated and refused with 400 otherwise), and that `accepted` for CHOICE_* holds those keys."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:573-579",
+            "contractRef": "api/openapi.yaml:1515-1517 (PartInput.key), 1526-1530 (Translation.partLabels)",
+            "issue": "Translation.partLabels and Translation.options are maps, but the contract does not say what they are keyed by (part key vs label). It also does not require PartInput.key to be unique within a task, although partLabels and AttemptRequest.answers depend on that. The spec only states uniqueness for labels (CA-D11).",
+            "suggestedFix": "Document that partLabels is keyed by PartInput.key, that options is keyed by option key, and that part keys are unique within a task (duplicate → 400 on `parts[i].key`)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:63-64, 723-727",
+            "contractRef": "api/openapi.yaml:436 (q maxLength 200), 1445-1447, 1471-1472, 1549, 1567",
+            "issue": "The spec counts lengths in Unicode characters after trimming leading and trailing whitespace. The contract's maxLength values are enforced on the raw value, and generated Bean Validation (@Size) counts UTF-16 units. A 200-character query with surrounding spaces, or a prompt at the limit that contains astral characters, would be refused by generated code but accepted by the spec.",
+            "suggestedFix": "Document in the contract description that text limits are applied by the server after trimming, in code points. Either raise the raw schema maxLength (or mark it x-trimmed) so generated validators do not pre-empt the rule, or narrow the spec to raw length."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:645-649, 657-667",
+            "contractRef": "api/openapi.yaml:710-729 (createMission: 400 only), 746-769 (updateMission: 400 and 409)",
+            "issue": "A duplicate position, a task from another topic, or the same task twice are state-dependent refusals. createMission declares only 400, while updateMission declares both 400 and 409. The contract does not say which status each rule uses, so the frontend cannot tell a field error (inline on position) from a state conflict.",
+            "suggestedFix": "In createMission and updateMission, document that a duplicate position and a topic mismatch are 400 with `errors[].field` (`position`, `taskIds[i]`), and that 409 is reserved for publishing-invariant rules (CA-D7/D9/D10)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:671-692",
+            "contractRef": "api/openapi.yaml:646-666 (previewTask), 1194-1205 (TaskView.images.url, parts minItems 1)",
+            "issue": "The preview must work for a DRAFT task. TaskView.images[].url does not say that preview URLs point to getAdminImage, while getChildImage (line 206) serves only tasks served to the child. TaskView.parts has `minItems: 1`, so a partless GRAPHIC task (CA-D13) has no valid preview response and no declared alternative status. previewTask also declares no 400, although `locale` has a pattern and must be configured.",
+            "suggestedFix": "In previewTask's 200 description, state that image URLs are admin image URLs. Declare the response for a partless GRAPHIC task (e.g. 409) or relax parts minItems in preview. Add a 400 response for an invalid or unconfigured locale."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:759-762, 852-868",
+            "contractRef": "api/openapi.yaml:523-547 (setTaskStatus), 784-808 (setMissionStatus)",
+            "issue": "Both status operations take a validated StatusChange body (required enum) but declare no 400, so a missing or unknown status value has no declared response in the generated code.",
+            "suggestedFix": "Add `\"400\": { $ref: \"#/components/responses/BadRequest\" }` to setTaskStatus and setMissionStatus."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:answer-checking",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1235,
+      "durationMs": 48580,
+      "sessionId": "d1ca9154-6a57-4eb4-aba6-1f7b7848598f",
+      "costUsd": 0.39769180000000004,
+      "numTurns": 12,
+      "result": {
+        "capability": "answer-checking",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:443-449",
+            "contractRef": "api/openapi.yaml:1259-1263 (AttemptRequest.answers array maxItems 20, items maxLength 100) vs api/openapi.yaml:1496-1506 (AnswerSpec.options[].key has no maxLength)",
+            "issue": "The spec says repeated keys collapse to one ({A, A, C} = {A, C}) and that an unknown key makes the selection UNPARSEABLE. The contract adds limits the spec does not mention. A selection of more than 20 keys (for example many repeats) or a key longer than 100 characters fails schema validation with 400, so it never reaches the checker. Also, an option key over 100 characters is allowed in AnswerSpec but could never be submitted. These are edge cases, and the spec does hand malformed request shapes to the contract (spec.md:875-877). Still, the boundary between a 400 and an UNPARSEABLE verdict for choice input is not written down on either side.",
+            "suggestedFix": "Add maxLength: 100 to AnswerSpec.options[].key, so every option can be submitted. In the AttemptRequest.answers description, state that arrays over 20 items or keys over 100 characters get 400, not a verdict. Or add one line to the spec's exclusions recording these request-shape limits."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:726-730",
+            "contractRef": "api/openapi.yaml:1284-1329 (AttemptResult: parts, bonusXp, completedMissionIds, rankUp, missionComplete)",
+            "issue": "The spec says an UNPARSEABLE response lists in `parts` only the unreadable parts, each with verdict UNPARSEABLE and a formatTip. AttemptResult.parts (line 1304) has no description saying this. AttemptResult also marks bonusXp, completedMissionIds, rankUp and missionComplete as required but does not say what they hold when status is UNPARSEABLE. The implementer has to infer 0 / [] / null / false. Only xpAwarded, attemptNo and feedback document their UNPARSEABLE value.",
+            "suggestedFix": "Document on AttemptResult.parts: 'When status is UNPARSEABLE, only the unreadable parts (verdict UNPARSEABLE, formatTip set)'. Document the UNPARSEABLE values for bonusXp (0), completedMissionIds ([]), rankUp (null) and missionComplete (false)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:227-230",
+            "contractRef": "api/openapi.yaml:1490 (AnswerSpec.exactDecimals)",
+            "issue": "The flow mapping `{ ..., description: DECIMAL — required number of decimal places, maximum: 6 }` is split at the comma by YAML. The result is a description cut short at 'decimal places' plus a real schema constraint `maximum: 6`. The spec sets no upper bound on exactDecimals. The cap may be accidental, or it may be a real authoring limit that the spec leaves out.",
+            "suggestedFix": "If 6 is intended, write it as an explicit key (`maximum: 6`) with an unbroken description, and record the limit in content-authoring or answer-checking. If not, quote the description string and drop the accidental maximum."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:practice-flow",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1233,
+      "durationMs": 50931,
+      "sessionId": "a300d42d-5976-43f6-bf7b-e0b5248372b4",
+      "costUsd": 0.4220144,
+      "numTurns": 8,
+      "result": {
+        "capability": "practice-flow",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/practice-flow/spec.md:656",
+            "contractRef": "api/openapi.yaml:1330 (Feedback)",
+            "issue": "The spec says the tutor-seam feedback contains 'the per-part verdicts' (lines 656-657), and the scenarios at lines 667 and 673 say 'the feedback carries the per-part verdicts'. The contract's Feedback object only has nextHintIndex and revealedAnswers. The per-part verdicts are in AttemptResult.parts (api/openapi.yaml:1304). The determinism scenario at spec line 679 already treats `feedback` and `parts` as separate, so the spec contradicts itself and the contract matches only one reading.",
+            "suggestedFix": "Fix the spec, not the contract: at lines 656-657, 667 and 673, say the per-part verdicts are returned in `AttemptResult.parts` next to `feedback`, and that `feedback` holds the hint pointer and the revealed answers."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/practice-flow/spec.md:291",
+            "contractRef": "api/openapi.yaml:1268 (PartResult.required)",
+            "issue": "Several spec scenarios depend on the `locked` value of a part: lines 279, 285 and 291 (a stays locked as CORRECT) and line 679 (parts compared on `locked`). But PartResult.locked is not in the required list, so the generated TS type is `locked?: boolean`. The backend could leave it out, and the client would have to guess that a missing value means false.",
+            "suggestedFix": "Add `locked` to PartResult.required."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/practice-flow/spec.md:132",
+            "contractRef": "api/openapi.yaml:1098 (HqView.required) / 1118 (continueTarget)",
+            "issue": "continueTarget is nullable ('null when no mission is in progress') but missing from HqView.required. Generated clients type it as optional and nullable, so the 'Nothing to continue' state (spec lines 155-159) can arrive as either a missing field or null.",
+            "suggestedFix": "Add `continueTarget` to HqView.required so 'nothing to continue' is always an explicit null."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/practice-flow/spec.md:679",
+            "contractRef": "api/openapi.yaml:1330-1338 (Feedback.nextHintIndex, revealedAnswers)",
+            "issue": "The determinism scenario requires the `feedback` objects to be byte-identical after canonicalization, and the 'no hint pointer' scenario (spec line 673) needs a defined 'no pointer' value. Feedback has no required list, though, so nextHintIndex and revealedAnswers may be either missing or null. Both mean 'no pointer' or 'not revealed', and the contract does not say which one to send.",
+            "suggestedFix": "Add `required: [ nextHintIndex, revealedAnswers ]` to Feedback (both stay nullable)."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:gamification",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1232,
+      "durationMs": 41380,
+      "sessionId": "64f06094-d4ff-409e-ae96-21eaddbf0487",
+      "costUsd": 0.3536568,
+      "numTurns": 9,
+      "result": {
+        "capability": "gamification",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/gamification/spec.md:248-261, 192-198",
+            "contractRef": "api/openapi.yaml:1315-1319 (AttemptResult.rankUp, missionComplete)",
+            "issue": "The contract says AttemptResult.rankUp is 'Null when the crossing happened together with mission completion; it is then celebrated on the mission summary'. missionComplete only means the current run's last task was resolved (line 1319). A shared-task resolution can complete another mission instead, as in the 'Shared tasks complete another mission' scenario: completedMissionIds=[B], bonusXp=20, missionComplete=false. If B's bonus crosses a threshold, the description tells the implementer to null rankUp. But no mission-complete screen follows for the current run. pendingRankUp (line 1141) only covers rank-ups outside a child session. So the spec's required celebration has no field to travel in, and the implementer has to guess.",
+            "suggestedFix": "Change the rankUp description to: 'Null when no threshold was crossed, or when missionComplete is true (then MissionSummary.rankUp carries it). When the crossing comes from the task XP or from bonuses of other missions in completedMissionIds while missionComplete is false, it is set here and animated now.'"
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/gamification/spec.md:123-127, 132-136",
+            "contractRef": "api/openapi.yaml:58-68 (/api/child/hq, GET only)",
+            "issue": "The spec requires PUT/POST/PATCH on /api/child/hq to be refused with a 4xx and to leave progress unchanged. The contract declares only getHq, so the expected status (405 in practice) comes from framework defaults. It is not documented in the contract.",
+            "suggestedFix": "Add a note to the getHq description or the info section: progress resources expose no write methods, and any other method is answered 405 (problem+json)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/gamification/spec.md:127-129, 138-142",
+            "contractRef": "api/openapi.yaml:1249-1263 (AttemptRequest)",
+            "issue": "The spec says client-supplied top-level fields such as xpAwarded, totalXp, rank and solvedTasks in an attempt body must be ignored. The answers description says unknown part keys inside answers are refused with 400, but the contract says nothing about unknown top-level fields. ProfileSettingsPatch documents this (line 1409); AttemptRequest does not, so a strict binder could reject the body with 400.",
+            "suggestedFix": "Add to the AttemptRequest description: 'Unknown top-level fields (e.g. xpAwarded, totalXp, rank, solvedTasks) are ignored and have no effect.' Keep additionalProperties unset (permissive)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/gamification/spec.md:158-163, 197",
+            "contractRef": "api/openapi.yaml:1363 (MissionSummary.xpEarned)",
+            "issue": "xpEarned is 'Task XP plus bonus earned in this run'. With shared tasks, a run can also pay bonuses for other missions (completedMissionIds). The contract does not say whether those bonuses count in this mission's xpEarned.",
+            "suggestedFix": "Say explicitly whether xpEarned includes bonuses paid during this run for other missions completed through shared tasks. Recommended: it includes them, so it matches the sum of xpAwarded + bonusXp over the run."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:progress-stats",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1234,
+      "durationMs": 55503,
+      "sessionId": "9877a40a-e207-43a0-bc6f-121517e582b1",
+      "costUsd": 0.336574,
+      "numTurns": 8,
+      "result": {
+        "capability": "progress-stats",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/progress-stats/spec.md:274-278 (also 238-242, 262-272)",
+            "contractRef": "api/openapi.yaml:817-820 (getStats `weeks` parameter)",
+            "issue": "The spec requires 400 for a present but empty `weeks=` value and for `٤` (Arabic-Indic digit four), and says none of them may be read as 4. The contract declares `weeks` as an optional int32 with `default: 4`. Spring code generated from this becomes `@RequestParam(required=false, defaultValue=\"4\") Integer weeks`. Spring uses the defaultValue when the value is empty, so `weeks=` is read as 4 and answers 200. Java's Integer.parseInt also accepts Unicode decimal digits, so `٤` is read as 4. The contract does not say that the default applies only when the parameter is absent. It also does not say which `Problem.errors[].field` value names the week count.",
+            "suggestedFix": "Add a parameter description: \"Default 4 applies only when the parameter is absent. A present but empty value, or any value that is not ASCII digits 1–52, is a 400 with errors[].field = \\\"weeks\\\".\" Optionally set `allowEmptyValue: false` explicitly. For a stricter generated check, declare the parameter as `type: string, pattern: '^([1-9]|[1-4][0-9]|5[0-2])$'` with default \"4\"."
+          },
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/progress-stats/spec.md:286-289, 323-327",
+            "contractRef": "api/openapi.yaml:837-840 (listReports `status` parameter), 1675-1677 (ReportStatus)",
+            "issue": "The spec requires 400 for the status filter `FOO`, `fixed` and an empty value. The contract has an optional enum query parameter and no description. Spring's String-to-enum conversion turns an empty value into null, so `status=` is treated as no filter and answers 200 with every report. The spec forbids that. The contract also does not say that matching is case-sensitive or which errors[].field value is used.",
+            "suggestedFix": "Add a parameter description: \"Exact, case-sensitive match of OPEN | FIXED | DISMISSED. Absent = no filter. A present but empty value or any other value is a 400 with errors[].field = \\\"status\\\".\" Optionally set `allowEmptyValue: false` explicitly."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:282-284, 297",
+            "contractRef": "api/openapi.yaml:1680, 1691-1693 (Report.required / taskPromptExcerpt)",
+            "issue": "Each flag-queue entry must show the task. `taskPromptExcerpt` is the only readable task field, but it is not in `Report.required`, so the generated TS type makes it optional and the frontend has to guess whether it is always present.",
+            "suggestedFix": "Add `taskPromptExcerpt` to Report.required, or document when it may be absent."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:353-358, 384-388",
+            "contractRef": "api/openapi.yaml:1753 (ReevaluationResult.changed)",
+            "issue": "`changed` is described as \"False when the new verdict would not improve the outcome\". When a replay attempt is re-evaluated, the task outcome never changes, but the report still becomes FIXED and the new verdict is recorded. Under that wording `changed` would be false, even though the admin should not be told that nothing changed.",
+            "suggestedFix": "Reword: \"True when a re-evaluated verdict was recorded and the report became FIXED, including replay attempts with xpAwarded 0. False when nothing changed and the report stays OPEN.\""
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:165-168, 256-260",
+            "contractRef": "api/openapi.yaml:1650-1659 (Stats.firstTryRateByTopic)",
+            "issue": "The spec requires a topic that has published tasks but no resolved tasks to appear with a rate of \"—\". The contract does not say which topics are listed, so the backend could leave out topics with `resolved: 0` and that scenario would have nothing to render.",
+            "suggestedFix": "Add a description: \"One entry per topic with at least one published task; resolved = 0 means no rate (rendered as —).\""
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:child-profile",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1233,
+      "durationMs": 34460,
+      "sessionId": "93b4cf73-8600-424a-84b1-f8b9d352d4b2",
+      "costUsd": 0.2643856,
+      "numTurns": 10,
+      "result": {
+        "capability": "child-profile",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/child-profile/spec.md:161",
+            "contractRef": "api/openapi.yaml:1392",
+            "issue": "ProfileSettings.secondaryTaskLocale is declared as `allOf: [TaskLocale]` + `nullable: true` with no sibling `type`. OAS 3.0.3 says `nullable` only takes effect when `type` is set in the same Schema Object, so strictly the response field is not nullable. The spec needs `null` as the default and as the cleared state (spec.md:166, :203, :217, :197). A generator that follows the rule types the field as non-null `String`/`string`, and then the server cannot return the default `null`.",
+            "suggestedFix": "Write the field inline as `type: string, pattern: ^[a-z]{2}$, nullable: true` (as ProfileSettingsPatch already does at :1399-1402), or add `type: string` next to the `allOf`."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/child-profile/spec.md:172",
+            "contractRef": "api/openapi.yaml:1408",
+            "issue": "ProfileSettingsPatch says it follows JSON merge-patch semantics (RFC 7396, `x-patch-semantics: json-merge-patch`), but the request media type is `application/json` (:233), not `application/merge-patch+json`. It also refuses `answerMode: null` with 400, which RFC 7396 does not do. The spec's partial-update rules are a design decision of their own, not RFC 7396.",
+            "suggestedFix": "Drop the RFC 7396 / json-merge-patch label and describe the spec's own rules (absent = unchanged, null clears the locale only, null answerMode = 400), or switch to `application/merge-patch+json` and keep the documented exception."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/child-profile/spec.md:333",
+            "contractRef": "api/openapi.yaml:1399",
+            "issue": "ProfileSettingsPatch.secondaryTaskLocale repeats the TaskLocale pattern inline instead of referencing TaskLocale (:1070). If the locale shape changes in one place, the two can drift apart.",
+            "suggestedFix": "Reference #/components/schemas/TaskLocale with a sibling `type: string` and `nullable: true`, or note that the two definitions must stay identical."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:admin-access",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 1.5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1232,
+      "durationMs": 17134,
+      "sessionId": "b7cfcad0-2850-40f9-b946-11d8a6283c14",
+      "costUsd": 0.29924,
+      "numTurns": 9,
+      "result": {
+        "capability": "admin-access",
+        "consistent": true,
+        "mismatches": []
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Review",
+      "message": "Contract review: 0 blocker, 7 major, 24 minor across 7 capabilities"
+    }
+  ],
+  "returned": {
+    "consistent": false,
+    "counts": {
+      "blocker": 0,
+      "major": 7,
+      "minor": 24
+    },
+    "mismatches": [
+      {
+        "capability": "content-authoring",
+        "severity": "major",
+        "specRef": "openspec/specs/content-authoring/spec.md:38",
+        "contractRef": "api/openapi.yaml:1424-1440 (ReferenceData)",
+        "issue": "CA-D16 says allowed grades and subjects come from configuration, and the upload/edit scenarios (spec.md:121-126, 146-150, 255-263) need the admin form to offer and list them. The only configuration endpoint, getReferenceData, returns topics and taskLocales but no grades or subjects. The frontend would have to hard-code 6/math, which breaks the configuration-driven rule. Meanwhile SourceMetadata.grade and TaskInput.grade carry a fixed 1-9 range (1448, 1551) that is unrelated to configuration.",
+        "suggestedFix": "Add required `grades: integer[]` and `subjects: string[]` to ReferenceData, and describe them as the configured values (MVP [6] and [\"math\"])."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "major",
+        "specRef": "openspec/specs/content-authoring/spec.md:63-66, 363-365, 391-407, 425-427, 458, 539",
+        "contractRef": "api/openapi.yaml:997-1001 (BadRequest), 1043-1050 (Problem.errors[].field)",
+        "issue": "The spec requires an inline message on a specific field: the prompt, a part's label, part b's missing type or expected value, one expected value, one hint, the duplicate label, or one option. The contract defines a field-path grammar only for child attempts (`answers.<partKey>`, line 31). For admin bodies such as TaskInput, MissionInput, SourceMetadata and SourceUpload, `errors[].field` is a free string. Backend and frontend are generated independently and would have to guess the path syntax (for example `parts[1].spec.accepted[0]`, `parts.b.spec.type` or `hints[2]`) to place the messages.",
+        "suggestedFix": "Document the admin field-path convention in BadRequest/Problem.errors.field: JSON-pointer-like dotted paths with zero-based array indexes matching the request body (e.g. `prompt`, `sourceRef.page`, `parts[1].label`, `parts[1].spec.accepted[0]`, `parts[0].spec.options[2].text`, `hints[0]`, `translations.uk.prompt`, `position`, `taskIds`, `file`)."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "major",
+        "specRef": "openspec/specs/content-authoring/spec.md:134-138, 942, 959-969",
+        "contractRef": "api/openapi.yaml:369-391 (updateSource PATCH), 1441-1449 (SourceMetadata)",
+        "issue": "updateSource is a PATCH, but its body is the full SourceMetadata schema with title, grade and subject required. Optional publisher and edition are nullable but not required. The contract does not say whether an omitted publisher or edition means 'keep' or 'clear', or whether null clears it. ProfileSettingsPatch, by contrast, explicitly declares merge-patch. To support the spec's clearing of optional metadata and editing a single field (edition 1→2), the implementer has to guess the semantics.",
+        "suggestedFix": "Either change updateSource to PUT with full-replacement semantics (absent publisher/edition = cleared), or keep PATCH and declare it like ProfileSettingsPatch: json-merge-patch, no required fields, null clears publisher/edition, null title/grade/subject → 400."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:977-981",
+        "contractRef": "api/openapi.yaml:369-391 (updateSource consumes application/json only), 406-421 (/file GET only)",
+        "issue": "The spec requires an API attempt to send a new file for an existing source to be refused with 400 or 405. With the generated server, a multipart PATCH to /api/admin/sources/{id} is answered 415 because the operation only consumes JSON. A JSON PATCH carrying an extra `file` property is silently ignored (200), since SourceMetadata does not forbid additional properties. Neither outcome matches the spec, and updateSource does not declare 405 or 415.",
+        "suggestedFix": "Declare `additionalProperties: false` on the updateSource body (unknown `file` → 400), state in updateSource that multipart bodies are refused, and either declare 415 there and widen the spec to '400, 405 or 415', or require the backend to map that case to 400."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:181-185",
+        "contractRef": "api/openapi.yaml:342-352 (uploadSource responses)",
+        "issue": "A file with the PDF signature that is encrypted, truncated or unreadable must be refused with a fixed message. uploadSource declares 400, 413 and 415, but the contract does not say which one carries this case (400 or 415), so the backend and the frontend's error handling may disagree.",
+        "suggestedFix": "In uploadSource, document that an unreadable or encrypted PDF (CA-D2) is answered 400 (or 415, whichever is chosen) with that `detail`, and that 415 is used for content that is not a PDF (CA-D1)."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:358, 397-401, 435-437, 539",
+        "contractRef": "api/openapi.yaml:1518 (PartInput.label), 1486-1488 (AnswerSpec.accepted items), 1504 (options[].text)",
+        "issue": "The spec makes a part label, an option text and a TEXT expected answer required and non-empty. The contract sets `minLength: 1` on prompt, hints, title and taskNo, but not on PartInput.label, AnswerSpec.accepted items or options[].text, so an empty string passes schema validation inconsistently with the other required texts.",
+        "suggestedFix": "Add `minLength: 1` to PartInput.label, AnswerSpec.accepted.items and AnswerSpec.options.items.text. The server still applies the trimmed-empty rule."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:435-436, 514-518",
+        "contractRef": "api/openapi.yaml:1496-1506 (AnswerSpec.options[].key), 1485",
+        "issue": "The spec says choice options are lettered A, B, C … in order, and the correct answer is stored as a letter. The contract makes the client send an arbitrary `key` and does not say whether the server assigns the letters, or validates that they are A, B, C in display order.",
+        "suggestedFix": "Document on options[].key that keys are `A`, `B`, `C` … in display order (server-assigned, or validated and refused with 400 otherwise), and that `accepted` for CHOICE_* holds those keys."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:573-579",
+        "contractRef": "api/openapi.yaml:1515-1517 (PartInput.key), 1526-1530 (Translation.partLabels)",
+        "issue": "Translation.partLabels and Translation.options are maps, but the contract does not say what they are keyed by (part key vs label). It also does not require PartInput.key to be unique within a task, although partLabels and AttemptRequest.answers depend on that. The spec only states uniqueness for labels (CA-D11).",
+        "suggestedFix": "Document that partLabels is keyed by PartInput.key, that options is keyed by option key, and that part keys are unique within a task (duplicate → 400 on `parts[i].key`)."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:63-64, 723-727",
+        "contractRef": "api/openapi.yaml:436 (q maxLength 200), 1445-1447, 1471-1472, 1549, 1567",
+        "issue": "The spec counts lengths in Unicode characters after trimming leading and trailing whitespace. The contract's maxLength values are enforced on the raw value, and generated Bean Validation (@Size) counts UTF-16 units. A 200-character query with surrounding spaces, or a prompt at the limit that contains astral characters, would be refused by generated code but accepted by the spec.",
+        "suggestedFix": "Document in the contract description that text limits are applied by the server after trimming, in code points. Either raise the raw schema maxLength (or mark it x-trimmed) so generated validators do not pre-empt the rule, or narrow the spec to raw length."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:645-649, 657-667",
+        "contractRef": "api/openapi.yaml:710-729 (createMission: 400 only), 746-769 (updateMission: 400 and 409)",
+        "issue": "A duplicate position, a task from another topic, or the same task twice are state-dependent refusals. createMission declares only 400, while updateMission declares both 400 and 409. The contract does not say which status each rule uses, so the frontend cannot tell a field error (inline on position) from a state conflict.",
+        "suggestedFix": "In createMission and updateMission, document that a duplicate position and a topic mismatch are 400 with `errors[].field` (`position`, `taskIds[i]`), and that 409 is reserved for publishing-invariant rules (CA-D7/D9/D10)."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:671-692",
+        "contractRef": "api/openapi.yaml:646-666 (previewTask), 1194-1205 (TaskView.images.url, parts minItems 1)",
+        "issue": "The preview must work for a DRAFT task. TaskView.images[].url does not say that preview URLs point to getAdminImage, while getChildImage (line 206) serves only tasks served to the child. TaskView.parts has `minItems: 1`, so a partless GRAPHIC task (CA-D13) has no valid preview response and no declared alternative status. previewTask also declares no 400, although `locale` has a pattern and must be configured.",
+        "suggestedFix": "In previewTask's 200 description, state that image URLs are admin image URLs. Declare the response for a partless GRAPHIC task (e.g. 409) or relax parts minItems in preview. Add a 400 response for an invalid or unconfigured locale."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:759-762, 852-868",
+        "contractRef": "api/openapi.yaml:523-547 (setTaskStatus), 784-808 (setMissionStatus)",
+        "issue": "Both status operations take a validated StatusChange body (required enum) but declare no 400, so a missing or unknown status value has no declared response in the generated code.",
+        "suggestedFix": "Add `\"400\": { $ref: \"#/components/responses/BadRequest\" }` to setTaskStatus and setMissionStatus."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:443-449",
+        "contractRef": "api/openapi.yaml:1259-1263 (AttemptRequest.answers array maxItems 20, items maxLength 100) vs api/openapi.yaml:1496-1506 (AnswerSpec.options[].key has no maxLength)",
+        "issue": "The spec says repeated keys collapse to one ({A, A, C} = {A, C}) and that an unknown key makes the selection UNPARSEABLE. The contract adds limits the spec does not mention. A selection of more than 20 keys (for example many repeats) or a key longer than 100 characters fails schema validation with 400, so it never reaches the checker. Also, an option key over 100 characters is allowed in AnswerSpec but could never be submitted. These are edge cases, and the spec does hand malformed request shapes to the contract (spec.md:875-877). Still, the boundary between a 400 and an UNPARSEABLE verdict for choice input is not written down on either side.",
+        "suggestedFix": "Add maxLength: 100 to AnswerSpec.options[].key, so every option can be submitted. In the AttemptRequest.answers description, state that arrays over 20 items or keys over 100 characters get 400, not a verdict. Or add one line to the spec's exclusions recording these request-shape limits."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:726-730",
+        "contractRef": "api/openapi.yaml:1284-1329 (AttemptResult: parts, bonusXp, completedMissionIds, rankUp, missionComplete)",
+        "issue": "The spec says an UNPARSEABLE response lists in `parts` only the unreadable parts, each with verdict UNPARSEABLE and a formatTip. AttemptResult.parts (line 1304) has no description saying this. AttemptResult also marks bonusXp, completedMissionIds, rankUp and missionComplete as required but does not say what they hold when status is UNPARSEABLE. The implementer has to infer 0 / [] / null / false. Only xpAwarded, attemptNo and feedback document their UNPARSEABLE value.",
+        "suggestedFix": "Document on AttemptResult.parts: 'When status is UNPARSEABLE, only the unreadable parts (verdict UNPARSEABLE, formatTip set)'. Document the UNPARSEABLE values for bonusXp (0), completedMissionIds ([]), rankUp (null) and missionComplete (false)."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:227-230",
+        "contractRef": "api/openapi.yaml:1490 (AnswerSpec.exactDecimals)",
+        "issue": "The flow mapping `{ ..., description: DECIMAL — required number of decimal places, maximum: 6 }` is split at the comma by YAML. The result is a description cut short at 'decimal places' plus a real schema constraint `maximum: 6`. The spec sets no upper bound on exactDecimals. The cap may be accidental, or it may be a real authoring limit that the spec leaves out.",
+        "suggestedFix": "If 6 is intended, write it as an explicit key (`maximum: 6`) with an unbroken description, and record the limit in content-authoring or answer-checking. If not, quote the description string and drop the accidental maximum."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "minor",
+        "specRef": "openspec/specs/practice-flow/spec.md:656",
+        "contractRef": "api/openapi.yaml:1330 (Feedback)",
+        "issue": "The spec says the tutor-seam feedback contains 'the per-part verdicts' (lines 656-657), and the scenarios at lines 667 and 673 say 'the feedback carries the per-part verdicts'. The contract's Feedback object only has nextHintIndex and revealedAnswers. The per-part verdicts are in AttemptResult.parts (api/openapi.yaml:1304). The determinism scenario at spec line 679 already treats `feedback` and `parts` as separate, so the spec contradicts itself and the contract matches only one reading.",
+        "suggestedFix": "Fix the spec, not the contract: at lines 656-657, 667 and 673, say the per-part verdicts are returned in `AttemptResult.parts` next to `feedback`, and that `feedback` holds the hint pointer and the revealed answers."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "minor",
+        "specRef": "openspec/specs/practice-flow/spec.md:291",
+        "contractRef": "api/openapi.yaml:1268 (PartResult.required)",
+        "issue": "Several spec scenarios depend on the `locked` value of a part: lines 279, 285 and 291 (a stays locked as CORRECT) and line 679 (parts compared on `locked`). But PartResult.locked is not in the required list, so the generated TS type is `locked?: boolean`. The backend could leave it out, and the client would have to guess that a missing value means false.",
+        "suggestedFix": "Add `locked` to PartResult.required."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "minor",
+        "specRef": "openspec/specs/practice-flow/spec.md:132",
+        "contractRef": "api/openapi.yaml:1098 (HqView.required) / 1118 (continueTarget)",
+        "issue": "continueTarget is nullable ('null when no mission is in progress') but missing from HqView.required. Generated clients type it as optional and nullable, so the 'Nothing to continue' state (spec lines 155-159) can arrive as either a missing field or null.",
+        "suggestedFix": "Add `continueTarget` to HqView.required so 'nothing to continue' is always an explicit null."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "minor",
+        "specRef": "openspec/specs/practice-flow/spec.md:679",
+        "contractRef": "api/openapi.yaml:1330-1338 (Feedback.nextHintIndex, revealedAnswers)",
+        "issue": "The determinism scenario requires the `feedback` objects to be byte-identical after canonicalization, and the 'no hint pointer' scenario (spec line 673) needs a defined 'no pointer' value. Feedback has no required list, though, so nextHintIndex and revealedAnswers may be either missing or null. Both mean 'no pointer' or 'not revealed', and the contract does not say which one to send.",
+        "suggestedFix": "Add `required: [ nextHintIndex, revealedAnswers ]` to Feedback (both stay nullable)."
+      },
+      {
+        "capability": "gamification",
+        "severity": "major",
+        "specRef": "openspec/specs/gamification/spec.md:248-261, 192-198",
+        "contractRef": "api/openapi.yaml:1315-1319 (AttemptResult.rankUp, missionComplete)",
+        "issue": "The contract says AttemptResult.rankUp is 'Null when the crossing happened together with mission completion; it is then celebrated on the mission summary'. missionComplete only means the current run's last task was resolved (line 1319). A shared-task resolution can complete another mission instead, as in the 'Shared tasks complete another mission' scenario: completedMissionIds=[B], bonusXp=20, missionComplete=false. If B's bonus crosses a threshold, the description tells the implementer to null rankUp. But no mission-complete screen follows for the current run. pendingRankUp (line 1141) only covers rank-ups outside a child session. So the spec's required celebration has no field to travel in, and the implementer has to guess.",
+        "suggestedFix": "Change the rankUp description to: 'Null when no threshold was crossed, or when missionComplete is true (then MissionSummary.rankUp carries it). When the crossing comes from the task XP or from bonuses of other missions in completedMissionIds while missionComplete is false, it is set here and animated now.'"
+      },
+      {
+        "capability": "gamification",
+        "severity": "minor",
+        "specRef": "openspec/specs/gamification/spec.md:123-127, 132-136",
+        "contractRef": "api/openapi.yaml:58-68 (/api/child/hq, GET only)",
+        "issue": "The spec requires PUT/POST/PATCH on /api/child/hq to be refused with a 4xx and to leave progress unchanged. The contract declares only getHq, so the expected status (405 in practice) comes from framework defaults. It is not documented in the contract.",
+        "suggestedFix": "Add a note to the getHq description or the info section: progress resources expose no write methods, and any other method is answered 405 (problem+json)."
+      },
+      {
+        "capability": "gamification",
+        "severity": "minor",
+        "specRef": "openspec/specs/gamification/spec.md:127-129, 138-142",
+        "contractRef": "api/openapi.yaml:1249-1263 (AttemptRequest)",
+        "issue": "The spec says client-supplied top-level fields such as xpAwarded, totalXp, rank and solvedTasks in an attempt body must be ignored. The answers description says unknown part keys inside answers are refused with 400, but the contract says nothing about unknown top-level fields. ProfileSettingsPatch documents this (line 1409); AttemptRequest does not, so a strict binder could reject the body with 400.",
+        "suggestedFix": "Add to the AttemptRequest description: 'Unknown top-level fields (e.g. xpAwarded, totalXp, rank, solvedTasks) are ignored and have no effect.' Keep additionalProperties unset (permissive)."
+      },
+      {
+        "capability": "gamification",
+        "severity": "minor",
+        "specRef": "openspec/specs/gamification/spec.md:158-163, 197",
+        "contractRef": "api/openapi.yaml:1363 (MissionSummary.xpEarned)",
+        "issue": "xpEarned is 'Task XP plus bonus earned in this run'. With shared tasks, a run can also pay bonuses for other missions (completedMissionIds). The contract does not say whether those bonuses count in this mission's xpEarned.",
+        "suggestedFix": "Say explicitly whether xpEarned includes bonuses paid during this run for other missions completed through shared tasks. Recommended: it includes them, so it matches the sum of xpAwarded + bonusXp over the run."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "major",
+        "specRef": "openspec/specs/progress-stats/spec.md:274-278 (also 238-242, 262-272)",
+        "contractRef": "api/openapi.yaml:817-820 (getStats `weeks` parameter)",
+        "issue": "The spec requires 400 for a present but empty `weeks=` value and for `٤` (Arabic-Indic digit four), and says none of them may be read as 4. The contract declares `weeks` as an optional int32 with `default: 4`. Spring code generated from this becomes `@RequestParam(required=false, defaultValue=\"4\") Integer weeks`. Spring uses the defaultValue when the value is empty, so `weeks=` is read as 4 and answers 200. Java's Integer.parseInt also accepts Unicode decimal digits, so `٤` is read as 4. The contract does not say that the default applies only when the parameter is absent. It also does not say which `Problem.errors[].field` value names the week count.",
+        "suggestedFix": "Add a parameter description: \"Default 4 applies only when the parameter is absent. A present but empty value, or any value that is not ASCII digits 1–52, is a 400 with errors[].field = \\\"weeks\\\".\" Optionally set `allowEmptyValue: false` explicitly. For a stricter generated check, declare the parameter as `type: string, pattern: '^([1-9]|[1-4][0-9]|5[0-2])$'` with default \"4\"."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "major",
+        "specRef": "openspec/specs/progress-stats/spec.md:286-289, 323-327",
+        "contractRef": "api/openapi.yaml:837-840 (listReports `status` parameter), 1675-1677 (ReportStatus)",
+        "issue": "The spec requires 400 for the status filter `FOO`, `fixed` and an empty value. The contract has an optional enum query parameter and no description. Spring's String-to-enum conversion turns an empty value into null, so `status=` is treated as no filter and answers 200 with every report. The spec forbids that. The contract also does not say that matching is case-sensitive or which errors[].field value is used.",
+        "suggestedFix": "Add a parameter description: \"Exact, case-sensitive match of OPEN | FIXED | DISMISSED. Absent = no filter. A present but empty value or any other value is a 400 with errors[].field = \\\"status\\\".\" Optionally set `allowEmptyValue: false` explicitly."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:282-284, 297",
+        "contractRef": "api/openapi.yaml:1680, 1691-1693 (Report.required / taskPromptExcerpt)",
+        "issue": "Each flag-queue entry must show the task. `taskPromptExcerpt` is the only readable task field, but it is not in `Report.required`, so the generated TS type makes it optional and the frontend has to guess whether it is always present.",
+        "suggestedFix": "Add `taskPromptExcerpt` to Report.required, or document when it may be absent."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:353-358, 384-388",
+        "contractRef": "api/openapi.yaml:1753 (ReevaluationResult.changed)",
+        "issue": "`changed` is described as \"False when the new verdict would not improve the outcome\". When a replay attempt is re-evaluated, the task outcome never changes, but the report still becomes FIXED and the new verdict is recorded. Under that wording `changed` would be false, even though the admin should not be told that nothing changed.",
+        "suggestedFix": "Reword: \"True when a re-evaluated verdict was recorded and the report became FIXED, including replay attempts with xpAwarded 0. False when nothing changed and the report stays OPEN.\""
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:165-168, 256-260",
+        "contractRef": "api/openapi.yaml:1650-1659 (Stats.firstTryRateByTopic)",
+        "issue": "The spec requires a topic that has published tasks but no resolved tasks to appear with a rate of \"—\". The contract does not say which topics are listed, so the backend could leave out topics with `resolved: 0` and that scenario would have nothing to render.",
+        "suggestedFix": "Add a description: \"One entry per topic with at least one published task; resolved = 0 means no rate (rendered as —).\""
+      },
+      {
+        "capability": "child-profile",
+        "severity": "major",
+        "specRef": "openspec/specs/child-profile/spec.md:161",
+        "contractRef": "api/openapi.yaml:1392",
+        "issue": "ProfileSettings.secondaryTaskLocale is declared as `allOf: [TaskLocale]` + `nullable: true` with no sibling `type`. OAS 3.0.3 says `nullable` only takes effect when `type` is set in the same Schema Object, so strictly the response field is not nullable. The spec needs `null` as the default and as the cleared state (spec.md:166, :203, :217, :197). A generator that follows the rule types the field as non-null `String`/`string`, and then the server cannot return the default `null`.",
+        "suggestedFix": "Write the field inline as `type: string, pattern: ^[a-z]{2}$, nullable: true` (as ProfileSettingsPatch already does at :1399-1402), or add `type: string` next to the `allOf`."
+      },
+      {
+        "capability": "child-profile",
+        "severity": "minor",
+        "specRef": "openspec/specs/child-profile/spec.md:172",
+        "contractRef": "api/openapi.yaml:1408",
+        "issue": "ProfileSettingsPatch says it follows JSON merge-patch semantics (RFC 7396, `x-patch-semantics: json-merge-patch`), but the request media type is `application/json` (:233), not `application/merge-patch+json`. It also refuses `answerMode: null` with 400, which RFC 7396 does not do. The spec's partial-update rules are a design decision of their own, not RFC 7396.",
+        "suggestedFix": "Drop the RFC 7396 / json-merge-patch label and describe the spec's own rules (absent = unchanged, null clears the locale only, null answerMode = 400), or switch to `application/merge-patch+json` and keep the documented exception."
+      },
+      {
+        "capability": "child-profile",
+        "severity": "minor",
+        "specRef": "openspec/specs/child-profile/spec.md:333",
+        "contractRef": "api/openapi.yaml:1399",
+        "issue": "ProfileSettingsPatch.secondaryTaskLocale repeats the TaskLocale pattern inline instead of referencing TaskLocale (:1070). If the locale shape changes in one place, the two can drift apart.",
+        "suggestedFix": "Reference #/components/schemas/TaskLocale with a sibling `type: string` and `nullable: true`, or note that the two definitions must stay identical."
+      }
+    ]
+  }
+}
