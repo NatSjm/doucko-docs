@@ -11,7 +11,7 @@ Result: PASS, 5 warning(s)
 | Slice | Review evidence | Trailer commits | design+tasks | lib domains touched |
 |---|---|---|---|---|
 | 2026-09-28-improve-PD-1 | **missing** | **0** | **no** | - |
-| 2026-10-03-add-api-contract-v0 | **unclean** | 8 | **no** | answer-checking, content-authoring, gamification, practice-flow, admin-access, child-profile, progress-stats |
+| 2026-10-03-add-api-contract-v0 | **unclean** | 9 | **no** | admin-access, answer-checking, child-profile, content-authoring, gamification, practice-flow, progress-stats |
 
 ## Cross-slice module overlap
 

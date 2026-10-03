@@ -11,14 +11,14 @@
     {
       "slice": "2026-10-03-add-api-contract-v0",
       "reviewEvidence": "unclean",
-      "trailerCommits": 8,
+      "trailerCommits": 9,
       "libDomains": [
+        "admin-access",
         "answer-checking",
+        "child-profile",
         "content-authoring",
         "gamification",
         "practice-flow",
-        "admin-access",
-        "child-profile",
         "progress-stats"
       ],
       "processComplete": false

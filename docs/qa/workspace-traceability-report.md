@@ -5,7 +5,7 @@ contract (requirements + plan ownership) with every member repo's committed
 evidence (trace/trace.json, factory.config.json acceptanceMethods).
 
 Scope: 64 MVP requirement(s).
-Result: PASS, 79 warning(s)
+Result: FAIL (77 failures), 2 warning(s)
 
 ## Members
 
@@ -85,12 +85,6 @@ Result: PASS, 79 warning(s)
 
 ## Failures
 
-None.
-
-## Warnings
-
-- **contract-pin**: backend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)
-- **contract-pin**: frontend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)
 - **test-trace**: FR-1: owner backend has no test annotated "@trace FR-1"
 - **test-trace**: FR-1: owner frontend has no test annotated "@trace FR-1"
 - **test-trace**: FR-2: owner backend has no test annotated "@trace FR-2"
@@ -168,3 +162,8 @@ None.
 - **test-trace**: FR-42: owner backend has no test annotated "@trace FR-42"
 - **test-trace**: FR-43: owner backend has no test annotated "@trace FR-43"
 - **test-trace**: FR-44: owner backend has no test annotated "@trace FR-44"
+
+## Warnings
+
+- **contract-pin**: backend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)
+- **contract-pin**: frontend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)

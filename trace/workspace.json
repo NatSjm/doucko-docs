@@ -970,16 +970,7 @@
       "tests": {}
     }
   ],
-  "failures": [],
-  "warnings": [
-    {
-      "check": "contract-pin",
-      "msg": "backend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)"
-    },
-    {
-      "check": "contract-pin",
-      "msg": "frontend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)"
-    },
+  "failures": [
     {
       "check": "test-trace",
       "msg": "FR-1: owner backend has no test annotated \"@trace FR-1\""
@@ -1287,6 +1278,16 @@
     {
       "check": "test-trace",
       "msg": "FR-44: owner backend has no test annotated \"@trace FR-44\""
+    }
+  ],
+  "warnings": [
+    {
+      "check": "contract-pin",
+      "msg": "backend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)"
+    },
+    {
+      "check": "contract-pin",
+      "msg": "frontend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)"
     }
   ]
 }
