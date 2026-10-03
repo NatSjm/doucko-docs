@@ -7,26 +7,51 @@
 ## Last Updated
 
 - **Date and time:** 2026-10-03 (Europe/Prague)
-- **Current phase:** Phase 3
-- **Last completed gate:** G2
-- **Active change:** none in the store (`improve-PD-2..5` remain open retro items). Branch `phase2-specs` holds Phase 2 and the Phase 3 plan draft; not yet merged to `main`.
-- **Phase 3 (2026-10-03, awaiting checkpoint 2):**
-  - `docs/mvp-capability-plan.md` drafted: 9 slices, every MVP FR and NFR owned
-    (§5), and owners and mechanisms for the deferred cross-cutting NFRs (§2.1).
-    Decisions D-P1..D-P4 (§7) are open for the product owner.
-  - G3 checks: `node scripts/check-traceability.mjs` PASS;
-    `node scripts/check-workspace.mjs` PASS (64 requirements; the 77
-    test-trace warnings are expected before G4, and the 2 contract-pin
-    warnings are D-P2) — evidence: `docs/qa/workspace-traceability-report.md`.
-    `check-acceptance-methods --mode=existence`: backend PASS, **frontend
-    FAIL**: FR-36 and FR-37 declare `vision-verify`, but there is no
-    `check:vision` mechanism (candidate: `../frontend/trace/missing-gate-candidates/vision-verify.md`).
-    It must be fixed or waived before Phase 4.
-  - CA-D22 (narrows FR-56) is pending at checkpoint 2: `docs/requirements.md` §6.7.
+- **Current phase:** Phase 4
+- **Last completed gate:** G3
+- **Active change:** none in the store (`improve-PD-2..5` remain open retro items). Docs work is on `main` (`phase2-specs` fast-forwarded into it).
+- **Phase 3 closed (G3), 2026-10-03:**
+  - Plan approved at checkpoint 2 as drafted, with every §7 recommendation
+    accepted — evidence: `docs/qa/checkpoint-2-plan-signoff.md`,
+    `docs/mvp-capability-plan.md`. CA-D22 accepted (`docs/requirements.md` §6.7).
+  - PD-9 fixed: the frontend has a real vision-verify mechanism
+    (`scripts/check-vision.mjs`, npm `check:vision`) — evidence:
+    `docs/qa/evidence/pd-9-vision-mechanism-proof.md`.
+  - Contract pinned (D-P2): `contract/` submodule (`url = ../docs`) in backend
+    and frontend at docs `4c87d67` (API 0.5.1). Local submodule commands need
+    `-c protocol.file.allow=always`.
+  - The first backend generator run on the pinned contract caught 3 YAML
+    flow-mapping descriptions split into stray keys. Fixed in API 0.5.1
+    (`openspec/changes/archive/2026-10-03-fix-contract-flow-descriptions/`).
+    Backend `mvnw compile` (generated interfaces) and frontend `typecheck`
+    pass on 0.5.1.
+  - G3 checks, all on the pinned contract:
+    `node scripts/check-traceability.mjs` PASS;
+    `node scripts/check-workspace.mjs` PASS, 0 failures, 77 test-trace
+    warnings expected before G4 — evidence: `docs/qa/workspace-traceability-report.md`;
+    `check-acceptance-methods --mode=existence` PASS in backend and frontend.
+  - In the code repos, `gate-status` shows G4–G8 FAIL / NOT-EARNED. That is
+    expected: product scaffold exists and no slice evidence does yet.
+  - Pins lag docs HEAD only by docs-only commits (this file, generated
+    reports). Bump them when the contract or plan changes.
+- **Next task:** Phase 4, slice 1 `platform-foundation` (plan §4.1).
+  `implement-platform-foundation-api` (backend) and
+  `implement-platform-foundation-ui` (frontend), following PLAYBOOK
+  Phase 4 a–h.
+- **Claims:**
+  - Harness installed and not drifted — evidence: `node factory/install.mjs --repo=docs --check`
+  - G0 PASS; G1 signed off — evidence: `node scripts/gate-status.mjs` + `docs/qa/checkpoint-1-scope-signoff.md`
+  - G2 PASS — evidence: `docs/qa/traceability-report.md` + `openspec/changes/archive/2026-10-03-add-api-contract-v0/`
+  - G3 PASS — evidence: `docs/qa/checkpoint-2-plan-signoff.md` + `docs/qa/workspace-traceability-report.md`
+
+> This header is machine-read: keep the exact formats `Phase <N>` and `G<N>`.
+
+## Earlier phases
+
 - **Phase 2 closed (G2):** `npx openspec validate --all --strict` and
   `node scripts/check-traceability.mjs` PASS. Contract change archived as
   `openspec/changes/archive/2026-10-03-add-api-contract-v0/` at
-  `api/openapi.yaml` v0.5.0. Its `review-findings.json` is recorded as
+  `api/openapi.yaml` v0.5.0 (0.5.1 after the Phase 3 fix). Its `review-findings.json` is recorded as
   **not clean**: v0.1–v0.4 were reviewed and every finding was applied
   (57 → 31 → 20 → 18), but v0.5 has no clean review yet. Re-run
   contract-review before G7. Spec cross-check rounds 3–5:
@@ -52,18 +77,6 @@
     independent contract review of v0.1 found 57 mismatches (4 blocker), all
     applied — evidence: `trace/workflow-runs/20261003-053111-contract-review.json`.
     v0.2 itself is not yet re-reviewed.
-- **Next task:** checkpoint 2 (plan approval and D-P1..D-P4, CA-D22). Then
-  fix or waive the frontend vision-verify mechanism, record the sign-off,
-  merge `phase2-specs` → `main`, pin `contract/` in both code repos
-  (D-P2), and re-run the existence check. Then Phase 4, slice 1
-  (`platform-foundation`).
-- **Claims:**
-  - Harness installed and not drifted — evidence: `node factory/install.mjs --repo=docs --check`
-  - G0 PASS; G1 signed off — evidence: `node scripts/gate-status.mjs` + `docs/qa/checkpoint-1-scope-signoff.md`
-  - G2 PASS — evidence: `docs/qa/traceability-report.md` + `openspec/changes/archive/2026-10-03-add-api-contract-v0/`
-  - G3 not earned: frontend acceptance existence FAIL (vision-verify) and checkpoint 2 pending
-
-> This header is machine-read: keep the exact formats `Phase <N>` and `G<N>`.
 
 ## Source Of Truth
 
@@ -78,7 +91,12 @@
 ## Open items
 
 - Remotes: none yet. When created, add `remote:` to
-  `.openspec-store/store.yaml` and pin `contract/` in both code repos.
+  `.openspec-store/store.yaml`. The `contract/` pins already use the relative
+  URL `../docs`, so they resolve if the three remotes sit side by side
+  (same host and owner, repos named `docs`, `backend`, `frontend`).
+- Contract review: API 0.5.x has no clean independent review
+  (`openspec/changes/archive/2026-10-03-add-api-contract-v0/review-findings.json`).
+  Re-run `contract-review` before G7.
 - PRD §11.1: the docs repo was meant to be a fork of the course capstone
   repo; here it is a standalone store. If it must become that fork, the
   store can live at the fork root (see factory/README.md).

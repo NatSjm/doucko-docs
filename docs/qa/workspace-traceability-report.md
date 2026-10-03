@@ -5,14 +5,14 @@ contract (requirements + plan ownership) with every member repo's committed
 evidence (trace/trace.json, factory.config.json acceptanceMethods).
 
 Scope: 64 MVP requirement(s).
-Result: FAIL (77 failures), 2 warning(s)
+Result: FAIL (77 failures)
 
 ## Members
 
 | Repo | Path | Present | Proves methods | Contract pin |
 |---|---|---|---|---|
-| backend | ../backend | yes | local-verifiable | - |
-| frontend | ../frontend | yes | local-verifiable, e2e, recording, vision-verify, a11y, eval | - |
+| backend | ../backend | yes | local-verifiable | 4c87d677 |
+| frontend | ../frontend | yes | local-verifiable, e2e, recording, vision-verify, a11y, eval | 4c87d677 |
 
 ## Requirements
 
@@ -165,5 +165,4 @@ Result: FAIL (77 failures), 2 warning(s)
 
 ## Warnings
 
-- **contract-pin**: backend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)
-- **contract-pin**: frontend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)
+None.
