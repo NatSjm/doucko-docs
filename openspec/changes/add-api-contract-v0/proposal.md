@@ -14,7 +14,7 @@ specs so Phase 3 can plan slices against real operations.
 
 ## What changes
 
-`api/openapi.yaml` v0.3.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
+`api/openapi.yaml` v0.4.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
 
 | Area | Operations | Spec |
 |---|---|---|
@@ -97,12 +97,41 @@ the round-3 cross-check contradiction
 (`trace/workflow-runs/20261003-060054-spec-crosscheck.json`). Its "file cannot
 be replaced" scenario accepts 400, 405 or 415.
 
+## Revision v0.4 (2026-10-03)
+
+The independent review of v0.3 (record
+`trace/workflow-runs/20261003-150844-contract-review.json`) found 1 blocker,
+5 major and 14 minor mismatches. All of them were applied:
+
+- blocker: no array is `uniqueItems` any more (generators emit sets that
+  drop duplicates and lose mission order); duplicates are a server 400;
+- `AnswerSpec.unit` is read-only and derived: NUMBER_WITH_UNIT accepted values
+  are "number unit" and must share one unit;
+- the rank-up celebration is one-shot end to end: `ackRankUp` takes
+  `{ rankIndex }`, `MissionSummary.rankUp` is null after the acknowledgement,
+  and an unshown mission-complete rank-up becomes `HqView.pendingRankUp`;
+- `answerMode: null` is refused during deserialization (`Nulls.FAIL`);
+- the remaining code-point limits (report note, choice elements, display
+  name) use `x-maxCodePoints`;
+- conventions for integer fields, path parameters and undeclared paths
+  (404); `tolerance` notation; `newTaskState` required; 400 on `addTaskImage`.
+
+The round-4 spec cross-check
+(`trace/workflow-runs/20261003-150844-spec-crosscheck.json`) confirmed the
+CHOICE_SINGLE fix and found 4 new spec items, all fixed. NFR-9 (authoring)
+and NFR-13 (gamification) are scoped to what their scenarios verify, and the
+rest is handed to the capability plan. The undefined "correct-answer
+celebration" is dropped. Deletion is also blocked by reports and opened hints
+(CA-D22, a pending ruling in `docs/requirements.md` §6.7).
+
 ## Validation
 
 - Structural check (YAML parses, every `$ref` resolves, unique operationIds,
-  admin ops secured with CSRF on mutations, child ops open): pass (v0.3).
-- Independent review against the specs: v0.1 and v0.2 reviewed, findings
-  applied in v0.2 and v0.3 respectively.
+  admin ops secured with CSRF on mutations, child ops open, no
+  `uniqueItems`): pass (v0.4).
+- Independent review against the specs: v0.1, v0.2 and v0.3 reviewed;
+  their findings were applied in v0.2, v0.3 and v0.4 respectively. v0.4 has
+  had no separate review of its own (see current-state).
 - Not yet run: an OpenAPI linter and the two generators. Phase 4a runs the
   backend `openapi-generator-maven-plugin` and the frontend client generator
   against the pinned file.

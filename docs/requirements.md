@@ -72,7 +72,7 @@ threshold-passing evidence artifact.
 | FR-12 | MVP | Content | Tasks have status `DRAFT` or `PUBLISHED`. Only published tasks in published missions are served to the child. | local-verifiable |
 | FR-13 | MVP | Content | Given any task, admin can see where it came from (source title, edition, page, task number) and open the PDF at that page. | e2e |
 | FR-55 | MVP | Content | *(CP1, OQ-18)* Admin edits existing sources, tasks (every field, including answer specs, hints, translations and images) and missions. *(§6.6 CA-D3: a source's PDF file cannot be replaced.)* | e2e |
-| FR-56 | MVP | Content | *(CP1, OQ-18)* Admin can delete a source, task or mission only when no attempt references it (directly or through its tasks); otherwise the delete is refused and the admin can unpublish instead. *(§6.6 CA-D4: a source referenced by any task cannot be deleted.)* | local-verifiable |
+| FR-56 | MVP | Content | *(CP1, OQ-18)* Admin can delete a source, task or mission only when no attempt references it (directly or through its tasks); otherwise the delete is refused and the admin can unpublish instead. *(§6.6 CA-D4: a source referenced by any task cannot be deleted.)* *(§6.7 CA-D22, pending checkpoint 2: a problem report or an opened hint also blocks deletion.)* | local-verifiable |
 | FR-57 | MVP | Content | *(CP1, OQ-19)* A mission can be published only when every task in it is `PUBLISHED` with modality `TEXT`. A task in a published mission cannot return to `DRAFT` until that mission is unpublished. | local-verifiable |
 
 ### 2.2 Answer checking (deterministic checker)
@@ -331,3 +331,14 @@ they narrow carry a pointer here.
 The other derived decisions in the content-authoring spec (CA-D1..CA-D21)
 refine behavior without narrowing a requirement row; they were accepted with
 this sign-off.
+
+### 6.7 Pending product-owner rulings (checkpoint 2)
+
+Raised after the 2026-10-03 sign-off by the round-4 independent spec
+cross-check (`trace/workflow-runs/20261003-150844-spec-crosscheck.json`).
+Specified as proposed; the product owner accepts or rejects it at
+checkpoint 2.
+
+| # | Ruling | Affects | Where it is specified |
+|---|---|---|---|
+| CA-D22 | A problem report or an opened-hint record blocks deletion of its task (and of any mission containing the task) the same way an attempt does. | narrows FR-56 | content-authoring, Delete only unused content |

@@ -306,7 +306,8 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/answer-checking/spec.md"
+        "openspec/specs/answer-checking/spec.md",
+        "openspec/specs/content-authoring/spec.md"
       ],
       "planned": null,
       "tests": [],

@@ -1,0 +1,185 @@
+{
+  "workflow": "spec-crosscheck",
+  "file": "./.claude/workflows/spec-crosscheck.js",
+  "description": "Independent cross-capability check of the baseline OpenSpec specs (the Cross-check phase of spec-pipeline on its own), plus verification that previously reported findings are resolved.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T15:08:44.416Z",
+  "finishedAt": "2026-10-03T15:11:27.063Z",
+  "args": {
+    "requirementsPath": "docs/requirements.md",
+    "capabilities": [
+      {
+        "name": "content-authoring",
+        "frIds": [
+          "FR-1",
+          "FR-2",
+          "FR-3",
+          "FR-4",
+          "FR-5",
+          "FR-6",
+          "FR-7",
+          "FR-8",
+          "FR-9",
+          "FR-10",
+          "FR-11",
+          "FR-12",
+          "FR-13",
+          "FR-55",
+          "FR-56",
+          "FR-57"
+        ]
+      },
+      {
+        "name": "answer-checking",
+        "frIds": [
+          "FR-14",
+          "FR-15",
+          "FR-16",
+          "FR-17",
+          "FR-18",
+          "FR-19",
+          "FR-20",
+          "FR-21",
+          "FR-22",
+          "FR-23"
+        ]
+      },
+      {
+        "name": "practice-flow",
+        "frIds": [
+          "FR-24",
+          "FR-25",
+          "FR-26",
+          "FR-27",
+          "FR-28",
+          "FR-29",
+          "FR-30",
+          "FR-31",
+          "FR-32",
+          "FR-33",
+          "FR-44"
+        ]
+      },
+      {
+        "name": "gamification",
+        "frIds": [
+          "FR-34",
+          "FR-35",
+          "FR-36",
+          "FR-37",
+          "FR-38",
+          "FR-39",
+          "FR-58"
+        ]
+      },
+      {
+        "name": "progress-stats",
+        "frIds": [
+          "FR-40",
+          "FR-41",
+          "FR-42"
+        ]
+      },
+      {
+        "name": "child-profile",
+        "frIds": [
+          "FR-43"
+        ]
+      },
+      {
+        "name": "admin-access",
+        "frIds": []
+      }
+    ],
+    "previous": {
+      "gaps": [],
+      "duplicates": [],
+      "contradictions": [
+        "CHOICE_SINGLE with several accepted keys: content-authoring vs answer-checking. content-authoring:435 (Answer spec authoring table, CHOICE_SINGLE row) requires 'exactly one option marked correct'. The same row refuses 'more than one correct option', and the scenario 'Invalid single-choice spec' at content-authoring:520-524 refuses options A and B both marked correct. answer-checking:572-573 ('Accepted alternatives': 'For CHOICE_SINGLE every accepted key is an alternative') and its scenario 'Single choice with two accepted keys' at answer-checking:593-597 (accepted keys A and D, input D gives CORRECT) define checker behavior for a spec that authoring forbids. That checker scenario is also a mandatory golden case (answer-checking:832-834). Under FR-20 ('A part can list several accepted alternatives') the content-authoring rule is a narrowing. Yet no derived decision in the CA-D table (content-authoring:21-43) records it, unlike the other narrowings (CA-D3, CA-D4, CA-D13). Fix: either add a CA-D decision that narrows FR-20 for CHOICE_SINGLE and drop or reframe answer-checking:572-573/593-597, or let content-authoring accept several correct options for CHOICE_SINGLE."
+      ]
+    },
+    "deferred": [
+      "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+      "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+      "NFR-10 Docker volume and cross-platform backup command",
+      "NFR-11 module boundaries verified by tests",
+      "NFR-12 contract drift check in the build",
+      "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+      "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+      "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 2,
+    "maxTotalUsd": 4,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 1.1418,
+  "steps": [
+    {
+      "label": "coverage-check",
+      "phase": "Cross-check",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 3294,
+      "durationMs": 162636,
+      "sessionId": "83cbd208-393d-4a02-b665-ac6a0c9ef807",
+      "costUsd": 1.1418482,
+      "numTurns": 25,
+      "result": {
+        "allCovered": true,
+        "gaps": [],
+        "duplicates": [],
+        "contradictions": [
+          "Deleting content vs. stored reports and hint-open records. content-authoring:1016-1018 allows deleting a task, mission or source when no attempt references it. It only checks attempts (scenario content-authoring:1032-1036). But practice-flow also stores data that points at a task with no attempt: a report filed before any attempt (practice-flow:491-495) and every opened hint (practice-flow:523-524). progress-stats depends on both. A flag-queue entry must show its task (progress-stats:282-284, 299-303). Weekly hint figures are built from hint-open records, and a hint opened on a task with no later attempt still counts (progress-stats:121-127). The path is reachable: unpublish the mission (CA-D6, content-authoring:1024-1025), then delete the task. That leaves a report with no task and hint records with no task, or silently drops them. Fix: extend the delete guard in content-authoring to cover reports and hint-open records (FR-56 says 'no attempt references it', so record this as a CA-D narrowing), or state in progress-stats what happens to those records.",
+          "NFR-9 overreach in content-authoring. The requirement 'Externalized admin strings' (content-authoring:611-614) says 'All admin UI strings SHALL be externalized'. Its only scenario checks just the authoring screens: source list, task editor, mission editor and preview (content-authoring:616-620). Admin strings outside authoring (sign-in in admin-access, stats and flag queue in progress-stats) are set aside for the Phase 3 plan. So the requirement text quietly claims scope it does not verify. Fix: scope line 613 to the authoring screens.",
+          "NFR-13 overreach in gamification. 'Light and dark theme' (gamification:418-420) says 'Both themes SHALL meet WCAG AA contrast (NFR-13)'. The scenario at gamification:436-438 applies the themes to 'any child or admin screen'. Read together, gamification owns WCAG AA contrast for the whole app, including the admin UI. But NFR-13 contrast outside gamification, admin UI included, is set aside for the Phase 3 plan. Fix: limit gamification:420 to the skin's colours on child-facing gamification screens, or say plainly that contrast on the other screens is owned elsewhere.",
+          "Undefined 'correct-answer celebration'. The reduced-motion scenario (gamification:296-298) covers 'a rank-up or a correct-answer celebration'. No spec defines a correct-answer celebration. practice-flow:273 only shows the text 'Výborně!' with '+10 XP', and no requirement owns an animation for it. So the reduced-motion rule points at an element no spec defines. Fix: define it in gamification or practice-flow, or drop it from gamification:297."
+        ],
+        "previousFindings": [
+          {
+            "id": "C1",
+            "resolved": true,
+            "evidence": "The conflict is gone, not just reworded. content-authoring:435 (CHOICE_SINGLE row) now reads 'one or more options marked correct; each correct option is an accepted alternative and the child picks exactly one (FR-20)'. The refusal column no longer lists 'more than one correct option'; it lists only 'no correct option'. The scenario 'Invalid single-choice spec' (content-authoring:520-524) no longer refuses A and B both marked correct. Its cases are one option only, no correct option, and duplicate options. A new scenario, 'Single-choice spec with two correct options' (content-authoring:526-530), saves accepted keys A and D and points to answer-checking 'Accepted alternatives'. That matches answer-checking:572-573 ('For CHOICE_SINGLE every accepted key is an alternative') and its scenario at answer-checking:593-597. It also matches answer-checking:448-451, where a selection of more than one key is UNPARSEABLE and otherwise CORRECT when the key is one of the accepted keys. Authoring no longer narrows FR-20, so no CA-D decision is needed. The golden case required by answer-checking:832-834 can now be authored."
+          }
+        ]
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Cross-check",
+      "message": "Cross-check clean: all MVP FRs owned exactly once, no open findings."
+    }
+  ],
+  "returned": {
+    "coverage": {
+      "allCovered": true,
+      "gaps": [],
+      "duplicates": [],
+      "contradictions": [
+        "Deleting content vs. stored reports and hint-open records. content-authoring:1016-1018 allows deleting a task, mission or source when no attempt references it. It only checks attempts (scenario content-authoring:1032-1036). But practice-flow also stores data that points at a task with no attempt: a report filed before any attempt (practice-flow:491-495) and every opened hint (practice-flow:523-524). progress-stats depends on both. A flag-queue entry must show its task (progress-stats:282-284, 299-303). Weekly hint figures are built from hint-open records, and a hint opened on a task with no later attempt still counts (progress-stats:121-127). The path is reachable: unpublish the mission (CA-D6, content-authoring:1024-1025), then delete the task. That leaves a report with no task and hint records with no task, or silently drops them. Fix: extend the delete guard in content-authoring to cover reports and hint-open records (FR-56 says 'no attempt references it', so record this as a CA-D narrowing), or state in progress-stats what happens to those records.",
+        "NFR-9 overreach in content-authoring. The requirement 'Externalized admin strings' (content-authoring:611-614) says 'All admin UI strings SHALL be externalized'. Its only scenario checks just the authoring screens: source list, task editor, mission editor and preview (content-authoring:616-620). Admin strings outside authoring (sign-in in admin-access, stats and flag queue in progress-stats) are set aside for the Phase 3 plan. So the requirement text quietly claims scope it does not verify. Fix: scope line 613 to the authoring screens.",
+        "NFR-13 overreach in gamification. 'Light and dark theme' (gamification:418-420) says 'Both themes SHALL meet WCAG AA contrast (NFR-13)'. The scenario at gamification:436-438 applies the themes to 'any child or admin screen'. Read together, gamification owns WCAG AA contrast for the whole app, including the admin UI. But NFR-13 contrast outside gamification, admin UI included, is set aside for the Phase 3 plan. Fix: limit gamification:420 to the skin's colours on child-facing gamification screens, or say plainly that contrast on the other screens is owned elsewhere.",
+        "Undefined 'correct-answer celebration'. The reduced-motion scenario (gamification:296-298) covers 'a rank-up or a correct-answer celebration'. No spec defines a correct-answer celebration. practice-flow:273 only shows the text 'Výborně!' with '+10 XP', and no requirement owns an animation for it. So the reduced-motion rule points at an element no spec defines. Fix: define it in gamification or practice-flow, or drop it from gamification:297."
+      ],
+      "previousFindings": [
+        {
+          "id": "C1",
+          "resolved": true,
+          "evidence": "The conflict is gone, not just reworded. content-authoring:435 (CHOICE_SINGLE row) now reads 'one or more options marked correct; each correct option is an accepted alternative and the child picks exactly one (FR-20)'. The refusal column no longer lists 'more than one correct option'; it lists only 'no correct option'. The scenario 'Invalid single-choice spec' (content-authoring:520-524) no longer refuses A and B both marked correct. Its cases are one option only, no correct option, and duplicate options. A new scenario, 'Single-choice spec with two correct options' (content-authoring:526-530), saves accepted keys A and D and points to answer-checking 'Accepted alternatives'. That matches answer-checking:572-573 ('For CHOICE_SINGLE every accepted key is an alternative') and its scenario at answer-checking:593-597. It also matches answer-checking:448-451, where a selection of more than one key is UNPARSEABLE and otherwise CORRECT when the key is one of the accepted keys. Authoring no longer narrows FR-20, so no CA-D decision is needed. The golden case required by answer-checking:832-834 can now be authored."
+        }
+      ]
+    },
+    "unresolvedPrevious": []
+  }
+}

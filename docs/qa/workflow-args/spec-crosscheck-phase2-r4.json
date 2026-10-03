@@ -1,0 +1,104 @@
+{
+  "requirementsPath": "docs/requirements.md",
+  "capabilities": [
+    {
+      "name": "content-authoring",
+      "frIds": [
+        "FR-1",
+        "FR-2",
+        "FR-3",
+        "FR-4",
+        "FR-5",
+        "FR-6",
+        "FR-7",
+        "FR-8",
+        "FR-9",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-55",
+        "FR-56",
+        "FR-57"
+      ]
+    },
+    {
+      "name": "answer-checking",
+      "frIds": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20",
+        "FR-21",
+        "FR-22",
+        "FR-23"
+      ]
+    },
+    {
+      "name": "practice-flow",
+      "frIds": [
+        "FR-24",
+        "FR-25",
+        "FR-26",
+        "FR-27",
+        "FR-28",
+        "FR-29",
+        "FR-30",
+        "FR-31",
+        "FR-32",
+        "FR-33",
+        "FR-44"
+      ]
+    },
+    {
+      "name": "gamification",
+      "frIds": [
+        "FR-34",
+        "FR-35",
+        "FR-36",
+        "FR-37",
+        "FR-38",
+        "FR-39",
+        "FR-58"
+      ]
+    },
+    {
+      "name": "progress-stats",
+      "frIds": [
+        "FR-40",
+        "FR-41",
+        "FR-42"
+      ]
+    },
+    {
+      "name": "child-profile",
+      "frIds": [
+        "FR-43"
+      ]
+    },
+    {
+      "name": "admin-access",
+      "frIds": []
+    }
+  ],
+  "previous": {
+    "gaps": [],
+    "duplicates": [],
+    "contradictions": [
+      "CHOICE_SINGLE with several accepted keys: content-authoring vs answer-checking. content-authoring:435 (Answer spec authoring table, CHOICE_SINGLE row) requires 'exactly one option marked correct'. The same row refuses 'more than one correct option', and the scenario 'Invalid single-choice spec' at content-authoring:520-524 refuses options A and B both marked correct. answer-checking:572-573 ('Accepted alternatives': 'For CHOICE_SINGLE every accepted key is an alternative') and its scenario 'Single choice with two accepted keys' at answer-checking:593-597 (accepted keys A and D, input D gives CORRECT) define checker behavior for a spec that authoring forbids. That checker scenario is also a mandatory golden case (answer-checking:832-834). Under FR-20 ('A part can list several accepted alternatives') the content-authoring rule is a narrowing. Yet no derived decision in the CA-D table (content-authoring:21-43) records it, unlike the other narrowings (CA-D3, CA-D4, CA-D13). Fix: either add a CA-D decision that narrows FR-20 for CHOICE_SINGLE and drop or reframe answer-checking:572-573/593-597, or let content-authoring accept several correct options for CHOICE_SINGLE."
+    ]
+  },
+  "deferred": [
+    "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+    "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+    "NFR-10 Docker volume and cross-platform backup command",
+    "NFR-11 module boundaries verified by tests",
+    "NFR-12 contract drift check in the build",
+    "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+    "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+    "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+  ]
+}

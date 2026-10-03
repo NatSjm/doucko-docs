@@ -258,7 +258,11 @@ rank-up lists the new rank as a static line and does not play the
 animation again. A rank-up caused outside a child session SHALL be
 celebrated the next time the child opens HQ. This covers a bonus credited
 when a mission is published already complete (OQ-28) and an admin
-re-evaluation.
+re-evaluation. A celebration counts as played once the client acknowledges
+it. A mission-complete rank-up whose screen was never shown (for example,
+the browser was closed first) SHALL play the next time the child opens HQ,
+and only then. When one award crosses several thresholds, the celebration
+names the highest rank reached.
 
 #### Scenario: Rank-up on a task award
 
@@ -285,6 +289,12 @@ re-evaluation.
 - **WHEN** the child reloads the app and opens HQ
 - **THEN** the celebration does not play again
 
+#### Scenario: Unshown mission-complete rank-up plays on HQ
+
+- **GIVEN** the last task of a mission crossed the 2nd-rank threshold, and the browser was closed before the mission-complete screen was shown
+- **WHEN** the child next opens HQ, and later opens that mission's summary
+- **THEN** the celebration naming the 2nd rank plays once on HQ, and the summary shows the rank as a static line only
+
 #### Scenario: Rank-up outside a session
 
 - **GIVEN** the placeholder ladder and a total of 140 XP
@@ -294,7 +304,7 @@ re-evaluation.
 #### Scenario: Reduced motion
 
 - **GIVEN** the operating system asks for reduced motion
-- **WHEN** a rank-up or a correct-answer celebration happens
+- **WHEN** a rank-up celebration happens
 - **THEN** it is shown without movement, as a static message and rank badge, with the same text (NFR-13)
 
 ### Requirement: Progress on HQ
@@ -417,7 +427,10 @@ copy in every skin is Czech.
 
 The app SHALL follow the operating system's `prefers-color-scheme` with a
 light and a dark theme, without an in-app toggle in MVP (FR-58, decision
-OQ-25). Both themes SHALL meet WCAG AA contrast (NFR-13).
+OQ-25). On the child screens named in "Contrast in both themes", both
+themes SHALL meet WCAG AA contrast (NFR-13). Contrast on every other screen,
+the admin UI included, is owned by the capability plan
+(`docs/mvp-capability-plan.md`).
 
 #### Scenario: Follows the OS (dark)
 

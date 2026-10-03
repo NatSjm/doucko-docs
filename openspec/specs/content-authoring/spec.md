@@ -41,6 +41,7 @@ recorded decision.
 | CA-D19 | Task search is a case- and diacritics-insensitive substring match on the Czech prompt. An empty or whitespace-only query does not filter. | FR-11. The admin types on an English keyboard, so `obdelnik` must find `obdélník`. |
 | CA-D20 | Expected values are parsed with the checker's input grammar (answer-checking). Numeric expected values have an absolute value below 10^12 and at most 6 decimal places. | answer-checking (integer, decimal, fraction and unit input): admin and child notation then agree, so a dot decimal is accepted and a dot or comma is never a thousands separator. The bounds make overflow testable. |
 | CA-D21 | Each code repo carries a fixture provenance manifest, and a check fails on any unlisted fixture file. | NFR-4 needs an executable mechanism, not a human review. |
+| CA-D22 | *(Pending product-owner approval at checkpoint 2, `docs/requirements.md` §6.7.)* **Narrows FR-56:** a problem report or an opened-hint record blocks deletion the same way an attempt does. | practice-flow stores both without an attempt (a report filed before any attempt, every opened hint). progress-stats shows the task of each report and counts every opened hint. Deleting the task would orphan or silently drop that history. |
 
 ## Requirements
 
@@ -60,7 +61,7 @@ admin-access (NFR-1); this spec does not restate them.
 ### Requirement: Field limits
 
 Authoring input SHALL obey the following limits (derived decision CA-D15).
-Lengths are counted in Unicode characters after trimming leading and
+Lengths are counted in Unicode code points after trimming leading and
 trailing whitespace. A required text that is empty after trimming counts as
 missing. A value over a limit SHALL be refused with an inline message that
 names the limit, and nothing SHALL be stored.
@@ -431,7 +432,7 @@ inline message on that value, and nothing SHALL be stored.
 | INTEGER | one or more whole numbers | a value with a fractional part, such as `12,5` (message suggests DECIMAL); anything unparseable |
 | DECIMAL | one or more numbers; optional exact number of decimal places 0–6 | unparseable input; more than 6 decimal places; an expected value that has fewer decimal places than the exact form requires |
 | FRACTION | one or more `a/b` or mixed `w a/b` values; flags "equivalent forms allowed" and `requireLowestTerms` | a zero denominator; a malformed fraction; an expected value not in lowest terms while `requireLowestTerms` is set |
-| NUMBER_WITH_UNIT | one or more number + unit values; flag "unit required" | a value with no unit (even when the unit is optional); a unit with no number; an unparseable number |
+| NUMBER_WITH_UNIT | one or more number + unit values, all in the same unit after normalization (answer-checking); flag "unit required". That common unit is the part's unit, shown next to the child's input | a value with no unit (even when the unit is optional); a unit with no number; an unparseable number; values in different units, such as `24 cm²` and `2400 mm²` (no unit conversion, FR-17) |
 | CHOICE_SINGLE | 2–10 option texts, lettered `A`, `B`, `C` … in order, and one or more options marked correct; each correct option is an accepted alternative and the child picks exactly one (FR-20) | fewer than 2 options; an empty option text; two options with the same text (compared trimmed and case-insensitively); no correct option |
 | CHOICE_MULTI | 2–10 option texts lettered as above; one or more options marked correct | fewer than 2 options; empty or duplicate option texts; no correct option |
 | TEXT | one or more expected texts of 1–100 code points; flag "diacritics-strict" | an empty or whitespace-only expected text; a text over 100 code points |
@@ -610,8 +611,11 @@ counterparts (see "Field limits").
 
 ### Requirement: Externalized admin strings
 
-All admin UI strings SHALL be externalized, and the admin UI SHALL be
-English (NFR-9, decision OQ-6).
+All admin UI strings of the authoring screens (source list, task editor,
+mission editor, preview and answer tester) SHALL be externalized, and the
+admin UI SHALL be English (NFR-9, decision OQ-6). Externalization of the
+other admin screens (sign-in, stats, flag queue) and of the child UI is
+owned by the capability plan (`docs/mvp-capability-plan.md`).
 
 #### Scenario: No hard-coded admin strings
 
@@ -1021,6 +1025,9 @@ Further delete rules derived from other requirements:
 
 - A source SHALL NOT be deletable while any task references it (derived
   decision CA-D4, which narrows FR-56).
+- A problem report or an opened-hint record SHALL block deletion of its
+  task, and of any mission containing that task, as an attempt does
+  (derived decision CA-D22, which narrows FR-56).
 - A task in a published mission SHALL NOT be deletable (derived decision
   CA-D6).
 - Deleting a source SHALL remove its file from the storage volume (derived
@@ -1040,6 +1047,12 @@ remove it from the draft missions that contain it.
 - **GIVEN** a task with at least one recorded attempt
 - **WHEN** the admin deletes it
 - **THEN** the delete is refused with a message offering to unpublish instead, and the task is unchanged
+
+#### Scenario: Reported or hinted task cannot be deleted
+
+- **GIVEN** a task in an unpublished mission with no attempt, but with one problem report, and another such task with one opened hint and no attempt
+- **WHEN** the admin deletes either task
+- **THEN** the delete is refused with a message offering to unpublish instead, and the task, the report and the hint record are unchanged
 
 #### Scenario: Task in a published mission cannot be deleted
 

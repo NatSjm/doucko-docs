@@ -1,0 +1,497 @@
+{
+  "workflow": "contract-review",
+  "file": "./.claude/workflows/contract-review.js",
+  "description": "Independent review of api/openapi.yaml against the baseline OpenSpec specs: one read-only reviewer per capability, each reporting concrete mismatches between what its spec requires at the API boundary and what the contract defines.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T15:08:44.416Z",
+  "finishedAt": "2026-10-03T15:11:47.047Z",
+  "args": {
+    "contractPath": "api/openapi.yaml",
+    "capabilities": [
+      {
+        "name": "content-authoring"
+      },
+      {
+        "name": "answer-checking"
+      },
+      {
+        "name": "practice-flow"
+      },
+      {
+        "name": "gamification"
+      },
+      {
+        "name": "progress-stats"
+      },
+      {
+        "name": "child-profile"
+      },
+      {
+        "name": "admin-access"
+      }
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 2,
+    "maxTotalUsd": 6,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 3.7197,
+  "steps": [
+    {
+      "label": "review:content-authoring",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1237,
+      "durationMs": 182624,
+      "sessionId": "7d5609d3-c6f8-4197-a027-03e9b8d6dfa1",
+      "costUsd": 0.9344608,
+      "numTurns": 6,
+      "result": {
+        "capability": "content-authoring",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "blocker",
+            "specRef": "openspec/specs/content-authoring/spec.md:624-636, 669-673 (Missions: ordered list; 'Same task twice' is refused), 995-999 (Reorder a mission)",
+            "contractRef": "api/openapi.yaml:1711-1719 (MissionInput.taskIds uniqueItems: true), used by createMission/updateMission",
+            "issue": "`uniqueItems: true` on an ordered list makes openapi-generator emit `Set<UUID>` (Kotlin/Java) and, depending on version, `Set<string>` in TS. Jackson deserializes an abstract `Set` into a `HashSet`, so the server handler gets a set with duplicates already collapsed and the order not preserved. The 'Same task twice' scenario cannot be refused, because the handler never sees the duplicate. Mission order (create, reorder, 'remove a task keeps the other 9 in their previous order') can also be lost. The createMission description at :749-751 promises a 400 on `taskIds[i]` that generated code cannot detect.",
+            "suggestedFix": "Remove `uniqueItems: true` from MissionInput.taskIds. Keep the 'appears at most once (CA-D12), duplicate = 400 on taskIds[i]' rule in the description so the server enforces it on a `List<UUID>`."
+          },
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/content-authoring/spec.md:429-437 (Answer spec authoring table, NUMBER_WITH_UNIT row), 502-512",
+            "contractRef": "api/openapi.yaml:1580 (AnswerSpec.unit) and :1286 (PartView.unit)",
+            "issue": "The spec says a NUMBER_WITH_UNIT part is authored as number+unit accepted values plus a 'unit required' flag. It defines no separate `unit` field. The contract adds a nullable `AnswerSpec.unit` ('the unit asked for'), and the child shows it next to the input. It does not say whether `unit` is required for NUMBER_WITH_UNIT, whether it must match (or is derived from) the units in `accepted`, what happens with mixed units (`24 cm²`, `2400 mm²`), or whether it is refused or ignored on other types. Implementers would each have to guess.",
+            "suggestedFix": "Either remove `AnswerSpec.unit` and derive `PartView.unit` from the first accepted value, or add the field to the spec's answer-spec table (required or optional, how it relates to the accepted units, 400 on `parts[i].spec.unit` when it is inconsistent or set on a non-unit type) and state the same in the contract description."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:713-716 vs info Conventions; :1110-1121 bulk publish",
+            "contractRef": "api/openapi.yaml:1013 (bulkPublishTasks taskIds uniqueItems: true)",
+            "issue": "Here too `uniqueItems` turns into a Set in generated code, so duplicate ids are silently collapsed rather than refused or reported. The spec does not cover duplicate ids, so no scenario breaks, but the contract's '400 / one result per requested id' story is not what generated code does.",
+            "suggestedFix": "Drop `uniqueItems` and either state that duplicate ids are 400 on `taskIds[i]` or that they are reported once."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:146-150, 241-257, 651-655 (grade/difficulty/page/position values `abc`, `6,0`, `2,0`, `1,5`, `99999999999` refused with an inline message on that field)",
+            "contractRef": "api/openapi.yaml:1523 (SourceMetadata.grade, multipart), :1556 (SourceRef.page), :1639-1640 (TaskInput.grade/difficulty), :1710 (MissionInput.position)",
+            "issue": "These fields are `type: integer` with no format, so generated code uses Int32. Malformed or overflowing values fail in binding or Jackson before validation, and the contract does not say they still answer 400 with `errors[].field` set to that field. Also, Jackson by default accepts a JSON float such as `2.5` or `2.0` for an Int by truncating it, which the spec ('whole numbers written without a decimal part') forbids. The contract already handles the same issue explicitly for `weeks` at :865-874.",
+            "suggestedFix": "Add to the Conventions block: a non-integer, fractional or out-of-int32 value for an integer field is 400 with `errors[].field` naming it, and JSON floats are never coerced to integers."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:62-66 (lengths 'counted in Unicode characters'), :77",
+            "contractRef": "api/openapi.yaml:37-42 (Text limits count Unicode code points; x-maxCodePoints)",
+            "issue": "The spec says 'Unicode characters', which could mean grapheme clusters. The contract says code points. The TEXT row of the spec already says code points, so the drift is wording only.",
+            "suggestedFix": "In the spec's Field limits text, change 'Unicode characters' to 'Unicode code points'."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:187-191 (Rejected image), :107-111",
+            "contractRef": "api/openapi.yaml:602-618 (addTaskImage responses)",
+            "issue": "addTaskImage declares no 400, but a multipart body without the `file` part, or with an empty file, has to be answered with something. Every other upload or validation operation declares BadRequest.",
+            "suggestedFix": "Add `\"400\": { $ref: \"#/components/responses/BadRequest\" }` to addTaskImage (errors[].field = file)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:810-832 (publishing state rules apply to edits of existing missions)",
+            "contractRef": "api/openapi.yaml:748-753 (createMission description) vs :762-770 (createMission responses)",
+            "issue": "The createMission description says '409 is reserved for state rules: publishing invariants … and a topic change of a non-empty mission', but createMission declares no 409. These rules cannot apply to a new DRAFT mission, so the text was copied from updateMission and is misleading.",
+            "suggestedFix": "Remove the 409 sentence from the createMission description, or replace it with 'A new mission is DRAFT, so no state rule (409) applies'."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:answer-checking",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1235,
+      "durationMs": 93157,
+      "sessionId": "c7d66aef-414c-4bc6-8ae2-5d6f6c21d1b9",
+      "costUsd": 0.6530233999999999,
+      "numTurns": 6,
+      "result": {
+        "capability": "answer-checking",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/answer-checking/spec.md:376",
+            "contractRef": "api/openapi.yaml:1567-1580 (AnswerSpec.accepted, AnswerSpec.unit)",
+            "issue": "The spec compares the input's unit with 'the part's unit' (one unit per part) and builds the normalized value from 'the part's unit spelling' (spec.md:383-385). The contract carries the unit in two places: AnswerSpec.unit ('the unit asked for', nullable for every type) and, per content-authoring (content-authoring/spec.md:434 'number + unit values'), inside each `accepted` string. The contract does not say whether NUMBER_WITH_UNIT `accepted` items contain the unit, which source wins when they differ, or whether `unit` may be null on a NUMBER_WITH_UNIT part. So the checker implementer has to guess what the input unit is compared against and which spelling goes into `normalized`.",
+            "suggestedFix": "Pick one representation and document it on AnswerSpec. Option A: `accepted` items for NUMBER_WITH_UNIT are bare numbers, and `unit` is required non-null for NUMBER_WITH_UNIT and null otherwise. Option B: `accepted` items are 'number unit', every item must use the same normalized unit (400 on `parts[i].spec.accepted[j]` otherwise), and `unit` is readOnly/derived. Then align content-authoring/spec.md:434 and the 'part's unit' wording in answer-checking."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:446-449",
+            "contractRef": "api/openapi.yaml:1318-1326 (AttemptRequest.answers)",
+            "issue": "The spec says repeated keys collapse (`{A, A, C}` → `{A, C}`) and an unknown key is UNPARSEABLE, with no limit on either. The contract refuses a choice array of more than 20 items, or with a key longer than 100 characters, with 400 instead of grading it. The exclusions (spec.md:875-877) defer request shape to the contract, but these limits are not stated there. Also, `maxLength: 100` counts UTF-16 units, while the contract's own convention counts code points.",
+            "suggestedFix": "Add a line to the spec's request-shape exclusion: 'a selection of more than 20 keys or a key over 100 characters is HTTP 400'. Alternatively, mark these limits in the contract as request-shape limits that sit outside the checker."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:601-603",
+            "contractRef": "api/openapi.yaml:1576 (AnswerSpec.tolerance)",
+            "issue": "The spec says tolerance is an optional absolute number, compared exactly. Content-authoring (content-authoring/spec.md:439-440) requires it to be ≥ 0 and allows it only on numeric types. The contract declares `tolerance` as a free string with no format, pattern or type restriction. It does not say which notation the server accepts (decimal comma? the spec's numeric notation?) or that it is ignored or refused on CHOICE_*/TEXT.",
+            "suggestedFix": "Document on `tolerance` that it is a non-negative decimal in the answer-checking numeric notation (or add a dot-decimal pattern such as `^\\d+(\\.\\d+)?$`), allowed only for INTEGER/DECIMAL/FRACTION/NUMBER_WITH_UNIT, and 400 on `parts[i].spec.tolerance` otherwise."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:practice-flow",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1233,
+      "durationMs": 106303,
+      "sessionId": "f3e0bf83-e1b5-4901-a0ef-a1971363664c",
+      "costUsd": 0.5426759999999999,
+      "numTurns": 5,
+      "result": {
+        "capability": "practice-flow",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/practice-flow/spec.md:345",
+            "contractRef": "api/openapi.yaml:1450-1453 (ReportRequest.note)",
+            "issue": "The spec caps the report note at 1000 Unicode code points (lines 345-346, scenario at 382-386) and names `ReportRequest.note` as the place that limit lives. The contract declares it as `maxLength: 1000`, which generated validators count in raw UTF-16 units and before trimming. The contract's own convention at lines 37-42 says code-point limits must be `x-maxCodePoints` and enforced by the server, so generated code never refuses a value the spec accepts. As written, a note of 600 emoji (600 code points, 1200 UTF-16 units) or a 1000-code-point note with trailing whitespace gets a 400 from the generated validator, while the spec says it must be stored.",
+            "suggestedFix": "Replace `maxLength: 1000` on ReportRequest.note with `x-maxCodePoints: 1000` and say in the description that it counts code points after trimming (server-enforced, 400 above 1000)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/practice-flow/spec.md:343-345",
+            "contractRef": "api/openapi.yaml:1318, 1326 (AttemptRequest.answers choice-list items)",
+            "issue": "The spec refuses a choice element only when it is longer than 100 code points. Shorter unknown keys are graded UNPARSEABLE with HTTP 200 (contract line 1318 agrees). The contract uses schema `maxLength: 100` on the array items (UTF-16 units), and its description says '100 characters'. So an element of 51-100 astral code points gets a 400 from the generated validator instead of a 200 UNPARSEABLE. This breaks the contract's code-point convention at lines 37-42. Real option keys are A-J, so the practical impact is small.",
+            "suggestedFix": "Change the item schema to `x-maxCodePoints: 100` (server-enforced) in place of `maxLength: 100`, and change the description's 'a key longer than 100 characters' to 'an element longer than 100 code points'."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:gamification",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1232,
+      "durationMs": 94292,
+      "sessionId": "7d6a0d81-0f10-424a-a072-93d9bc33b92a",
+      "costUsd": 0.4726074,
+      "numTurns": 10,
+      "result": {
+        "capability": "gamification",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/gamification/spec.md:251-257",
+            "contractRef": "api/openapi.yaml:1433-1436 (MissionSummary.rankUp, getMissionSummary at api/openapi.yaml:136-150)",
+            "issue": "The spec says a rank-up celebration plays once and never repeats on later visits. When the completing award crosses a threshold, it plays on the mission-complete screen. The contract moves that celebration to MissionSummary.rankUp (AttemptResult.rankUp is null when missionComplete is true, api/openapi.yaml:1383). That value comes from an idempotent GET of the 'latest completed run'. Nothing says whether rankUp is still returned on a second GET, for example after a reload or a later visit to the summary. The contract states the no-replay rule only for TaskView.lastFeedback (api/openapi.yaml:1275) and for HQ (pendingRankUp plus ackRankUp). So the backend implementer has to guess whether summary.rankUp is one-shot, and the frontend cannot tell whether to animate it. The obvious reading (GET always returns it) replays the celebration.",
+            "suggestedFix": "Define the one-shot rule in the contract. Option 1: document that MissionSummary.rankUp is non-null only until the celebration is acknowledged and is null on every later GET. The ack can happen on the first GET, or through ackRankUp extended to cover in-session rank-ups. Option 2: return the celebration in AttemptResult (for example an AttemptResult.summaryRankUp field), and make MissionSummary carry the reached rank only as a static field. Either way, state it in the field description, as TaskView.lastFeedback already does."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/gamification/spec.md:258-261, 288-292",
+            "contractRef": "api/openapi.yaml:982-990 (ackRankUp), api/openapi.yaml:1199-1203 (HqView.pendingRankUp)",
+            "issue": "ackRankUp has no request body, so it clears whatever rank-up is pending when the ack arrives, not the one the client showed. Suppose a publish-time bonus or an admin re-evaluation raises pendingRankUp after GET /api/child/hq but before the ack. That newer rank-up is then cleared without ever being celebrated, but the spec requires it to be celebrated at the next HQ open.",
+            "suggestedFix": "Give ackRankUp a body such as { rankIndex: integer }. The ack then clears pendingRankUp only when its index is at most rankIndex; otherwise it is a no-op that still returns 204."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/gamification/spec.md:250-251, 269-274",
+            "contractRef": "api/openapi.yaml:1380-1383 (AttemptResult.rankUp), api/openapi.yaml:1433-1436 (MissionSummary.rankUp)",
+            "issue": "The spec says that when one award crosses several thresholds, exactly one celebration plays and it names the highest new rank (the 3rd, not the 2nd). HqView.pendingRankUp says 'Highest rank reached', but AttemptResult.rankUp and MissionSummary.rankUp only say 'the new rank'. That leaves open which rank goes in the field when several thresholds are crossed.",
+            "suggestedFix": "In both descriptions, say: 'the highest rank reached by this award when it crossed one or more thresholds'."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:progress-stats",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1234,
+      "durationMs": 54545,
+      "sessionId": "da59a41f-cc2d-4333-95e2-821f2438941b",
+      "costUsd": 0.3713204,
+      "numTurns": 10,
+      "result": {
+        "capability": "progress-stats",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:468-472",
+            "contractRef": "api/openapi.yaml:30-36 (Conventions, Field paths); api/openapi.yaml:1055 (ReportId)",
+            "issue": "The spec says a malformed report id (`123`, `abc`, a 5,000-character string) answers 400 with a problem+json body 'naming the report id'. The Field paths convention covers request-body paths, query parameters ('weeks', 'status', 'q') and child answers, but it never says what `errors[].field` holds for an invalid path parameter. Implementers and test writers have to guess whether it is `reportId`, `id` or something else. reevaluateReport (914-935) and dismissReport (937-957) do declare the 400 response, so the status code itself matches.",
+            "suggestedFix": "Extend the Field paths convention: 'Path parameters use their own name (`reportId`, `taskId`, `missionId`, ...)'. Optionally add to the ReportId parameter description: 'A non-UUID value is 400 with errors[].field = reportId, before any lookup.'"
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:331-358 (re-evaluation outcomes, replay case)",
+            "contractRef": "api/openapi.yaml:1843-1845 (ReevaluationResult.newTaskState)",
+            "issue": "newTaskState is optional (not in `required`), nullable and has no description. The spec has three outcome paths: an improved first resolution (the state changes), a replay attempt fixed with 0 XP (the task outcome must stay unchanged), and no change (report stays OPEN). The contract does not say what newTaskState holds in each one: null, absent, or the unchanged current state. That leaves the backend and the generated TS client to guess, even though every other ReevaluationResult field is required.",
+            "suggestedFix": "Make newTaskState required and nullable, and document it, e.g. 'The task's state after a re-evaluation that changed the first-resolution outcome; null when changed is false or when the attached attempt is a replay attempt (the outcome is unchanged).'"
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:child-profile",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1233,
+      "durationMs": 53153,
+      "sessionId": "3d687656-db3c-48e8-ab50-18434c7e272b",
+      "costUsd": 0.30398539999999996,
+      "numTurns": 8,
+      "result": {
+        "capability": "child-profile",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/child-profile/spec.md:180",
+            "contractRef": "api/openapi.yaml:1472 (ProfileSettingsPatch.answerMode)",
+            "issue": "The spec says that `answerMode: null` must return 400 naming `answerMode` (spec.md:297-302) and that leaving `answerMode` out changes nothing (spec.md:174-175, 219-223). In the contract, `answerMode` is optional and not nullable. Generators only emit a presence-aware wrapper (JsonNullable or similar) for `nullable: true` properties. So the generated Kotlin DTO gets a plain `AnswerMode? = null`, and an explicit null and a missing field bind to the same value. The note at 1476 about presence-aware binding only helps the nullable `secondaryTaskLocale`. With the generated DTO, the server can't tell `{\"answerMode\": null}` (400) from `{}` (200 no-op). The implementer would have to guess a workaround, such as a Jackson null-FAIL config override for AnswerMode.",
+            "suggestedFix": "Make null vs. absent expressible for `answerMode` in the contract. One option is to add a vendor extension that the backend generator config uses to force a presence-aware type for this property, and document it in the ProfileSettingsPatch description. The other is to state explicitly that `answerMode: null` must be rejected during deserialization (e.g. Jackson `Nulls.FAIL` for AnswerMode) with 400 and `errors[].field = answerMode`. Either way, the 400 path for null must not depend on the generated DTO telling null from absent."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/child-profile/spec.md:65",
+            "contractRef": "api/openapi.yaml:1169-1172 (HqView.displayName)",
+            "issue": "The spec limits the display name to 1–50 Unicode characters (code points) after trimming. HqView.displayName uses schema `maxLength: 50`. The contract's own Text limits convention (openapi.yaml:37-42) says generated validators count `maxLength` in UTF-16 units and that code-point limits should therefore go in `x-maxCodePoints`. A valid 50-code-point name containing astral characters (e.g. emoji) is over 50 UTF-16 units and could fail a generated client or response validator.",
+            "suggestedFix": "Replace `maxLength: 50` with `x-maxCodePoints: 50` (keep `minLength: 1`), following the contract's Text limits convention."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/child-profile/spec.md:240-241",
+            "contractRef": "api/openapi.yaml:43-44 (info.description, Conventions › Methods)",
+            "issue": "The spec requires HTTP 404 for `PATCH /api/admin/profile/settings` and `PUT /api/admin/profile`, which are paths the contract doesn't declare. The contract's conventions only cover undeclared methods on a declared path (405). They say nothing about undeclared paths, so the 404 the spec relies on isn't written down anywhere in the contract.",
+            "suggestedFix": "Add a convention line: \"A path not declared here is answered 404 with a problem+json body and changes nothing.\""
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:admin-access",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1232,
+      "durationMs": 34467,
+      "sessionId": "f588cdda-9100-4992-87f0-7995bd44f5cb",
+      "costUsd": 0.44162640000000003,
+      "numTurns": 8,
+      "result": {
+        "capability": "admin-access",
+        "consistent": true,
+        "mismatches": []
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Review",
+      "message": "Contract review: 1 blocker, 5 major, 14 minor across 7 capabilities"
+    }
+  ],
+  "returned": {
+    "consistent": false,
+    "counts": {
+      "blocker": 1,
+      "major": 5,
+      "minor": 14
+    },
+    "mismatches": [
+      {
+        "capability": "content-authoring",
+        "severity": "blocker",
+        "specRef": "openspec/specs/content-authoring/spec.md:624-636, 669-673 (Missions: ordered list; 'Same task twice' is refused), 995-999 (Reorder a mission)",
+        "contractRef": "api/openapi.yaml:1711-1719 (MissionInput.taskIds uniqueItems: true), used by createMission/updateMission",
+        "issue": "`uniqueItems: true` on an ordered list makes openapi-generator emit `Set<UUID>` (Kotlin/Java) and, depending on version, `Set<string>` in TS. Jackson deserializes an abstract `Set` into a `HashSet`, so the server handler gets a set with duplicates already collapsed and the order not preserved. The 'Same task twice' scenario cannot be refused, because the handler never sees the duplicate. Mission order (create, reorder, 'remove a task keeps the other 9 in their previous order') can also be lost. The createMission description at :749-751 promises a 400 on `taskIds[i]` that generated code cannot detect.",
+        "suggestedFix": "Remove `uniqueItems: true` from MissionInput.taskIds. Keep the 'appears at most once (CA-D12), duplicate = 400 on taskIds[i]' rule in the description so the server enforces it on a `List<UUID>`."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "major",
+        "specRef": "openspec/specs/content-authoring/spec.md:429-437 (Answer spec authoring table, NUMBER_WITH_UNIT row), 502-512",
+        "contractRef": "api/openapi.yaml:1580 (AnswerSpec.unit) and :1286 (PartView.unit)",
+        "issue": "The spec says a NUMBER_WITH_UNIT part is authored as number+unit accepted values plus a 'unit required' flag. It defines no separate `unit` field. The contract adds a nullable `AnswerSpec.unit` ('the unit asked for'), and the child shows it next to the input. It does not say whether `unit` is required for NUMBER_WITH_UNIT, whether it must match (or is derived from) the units in `accepted`, what happens with mixed units (`24 cm²`, `2400 mm²`), or whether it is refused or ignored on other types. Implementers would each have to guess.",
+        "suggestedFix": "Either remove `AnswerSpec.unit` and derive `PartView.unit` from the first accepted value, or add the field to the spec's answer-spec table (required or optional, how it relates to the accepted units, 400 on `parts[i].spec.unit` when it is inconsistent or set on a non-unit type) and state the same in the contract description."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:713-716 vs info Conventions; :1110-1121 bulk publish",
+        "contractRef": "api/openapi.yaml:1013 (bulkPublishTasks taskIds uniqueItems: true)",
+        "issue": "Here too `uniqueItems` turns into a Set in generated code, so duplicate ids are silently collapsed rather than refused or reported. The spec does not cover duplicate ids, so no scenario breaks, but the contract's '400 / one result per requested id' story is not what generated code does.",
+        "suggestedFix": "Drop `uniqueItems` and either state that duplicate ids are 400 on `taskIds[i]` or that they are reported once."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:146-150, 241-257, 651-655 (grade/difficulty/page/position values `abc`, `6,0`, `2,0`, `1,5`, `99999999999` refused with an inline message on that field)",
+        "contractRef": "api/openapi.yaml:1523 (SourceMetadata.grade, multipart), :1556 (SourceRef.page), :1639-1640 (TaskInput.grade/difficulty), :1710 (MissionInput.position)",
+        "issue": "These fields are `type: integer` with no format, so generated code uses Int32. Malformed or overflowing values fail in binding or Jackson before validation, and the contract does not say they still answer 400 with `errors[].field` set to that field. Also, Jackson by default accepts a JSON float such as `2.5` or `2.0` for an Int by truncating it, which the spec ('whole numbers written without a decimal part') forbids. The contract already handles the same issue explicitly for `weeks` at :865-874.",
+        "suggestedFix": "Add to the Conventions block: a non-integer, fractional or out-of-int32 value for an integer field is 400 with `errors[].field` naming it, and JSON floats are never coerced to integers."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:62-66 (lengths 'counted in Unicode characters'), :77",
+        "contractRef": "api/openapi.yaml:37-42 (Text limits count Unicode code points; x-maxCodePoints)",
+        "issue": "The spec says 'Unicode characters', which could mean grapheme clusters. The contract says code points. The TEXT row of the spec already says code points, so the drift is wording only.",
+        "suggestedFix": "In the spec's Field limits text, change 'Unicode characters' to 'Unicode code points'."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:187-191 (Rejected image), :107-111",
+        "contractRef": "api/openapi.yaml:602-618 (addTaskImage responses)",
+        "issue": "addTaskImage declares no 400, but a multipart body without the `file` part, or with an empty file, has to be answered with something. Every other upload or validation operation declares BadRequest.",
+        "suggestedFix": "Add `\"400\": { $ref: \"#/components/responses/BadRequest\" }` to addTaskImage (errors[].field = file)."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:810-832 (publishing state rules apply to edits of existing missions)",
+        "contractRef": "api/openapi.yaml:748-753 (createMission description) vs :762-770 (createMission responses)",
+        "issue": "The createMission description says '409 is reserved for state rules: publishing invariants … and a topic change of a non-empty mission', but createMission declares no 409. These rules cannot apply to a new DRAFT mission, so the text was copied from updateMission and is misleading.",
+        "suggestedFix": "Remove the 409 sentence from the createMission description, or replace it with 'A new mission is DRAFT, so no state rule (409) applies'."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "major",
+        "specRef": "openspec/specs/answer-checking/spec.md:376",
+        "contractRef": "api/openapi.yaml:1567-1580 (AnswerSpec.accepted, AnswerSpec.unit)",
+        "issue": "The spec compares the input's unit with 'the part's unit' (one unit per part) and builds the normalized value from 'the part's unit spelling' (spec.md:383-385). The contract carries the unit in two places: AnswerSpec.unit ('the unit asked for', nullable for every type) and, per content-authoring (content-authoring/spec.md:434 'number + unit values'), inside each `accepted` string. The contract does not say whether NUMBER_WITH_UNIT `accepted` items contain the unit, which source wins when they differ, or whether `unit` may be null on a NUMBER_WITH_UNIT part. So the checker implementer has to guess what the input unit is compared against and which spelling goes into `normalized`.",
+        "suggestedFix": "Pick one representation and document it on AnswerSpec. Option A: `accepted` items for NUMBER_WITH_UNIT are bare numbers, and `unit` is required non-null for NUMBER_WITH_UNIT and null otherwise. Option B: `accepted` items are 'number unit', every item must use the same normalized unit (400 on `parts[i].spec.accepted[j]` otherwise), and `unit` is readOnly/derived. Then align content-authoring/spec.md:434 and the 'part's unit' wording in answer-checking."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:446-449",
+        "contractRef": "api/openapi.yaml:1318-1326 (AttemptRequest.answers)",
+        "issue": "The spec says repeated keys collapse (`{A, A, C}` → `{A, C}`) and an unknown key is UNPARSEABLE, with no limit on either. The contract refuses a choice array of more than 20 items, or with a key longer than 100 characters, with 400 instead of grading it. The exclusions (spec.md:875-877) defer request shape to the contract, but these limits are not stated there. Also, `maxLength: 100` counts UTF-16 units, while the contract's own convention counts code points.",
+        "suggestedFix": "Add a line to the spec's request-shape exclusion: 'a selection of more than 20 keys or a key over 100 characters is HTTP 400'. Alternatively, mark these limits in the contract as request-shape limits that sit outside the checker."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:601-603",
+        "contractRef": "api/openapi.yaml:1576 (AnswerSpec.tolerance)",
+        "issue": "The spec says tolerance is an optional absolute number, compared exactly. Content-authoring (content-authoring/spec.md:439-440) requires it to be ≥ 0 and allows it only on numeric types. The contract declares `tolerance` as a free string with no format, pattern or type restriction. It does not say which notation the server accepts (decimal comma? the spec's numeric notation?) or that it is ignored or refused on CHOICE_*/TEXT.",
+        "suggestedFix": "Document on `tolerance` that it is a non-negative decimal in the answer-checking numeric notation (or add a dot-decimal pattern such as `^\\d+(\\.\\d+)?$`), allowed only for INTEGER/DECIMAL/FRACTION/NUMBER_WITH_UNIT, and 400 on `parts[i].spec.tolerance` otherwise."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "major",
+        "specRef": "openspec/specs/practice-flow/spec.md:345",
+        "contractRef": "api/openapi.yaml:1450-1453 (ReportRequest.note)",
+        "issue": "The spec caps the report note at 1000 Unicode code points (lines 345-346, scenario at 382-386) and names `ReportRequest.note` as the place that limit lives. The contract declares it as `maxLength: 1000`, which generated validators count in raw UTF-16 units and before trimming. The contract's own convention at lines 37-42 says code-point limits must be `x-maxCodePoints` and enforced by the server, so generated code never refuses a value the spec accepts. As written, a note of 600 emoji (600 code points, 1200 UTF-16 units) or a 1000-code-point note with trailing whitespace gets a 400 from the generated validator, while the spec says it must be stored.",
+        "suggestedFix": "Replace `maxLength: 1000` on ReportRequest.note with `x-maxCodePoints: 1000` and say in the description that it counts code points after trimming (server-enforced, 400 above 1000)."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "minor",
+        "specRef": "openspec/specs/practice-flow/spec.md:343-345",
+        "contractRef": "api/openapi.yaml:1318, 1326 (AttemptRequest.answers choice-list items)",
+        "issue": "The spec refuses a choice element only when it is longer than 100 code points. Shorter unknown keys are graded UNPARSEABLE with HTTP 200 (contract line 1318 agrees). The contract uses schema `maxLength: 100` on the array items (UTF-16 units), and its description says '100 characters'. So an element of 51-100 astral code points gets a 400 from the generated validator instead of a 200 UNPARSEABLE. This breaks the contract's code-point convention at lines 37-42. Real option keys are A-J, so the practical impact is small.",
+        "suggestedFix": "Change the item schema to `x-maxCodePoints: 100` (server-enforced) in place of `maxLength: 100`, and change the description's 'a key longer than 100 characters' to 'an element longer than 100 code points'."
+      },
+      {
+        "capability": "gamification",
+        "severity": "major",
+        "specRef": "openspec/specs/gamification/spec.md:251-257",
+        "contractRef": "api/openapi.yaml:1433-1436 (MissionSummary.rankUp, getMissionSummary at api/openapi.yaml:136-150)",
+        "issue": "The spec says a rank-up celebration plays once and never repeats on later visits. When the completing award crosses a threshold, it plays on the mission-complete screen. The contract moves that celebration to MissionSummary.rankUp (AttemptResult.rankUp is null when missionComplete is true, api/openapi.yaml:1383). That value comes from an idempotent GET of the 'latest completed run'. Nothing says whether rankUp is still returned on a second GET, for example after a reload or a later visit to the summary. The contract states the no-replay rule only for TaskView.lastFeedback (api/openapi.yaml:1275) and for HQ (pendingRankUp plus ackRankUp). So the backend implementer has to guess whether summary.rankUp is one-shot, and the frontend cannot tell whether to animate it. The obvious reading (GET always returns it) replays the celebration.",
+        "suggestedFix": "Define the one-shot rule in the contract. Option 1: document that MissionSummary.rankUp is non-null only until the celebration is acknowledged and is null on every later GET. The ack can happen on the first GET, or through ackRankUp extended to cover in-session rank-ups. Option 2: return the celebration in AttemptResult (for example an AttemptResult.summaryRankUp field), and make MissionSummary carry the reached rank only as a static field. Either way, state it in the field description, as TaskView.lastFeedback already does."
+      },
+      {
+        "capability": "gamification",
+        "severity": "minor",
+        "specRef": "openspec/specs/gamification/spec.md:258-261, 288-292",
+        "contractRef": "api/openapi.yaml:982-990 (ackRankUp), api/openapi.yaml:1199-1203 (HqView.pendingRankUp)",
+        "issue": "ackRankUp has no request body, so it clears whatever rank-up is pending when the ack arrives, not the one the client showed. Suppose a publish-time bonus or an admin re-evaluation raises pendingRankUp after GET /api/child/hq but before the ack. That newer rank-up is then cleared without ever being celebrated, but the spec requires it to be celebrated at the next HQ open.",
+        "suggestedFix": "Give ackRankUp a body such as { rankIndex: integer }. The ack then clears pendingRankUp only when its index is at most rankIndex; otherwise it is a no-op that still returns 204."
+      },
+      {
+        "capability": "gamification",
+        "severity": "minor",
+        "specRef": "openspec/specs/gamification/spec.md:250-251, 269-274",
+        "contractRef": "api/openapi.yaml:1380-1383 (AttemptResult.rankUp), api/openapi.yaml:1433-1436 (MissionSummary.rankUp)",
+        "issue": "The spec says that when one award crosses several thresholds, exactly one celebration plays and it names the highest new rank (the 3rd, not the 2nd). HqView.pendingRankUp says 'Highest rank reached', but AttemptResult.rankUp and MissionSummary.rankUp only say 'the new rank'. That leaves open which rank goes in the field when several thresholds are crossed.",
+        "suggestedFix": "In both descriptions, say: 'the highest rank reached by this award when it crossed one or more thresholds'."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:468-472",
+        "contractRef": "api/openapi.yaml:30-36 (Conventions, Field paths); api/openapi.yaml:1055 (ReportId)",
+        "issue": "The spec says a malformed report id (`123`, `abc`, a 5,000-character string) answers 400 with a problem+json body 'naming the report id'. The Field paths convention covers request-body paths, query parameters ('weeks', 'status', 'q') and child answers, but it never says what `errors[].field` holds for an invalid path parameter. Implementers and test writers have to guess whether it is `reportId`, `id` or something else. reevaluateReport (914-935) and dismissReport (937-957) do declare the 400 response, so the status code itself matches.",
+        "suggestedFix": "Extend the Field paths convention: 'Path parameters use their own name (`reportId`, `taskId`, `missionId`, ...)'. Optionally add to the ReportId parameter description: 'A non-UUID value is 400 with errors[].field = reportId, before any lookup.'"
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:331-358 (re-evaluation outcomes, replay case)",
+        "contractRef": "api/openapi.yaml:1843-1845 (ReevaluationResult.newTaskState)",
+        "issue": "newTaskState is optional (not in `required`), nullable and has no description. The spec has three outcome paths: an improved first resolution (the state changes), a replay attempt fixed with 0 XP (the task outcome must stay unchanged), and no change (report stays OPEN). The contract does not say what newTaskState holds in each one: null, absent, or the unchanged current state. That leaves the backend and the generated TS client to guess, even though every other ReevaluationResult field is required.",
+        "suggestedFix": "Make newTaskState required and nullable, and document it, e.g. 'The task's state after a re-evaluation that changed the first-resolution outcome; null when changed is false or when the attached attempt is a replay attempt (the outcome is unchanged).'"
+      },
+      {
+        "capability": "child-profile",
+        "severity": "major",
+        "specRef": "openspec/specs/child-profile/spec.md:180",
+        "contractRef": "api/openapi.yaml:1472 (ProfileSettingsPatch.answerMode)",
+        "issue": "The spec says that `answerMode: null` must return 400 naming `answerMode` (spec.md:297-302) and that leaving `answerMode` out changes nothing (spec.md:174-175, 219-223). In the contract, `answerMode` is optional and not nullable. Generators only emit a presence-aware wrapper (JsonNullable or similar) for `nullable: true` properties. So the generated Kotlin DTO gets a plain `AnswerMode? = null`, and an explicit null and a missing field bind to the same value. The note at 1476 about presence-aware binding only helps the nullable `secondaryTaskLocale`. With the generated DTO, the server can't tell `{\"answerMode\": null}` (400) from `{}` (200 no-op). The implementer would have to guess a workaround, such as a Jackson null-FAIL config override for AnswerMode.",
+        "suggestedFix": "Make null vs. absent expressible for `answerMode` in the contract. One option is to add a vendor extension that the backend generator config uses to force a presence-aware type for this property, and document it in the ProfileSettingsPatch description. The other is to state explicitly that `answerMode: null` must be rejected during deserialization (e.g. Jackson `Nulls.FAIL` for AnswerMode) with 400 and `errors[].field = answerMode`. Either way, the 400 path for null must not depend on the generated DTO telling null from absent."
+      },
+      {
+        "capability": "child-profile",
+        "severity": "minor",
+        "specRef": "openspec/specs/child-profile/spec.md:65",
+        "contractRef": "api/openapi.yaml:1169-1172 (HqView.displayName)",
+        "issue": "The spec limits the display name to 1–50 Unicode characters (code points) after trimming. HqView.displayName uses schema `maxLength: 50`. The contract's own Text limits convention (openapi.yaml:37-42) says generated validators count `maxLength` in UTF-16 units and that code-point limits should therefore go in `x-maxCodePoints`. A valid 50-code-point name containing astral characters (e.g. emoji) is over 50 UTF-16 units and could fail a generated client or response validator.",
+        "suggestedFix": "Replace `maxLength: 50` with `x-maxCodePoints: 50` (keep `minLength: 1`), following the contract's Text limits convention."
+      },
+      {
+        "capability": "child-profile",
+        "severity": "minor",
+        "specRef": "openspec/specs/child-profile/spec.md:240-241",
+        "contractRef": "api/openapi.yaml:43-44 (info.description, Conventions › Methods)",
+        "issue": "The spec requires HTTP 404 for `PATCH /api/admin/profile/settings` and `PUT /api/admin/profile`, which are paths the contract doesn't declare. The contract's conventions only cover undeclared methods on a declared path (405). They say nothing about undeclared paths, so the 404 the spec relies on isn't written down anywhere in the contract.",
+        "suggestedFix": "Add a convention line: \"A path not declared here is answered 404 with a problem+json body and changes nothing.\""
+      }
+    ]
+  }
+}

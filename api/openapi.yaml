@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Doučko API
-  version: 0.3.0
+  version: 0.4.0
   description: |
     Contract between the Doučko backend (Kotlin/Spring Boot) and frontend
     (React/Vite). Single source of truth (NFR-12): server interfaces and the
@@ -24,7 +24,8 @@ info:
     v0.2: aligned with the re-authored baseline specs after the independent
     contract review (trace/workflow-runs/20261003-053111-contract-review.json).
     v0.3: applies the review of v0.2
-    (trace/workflow-runs/20261003-060056-contract-review.json).
+    (trace/workflow-runs/20261003-060056-contract-review.json); v0.4 applies
+    the review of v0.3 (trace/workflow-runs/20261003-150844-contract-review.json).
 
     Conventions:
     - Field paths. `Problem.errors[].field` names the invalid input with a
@@ -32,16 +33,29 @@ info:
       indexes: `prompt`, `sourceRef.page`, `parts[1].label`,
       `parts[1].spec.accepted[0]`, `parts[0].spec.options[2].text`,
       `hints[0]`, `translations.uk.prompt`, `position`, `taskIds[3]`,
-      `file`. Query parameters use their own name (`weeks`, `status`, `q`).
-      Child attempts name the part as `answers.<partKey>`.
+      `file`. Query and path parameters use their own name (`weeks`,
+      `status`, `q`, `reportId`, `taskId`, …); a path id that is not a UUID
+      is 400 before any lookup. Child attempts name the part as
+      `answers.<partKey>`.
+    - Integers. A value for an integer field that is not a JSON integer
+      (`2.5`, `2.0`, `"abc"`) or that is outside int32 is 400 with
+      `errors[].field` naming the field; floats are never coerced to
+      integers (Jackson `ACCEPT_FLOAT_AS_INT` off). The same holds for
+      integer multipart fields.
+    - Arrays. No array is declared `uniqueItems`, because generators turn
+      such arrays into sets that silently drop duplicates and lose order.
+      Where an operation forbids duplicates, the server refuses them with
+      400 on the duplicate's index.
     - Text limits. Authoring text limits (content-authoring "Field limits")
       count Unicode code points after trimming leading and trailing
       whitespace. They are published as `x-maxCodePoints` and enforced by
       the server, not as schema `maxLength`, so generated validators (which
       count raw UTF-16 units) cannot refuse a value the spec accepts. A text
       that is empty after trimming counts as missing (400).
-    - Methods. A path answers only the methods declared here; any other
-      method is answered 405 with a problem+json body and changes nothing.
+    - Methods and paths. A path answers only the methods declared here; any
+      other method is answered 405 with a problem+json body and changes
+      nothing. A path not declared here is answered 404 with a problem+json
+      body and changes nothing.
 
     Skin ownership: the backend owns the rank ladder (names, thresholds) and
     computes rank and rank-ups from it; the frontend owns the rest of the skin
@@ -605,6 +619,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/TaskImage" }
+        "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -748,9 +763,8 @@ paths:
       description: |
         Field rules are 400 with `errors[].field`: a missing, duplicate or
         out-of-range `position` (CA-D17), a task of another topic or a task
-        listed twice (`taskIds[i]`, FR-9, CA-D12), more than 50 tasks. 409
-        is reserved for state rules: publishing invariants (CA-D7, CA-D9) and
-        a topic change of a non-empty mission (CA-D10), with `conflicts`.
+        listed twice (`taskIds[i]`, FR-9, CA-D12), more than 50 tasks. A new
+        mission is DRAFT, so no state rule (409) applies.
       security:
         - adminSession: []
           csrfToken: []
@@ -984,10 +998,26 @@ paths:
       tags:
         - child-hq
       operationId: ackRankUp
-      summary: Mark the pending rank-up as celebrated so it never plays again
+      summary: Mark a shown rank-up celebration as played so it never plays again
+      description: |
+        The client calls this when it plays a celebration from
+        HqView.pendingRankUp or MissionSummary.rankUp. The pending rank-up is
+        cleared only when its index is at most `rankIndex`, so a newer
+        rank-up that arrived after the client read it is kept and still
+        plays. Answered 204 also when nothing was pending.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ rankIndex ]
+              properties:
+                rankIndex: { type: integer, minimum: 0, description: Rank.index of the celebration that was shown }
       responses:
         "204":
           description: Acknowledged (also when nothing was pending)
+        "400": { $ref: "#/components/responses/BadRequest" }
   /api/admin/tasks/publish:
     post:
       tags:
@@ -1010,7 +1040,7 @@ paths:
                   type: array
                   minItems: 1
                   maxItems: 100
-                  uniqueItems: true
+                  description: A repeated id is 400 on `taskIds[i]` of the repeat
                   items:
                     type: string
                     format: uuid
@@ -1169,7 +1199,7 @@ components:
         displayName:
           type: string
           minLength: 1
-          maxLength: 50
+          x-maxCodePoints: 50
         totalXp: { type: integer, minimum: 0 }
         solvedTasks: { type: integer, minimum: 0 }
         rank: { $ref: "#/components/schemas/Rank" }
@@ -1200,7 +1230,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/Rank"
           nullable: true
-          description: Highest rank reached outside a child session (publish-time bonus, admin re-evaluation) and not yet celebrated; cleared by ackRankUp
+          description: "Highest rank reached and not yet celebrated: crossings outside a child session (publish-time bonus, admin re-evaluation), and a mission-complete crossing whose summary was never acknowledged. Cleared by ackRankUp."
     Rank:
       type: object
       required: [ index, name, minXp ]
@@ -1315,7 +1345,7 @@ components:
       properties:
         answers:
           type: object
-          description: "Raw input per part key. CHOICE_SINGLE and CHOICE_MULTI parts send an array of option keys (may be empty or repeat keys; repeats collapse); every other type sends a string. A shape that does not match the part type, an unknown part key, an array of more than 20 items or a key longer than 100 characters is refused with 400 naming `answers.<partKey>` (request shape, not a verdict). An over-long string is not refused: it is graded UNPARSEABLE. An unknown option key within the limits is graded UNPARSEABLE."
+          description: "Raw input per part key. CHOICE_SINGLE and CHOICE_MULTI parts send an array of option keys (may be empty or repeat keys; repeats collapse); every other type sends a string. A shape that does not match the part type, an unknown part key, an array of more than 20 items or an element longer than 100 code points (server-enforced) is refused with 400 naming `answers.<partKey>` (request shape, not a verdict). An over-long string is not refused: it is graded UNPARSEABLE. An unknown option key within the limits is graded UNPARSEABLE."
           additionalProperties:
             oneOf:
               - type: string
@@ -1323,7 +1353,7 @@ components:
                 maxItems: 20
                 items:
                   type: string
-                  maxLength: 100
+                  x-maxCodePoints: 100
     Verdict:
       type: string
       enum: [ CORRECT, WRONG, UNPARSEABLE ]
@@ -1380,7 +1410,7 @@ components:
         rankUp:
           allOf: [ { $ref: "#/components/schemas/Rank" } ]
           nullable: true
-          description: "The new rank when this resolution crossed a threshold, animated now. That covers the task XP, and bonuses of other missions in completedMissionIds while missionComplete is false. Null when no threshold was crossed, when status is UNPARSEABLE, or when missionComplete is true: MissionSummary.rankUp then carries it."
+          description: "The highest rank reached when this resolution crossed one or more thresholds, animated now (one-shot: the POST response is its only carrier). That covers the task XP, and bonuses of other missions in completedMissionIds while missionComplete is false. Null when no threshold was crossed, when status is UNPARSEABLE, or when missionComplete is true: MissionSummary.rankUp then carries it."
         missionComplete: { type: boolean, description: True when this resolved the run's last task; false when status is UNPARSEABLE }
         bonusXp:
           type: integer
@@ -1433,12 +1463,12 @@ components:
         rankUp:
           allOf: [ { $ref: "#/components/schemas/Rank" } ]
           nullable: true
-          description: "Rank crossed by the completing award or bonus: animate on this screen"
+          description: "Highest rank crossed by the completing award or bonus, while its celebration is not yet acknowledged: animate on this screen, then call ackRankUp. Null on every GET after the acknowledgement."
         rankReachedDuringRun:
           allOf:
             - $ref: "#/components/schemas/Rank"
           nullable: true
-          description: "Rank reached earlier in this run and already celebrated: show as a static line only"
+          description: "Highest rank reached during this run whose celebration has already played (mid-mission, or acknowledged): show as a static line only"
     ReportReason:
       type: string
       enum: [ ANSWER_IS_CORRECT, UNCLEAR_PROMPT, OTHER ]
@@ -1449,8 +1479,8 @@ components:
         reason: { $ref: "#/components/schemas/ReportReason" }
         note:
           type: string
-          maxLength: 1000
-          description: Required (non-blank after trimming) when reason is OTHER; otherwise optional; refused with 400
+          x-maxCodePoints: 1000
+          description: Required (non-blank after trimming) when reason is OTHER; otherwise optional. At most 1000 code points after trimming (server-enforced); over that is 400 on `note`.
     ProfileSettings:
       type: object
       required: [ secondaryTaskLocale, answerMode ]
@@ -1472,7 +1502,7 @@ components:
         answerMode:
           allOf:
             - $ref: "#/components/schemas/AnswerMode"
-          description: "Not nullable: null is refused with 400; GUIDED is refused with 422"
+          description: "Not nullable: an explicit `answerMode: null` is refused during deserialization (Jackson `Nulls.FAIL` on this property), before the generated DTO turns it into 'absent', and answered 400 with `errors[].field = answerMode`. GUIDED is refused with 422."
       description: "Partial update with the child-profile rules (not RFC 7396): an absent field is unchanged; `secondaryTaskLocale: null` clears it; `answerMode: null` is refused with 400. Unknown top-level fields are ignored. The backend must bind this body with a presence-aware type (e.g. JsonNullable) to tell absent from null."
     AnswerMode:
       type: string
@@ -1573,11 +1603,11 @@ components:
             type: string
             minLength: 1
             x-maxCodePoints: 100
-        tolerance: { type: string, nullable: true, description: Absolute tolerance for numeric types; null = exact }
+        tolerance: { type: string, nullable: true, description: "Absolute tolerance, a number ≥ 0 in the answer-checking numeric notation (decimal comma or dot); null = exact. Allowed only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT; set on another type, negative or unparseable it is 400 on `parts[i].spec.tolerance`." }
         exactDecimals: { type: integer, minimum: 0, maximum: 6, nullable: true, description: "DECIMAL only: required number of decimal places, 0-6 (content-authoring answer-spec table)" }
         allowEquivalent: { type: boolean, default: true, description: FRACTION — accept equal values in other forms }
         requireLowestTerms: { type: boolean, default: false, description: FRACTION only }
-        unit: { type: string, nullable: true, description: NUMBER_WITH_UNIT — the unit asked for }
+        unit: { type: string, nullable: true, readOnly: true, description: "NUMBER_WITH_UNIT only: the part's unit, derived by the server from `accepted` (whose items are 'number unit' and must all share one normalized unit, otherwise 400 on `parts[i].spec.accepted[j]`). Ignored on input; null for other types. PartView.unit shows it." }
         unitRequired: { type: boolean, default: true, description: "NUMBER_WITH_UNIT only: whether the unit must be given" }
         diacriticsStrict: { type: boolean, default: false, description: TEXT only }
         options:
@@ -1712,8 +1742,7 @@ components:
           type: array
           minItems: 0
           maxItems: 50
-          uniqueItems: true
-          description: Ordered; every task must have the mission topic (default size 10, CA-D18). Any count 0-50 can be saved; publishing needs at least 1 (CA-D7). A task appears at most once (CA-D12).
+          description: Ordered list (order is kept exactly); every task must have the mission topic (default size 10, CA-D18). Any count 0-50 can be saved; publishing needs at least 1 (CA-D7). A task appears at most once (CA-D12); a repeated id is 400 on `taskIds[i]` of the repeat.
           items:
             type: string
             format: uuid
@@ -1838,11 +1867,13 @@ components:
         - bonusXp
         - completedMissionIds
         - report
+        - newTaskState
       properties:
         changed: { type: boolean, description: "True when a re-evaluated verdict was recorded and the report became FIXED, including a replay attempt (xpAwarded 0, task outcome unchanged). False when nothing changed and the report stays OPEN." }
         newTaskState:
           allOf: [ { $ref: "#/components/schemas/TaskState" } ]
           nullable: true
+          description: The task's state after a re-evaluation that changed the first-resolution outcome; null when changed is false, or when the attached attempt is a replay attempt (the outcome is unchanged)
         xpAwarded: { type: integer, minimum: 0, description: Task XP difference awarded; excludes bonuses (see bonusXp) }
         report: { $ref: "#/components/schemas/Report" }
         bonusXp:

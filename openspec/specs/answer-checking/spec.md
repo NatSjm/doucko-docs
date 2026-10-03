@@ -373,8 +373,9 @@ decision)*. Units SHALL be compared after this normalization:
   superscript digit (`²`, `³`, …, `⁹`), as `^n`, or as a plain digit
   directly after a letter. So `cm2` = `cm²` = `cm^2` and `m3` = `m³` = `m^3`.
 
-The unit is compared as a normalized string with the part's unit; there is
-no unit registry. A readable number with any other unit, including
+The unit is compared as a normalized string with the part's unit, which is
+the one unit shared by all of the part's accepted values (content-authoring,
+answer spec authoring); there is no unit registry. A readable number with any other unit, including
 unrecognized text (`24 xyz`) or a different exponent (`cm³` when `cm²` is
 asked for), SHALL be `WRONG`. A per-part flag decides whether the unit is
 required. When the unit is optional and omitted, only the number is
@@ -872,8 +873,9 @@ workbook (NFR-4).
   for the answer tester belong to admin-access, and the tester screen and its
   per-part results to content-authoring. The tester reports each part's
   verdict independently and does not apply the whole-submission refusal.
-- Malformed request shapes (unknown part keys, wrong JSON types) are HTTP
-  400 and request bodies over 16 KB are HTTP 413 at the API; they belong to
-  practice-flow and the API contract. They are not checker verdicts.
+- Malformed request shapes (unknown part keys, wrong JSON types, a choice
+  selection of more than 20 keys) are HTTP 400 and request bodies over 16 KB
+  are HTTP 413 at the API; they belong to practice-flow and the API
+  contract. They are not checker verdicts.
 - Editing an answer spec does not re-check past attempts. Re-evaluation
   belongs to the flag queue in the progress-stats capability.
