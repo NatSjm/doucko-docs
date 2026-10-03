@@ -443,7 +443,7 @@ only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT parts.
 
 - **GIVEN** a DECIMAL part in the editor
 - **WHEN** the admin enters the expected value `1 250,75` with a no-break space
-- **THEN** the part is saved with the expected value `1250.75`
+- **THEN** the part is saved with the expected value `1 250,75` as entered, and the editor shows its normalized interpretation `1250.75`
 
 #### Scenario: Expected value with a decimal dot
 
@@ -505,11 +505,11 @@ only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT parts.
 - **WHEN** the admin enters the expected value `24` or `cm²`
 - **THEN** the save is refused with an inline message that the expected value needs both a number and a unit
 
-#### Scenario: Unit spelling is normalized on save
+#### Scenario: Unit spelling is shown normalized
 
 - **GIVEN** a NUMBER_WITH_UNIT part in the editor
 - **WHEN** the admin enters the expected value `24 cm2`
-- **THEN** the part is saved with the expected value `24 cm²`
+- **THEN** the part is saved with the expected value `24 cm2` as entered, and the editor shows its normalized interpretation `24 cm²`
 
 #### Scenario: Single-choice options and answer
 
@@ -535,7 +535,8 @@ only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT parts.
 - **GIVEN** a TEXT part in the editor
 - **WHEN** the admin enters the expected answers `pravý úhel` and `pravý`
 - **THEN** the part is saved with both accepted answers
-- **AND** saving an expected answer of only spaces, or of 201 characters, is refused with an inline message on that answer
+- **AND** an expected answer of exactly 100 code points is saved
+- **AND** saving an expected answer of only spaces, or of 101 code points, is refused with an inline message on that answer
 
 #### Scenario: Negative tolerance
 

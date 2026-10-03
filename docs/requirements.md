@@ -1,4 +1,4 @@
-# Requirements Document *(§6.6 OQ-31: publisher and edition are optional.)* *(§6.6 CA-D13: a GRAPHIC task may have zero parts.)* *(§6.6 CA-D3: a source's PDF file cannot be replaced.)* *(§6.6 CA-D4: a source referenced by any task cannot be deleted.)* *(§6.6 OQ-30: at most 72 bytes.)*
+# Requirements Document
 
 **Doučko — a home math tutor for a Czech 6th-grader**
 
@@ -58,12 +58,12 @@ threshold-passing evidence artifact.
 
 | ID | Phase | Area | Description | Verification |
 |---|---|---|---|---|
-| FR-1 | MVP | Content | Admin uploads a PDF **source** with metadata: title, publisher, edition, grade, and subject. | local-verifiable, e2e |
+| FR-1 | MVP | Content | Admin uploads a PDF **source** with metadata: title, publisher, edition, grade, and subject. *(§6.6 OQ-31: publisher and edition are optional.)* | local-verifiable, e2e |
 | FR-2 | MVP | Content | Admin views an uploaded PDF page by page, side by side with the task editor, and can jump to a page number. | e2e |
 | FR-3 | MVP | Content | Admin creates a task with: Czech prompt text, topic, grade, difficulty (1–3), and **source reference** (source, page, task number, optional sub-part). | e2e |
 | FR-4 | MVP | Content | Admin attaches 0..n images (PNG/JPG, cropped outside the app) to a task. Images are shown to the child with the task. | e2e |
 | FR-5 | MVP | Content | Every task has an **answer modality**: `TEXT` or `GRAPHIC`. `GRAPHIC` tasks are never served to the child in MVP. | local-verifiable |
-| FR-6 | MVP | Content | A task has 1..n **answer parts** (e.g. a, b, c). Each part has a label and its own answer spec (see §2.2). | local-verifiable |
+| FR-6 | MVP | Content | A task has 1..n **answer parts** (e.g. a, b, c). Each part has a label and its own answer spec (see §2.2). *(§6.6 CA-D13: a GRAPHIC task may have zero parts.)* | local-verifiable |
 | FR-7 | MVP | Content | Admin adds 0..n ordered hints per task. Tasks without hints work normally. | local-verifiable |
 | FR-8 | MVP | Content | Admin adds translations of prompt, part labels, and hints per locale (`uk` in MVP). Supported locales are configuration, not code. | local-verifiable |
 | FR-9 | MVP | Content | Admin creates **missions**: ordered lists of tasks within one topic. The default size is 10 tasks. | e2e |
@@ -71,8 +71,8 @@ threshold-passing evidence artifact.
 | FR-11 | MVP | Content | Admin filters and searches tasks by grade, topic, source, page, modality, and status. | e2e |
 | FR-12 | MVP | Content | Tasks have status `DRAFT` or `PUBLISHED`. Only published tasks in published missions are served to the child. | local-verifiable |
 | FR-13 | MVP | Content | Given any task, admin can see where it came from (source title, edition, page, task number) and open the PDF at that page. | e2e |
-| FR-55 | MVP | Content | *(CP1, OQ-18)* Admin edits existing sources, tasks (every field, including answer specs, hints, translations and images) and missions. | e2e |
-| FR-56 | MVP | Content | *(CP1, OQ-18)* Admin can delete a source, task or mission only when no attempt references it (directly or through its tasks); otherwise the delete is refused and the admin can unpublish instead. | local-verifiable |
+| FR-55 | MVP | Content | *(CP1, OQ-18)* Admin edits existing sources, tasks (every field, including answer specs, hints, translations and images) and missions. *(§6.6 CA-D3: a source's PDF file cannot be replaced.)* | e2e |
+| FR-56 | MVP | Content | *(CP1, OQ-18)* Admin can delete a source, task or mission only when no attempt references it (directly or through its tasks); otherwise the delete is refused and the admin can unpublish instead. *(§6.6 CA-D4: a source referenced by any task cannot be deleted.)* | local-verifiable |
 | FR-57 | MVP | Content | *(CP1, OQ-19)* A mission can be published only when every task in it is `PUBLISHED` with modality `TEXT`. A task in a published mission cannot return to `DRAFT` until that mission is unpublished. | local-verifiable |
 
 ### 2.2 Answer checking (deterministic checker)
@@ -174,7 +174,7 @@ and raw input, it returns a per-part verdict (`CORRECT` / `WRONG` /
 | NFR-13 | MVP | Accessibility | WCAG AA contrast. Animations respect `prefers-reduced-motion`. | a11y |
 | NFR-14 | Future | AI | OpenAI calls are made from the backend only. The key is never exposed to the frontend. There is a monthly budget cap, and prompts contain no PII. Prompts and responses are logged for review. | local-verifiable |
 | NFR-15 | MVP | Security | *(CP1, OQ-23)* Admin uses form login with a session cookie that is HttpOnly and SameSite=Strict, CSRF protection is on for admin mutations, and the session expires after 8 h of inactivity. No lockout (LAN only, NFR-2). | local-verifiable |
-| NFR-16 | MVP | Security | *(CP1, OQ-23)* The admin password supplied by env must be at least 12 characters; the backend refuses to start otherwise, with a clear message. | local-verifiable |
+| NFR-16 | MVP | Security | *(CP1, OQ-23)* The admin password supplied by env must be at least 12 characters; the backend refuses to start otherwise, with a clear message. *(§6.6 OQ-30: at most 72 bytes.)* | local-verifiable |
 | NFR-17 | MVP | Reliability | *(CP1, OQ-24)* Uploads are limited to PDF ≤ 50 MB for sources and PNG/JPG ≤ 5 MB per image; anything else is rejected with a clear message. Files are stored on the local storage volume, never in a repository. | local-verifiable |
 
 > The PRD's NFR table had no Phase column; it is added here so the gate

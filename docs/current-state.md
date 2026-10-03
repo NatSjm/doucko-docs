@@ -11,26 +11,29 @@
 - **Last completed gate:** G1
 - **Active change:** `add-api-contract-v0` (draft, not archived) — Phase 2 work on branch `phase2-specs`
 - **Progress:** Phase 1 signed off on 2026-10-02 (evidence:
-  `docs/qa/checkpoint-1-scope-signoff.md`). Phase 2 in progress:
-  - Baseline specs for 7 capabilities under `openspec/specs/`
-    (content-authoring, answer-checking, practice-flow, gamification,
-    progress-stats, child-profile, admin-access). All 48 MVP FRs are cited,
-    each by exactly one spec — evidence: `node scripts/check-traceability.mjs`
-    (Result: PASS) and `npx openspec validate --all --strict`.
-  - `api/openapi.yaml` v0.1.0 drafted in change `add-api-contract-v0`
-    (31 paths, 45 operations); structural check only, no linter/generator run yet.
-  - Specs were authored inline, not through the `spec-pipeline` workflow:
-    the independent critique + cross-check (maker ≠ checker) has NOT run.
-  - PD-8 / COR-2 (G2 vacuous PASS) fixed in all three repos (docs edc3f19,
-    backend c58094f, frontend b0a848b); COR-2 awaits the product owner's
-    disposition — until then gate-status is red by design.
-- **Next task:** run the independent spec critique and cross-check; review
-  and archive `add-api-contract-v0`; merge `phase2-specs` → `main`. Then
-  Phase 3 (capability plan, checkpoint 2).
+  `docs/qa/checkpoint-1-scope-signoff.md`). Phase 2 in progress on `phase2-specs`:
+  - Workflows run through `scripts/run-workflow.mjs` (factory/README.md,
+    "Running workflows"); the Claude CLI must be signed in.
+  - Specs re-authored by the `spec-pipeline` workflow (product owner's
+    choice): 22 steps, $13.06 — evidence: `trace/workflow-runs/20261003-043657-spec-pipeline.json`.
+  - Its cross-check findings were fixed; the independent `spec-crosscheck`
+    run confirmed 18 of 26 resolved and all 48 MVP FRs owned exactly once —
+    evidence: `trace/workflow-runs/20261003-052439-spec-crosscheck.json`.
+    The 8 open items are the deferred cross-cutting NFRs (NFR-3, 4, 6, 9-13
+    scopes), to be owned in the Phase 3 plan. Its 4 new minor findings were
+    fixed afterwards and are not yet independently re-checked.
+  - Spec-derived rulings accepted 2026-10-03: `docs/requirements.md` §6.5-6.6.
+  - Specs validate (`npx openspec validate --all --strict`) and trace
+    (`node scripts/check-traceability.mjs`, Result: PASS).
+  - `api/openapi.yaml` v0.1.0 in change `add-api-contract-v0` (draft, not
+    archived; no independent review yet).
+- **Next task:** decide on a final cross-check run and a contract review;
+  archive `add-api-contract-v0`; merge `phase2-specs` → `main`. Then
+  Phase 3 (capability plan incl. owners for the deferred NFRs, checkpoint 2).
 - **Claims:**
   - Harness installed and not drifted — evidence: `node factory/install.mjs --repo=docs --check`
   - G0 PASS; G1 signed off — evidence: `node scripts/gate-status.mjs` + `docs/qa/checkpoint-1-scope-signoff.md`
-  - G2 not yet claimed: specs exist and trace, but the critique pass and contract archive are pending
+  - G2 not yet claimed: contract change not archived
 
 > This header is machine-read: keep the exact formats `Phase <N>` and `G<N>`.
 

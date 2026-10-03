@@ -1,0 +1,131 @@
+{
+  "requirementsPath": "docs/requirements.md",
+  "capabilities": [
+    {
+      "name": "content-authoring",
+      "frIds": [
+        "FR-1",
+        "FR-2",
+        "FR-3",
+        "FR-4",
+        "FR-5",
+        "FR-6",
+        "FR-7",
+        "FR-8",
+        "FR-9",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-55",
+        "FR-56",
+        "FR-57"
+      ]
+    },
+    {
+      "name": "answer-checking",
+      "frIds": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20",
+        "FR-21",
+        "FR-22",
+        "FR-23"
+      ]
+    },
+    {
+      "name": "practice-flow",
+      "frIds": [
+        "FR-24",
+        "FR-25",
+        "FR-26",
+        "FR-27",
+        "FR-28",
+        "FR-29",
+        "FR-30",
+        "FR-31",
+        "FR-32",
+        "FR-33",
+        "FR-44"
+      ]
+    },
+    {
+      "name": "gamification",
+      "frIds": [
+        "FR-34",
+        "FR-35",
+        "FR-36",
+        "FR-37",
+        "FR-38",
+        "FR-39",
+        "FR-58"
+      ]
+    },
+    {
+      "name": "progress-stats",
+      "frIds": [
+        "FR-40",
+        "FR-41",
+        "FR-42"
+      ]
+    },
+    {
+      "name": "child-profile",
+      "frIds": [
+        "FR-43"
+      ]
+    },
+    {
+      "name": "admin-access",
+      "frIds": []
+    }
+  ],
+  "previous": {
+    "gaps": [
+      "FR coverage is complete: all 48 MVP FRs (FR-1..FR-44, FR-55..FR-58) have a normative requirement in the spec the map assigns them to. No FR is missing.",
+      "NFR-6 (Chrome/Edge/Firefox, ≥1280×720): no spec owns it. It only shows up in a practice-flow exclusion ('Laptop only') and as the viewport in a content-authoring preview scenario. Nothing requires a cross-browser e2e run.",
+      "NFR-10 (Docker volume, `npm run backup` working on Windows, progress survives restarts): no spec owns it. child-profile 'Setting survives a backend restart' touches the last clause only; the backup command has no requirement anywhere.",
+      "NFR-11 (modular monolith, module boundaries verified by Modulith/ArchUnit): no spec owns it. practice-flow's architecture test only covers TutorPort.",
+      "NFR-12 (OpenAPI is the single source of truth, build fails on drift): no spec requires the drift check. admin-access and child-profile only cite api/openapi.yaml for the problem+json shape and status codes.",
+      "NFR-13 is owned only by gamification ('Light and dark theme', 'Rank-up celebration'), and its contrast scenario covers only child screens (HQ, task, mission complete). WCAG AA contrast for the admin UI (sign-in, editor, preview, stats, flag queue) is unowned, as is reduced motion for practice-flow's correct-answer feedback outside gamification.",
+      "NFR-3 is owned only by child-profile and narrowed to the display name: the privacy scan reads only that one name from the env file. 'Photos or any PII' in fixtures, logs or recordings across the other capabilities is unowned (for example free-text report notes or TEXT answers that end up in logs).",
+      "NFR-4 is owned only by content-authoring (pre-commit hook and fixture provenance manifest). Its scenario covers 'authoring test fixtures', so seeded e2e content (practice-flow), the golden table (answer-checking only asserts it is self-authored) and skin assets (gamification) are not explicitly in scope of an executable check.",
+      "NFR-9: content-authoring only checks externalization of admin strings. No spec has an executable check that child UI strings are externalized; gamification's 'No theme text outside the skin' only covers the school and mentor names.",
+      "FR-29 / FR-43 mapping is implicit: neither practice-flow nor child-profile says that 'toggle on' means secondaryTaskLocale = 'uk' and 'toggle off' means null.",
+      "progress-stats ('Weekly hint and reveal figures') requires every hint-open record to carry an opened-at timestamp, but the owner of those records (practice-flow 'Hints on demand') only says each hint is 'recorded with the task, once'. One spec places an obligation on another spec's entity without the owner stating it.",
+      "Unrecorded narrowings that should be logged as derived decisions or OQs: content-authoring makes FR-1 publisher and edition optional without citing a CA-D; admin-access adds a 72-byte ADMIN_PASSWORD maximum that NFR-16 does not state.",
+      "Pending human confirmations that the specs still depend on: gamification OQ-28 (bonus credited at publish time) and OQ-29 (no fallback for missing XP keys, threshold typing), and content-authoring CA-D3, CA-D4 and CA-D13, which narrow or deviate from FR-55, FR-56 and FR-6."
+    ],
+    "duplicates": [
+      "FR-5 (GRAPHIC tasks never served) is specified normatively twice. content-authoring has 'Graphic tasks are never served in MVP' (404 by id, even inside a draft mission). practice-flow restates it with its own scenarios in 'Task screen' ('Graphic tasks are never served') and 'Task-scoped requests are checked against the content' (404 for attempt, hint and report, citing TC-8). They agree today, but they would drift independently. Recommendation: practice-flow should reference content-authoring instead of re-specifying.",
+      "FR-12 (only PUBLISHED tasks in PUBLISHED missions are served) is likewise in both: content-authoring 'Draft and published status' and practice-flow 'Unpublished content is invisible', 'Unknown or unpublished mission' and the draft-task 404 scenarios.",
+      "FR-13 / OQ-7 (the source reference is never sent to the child) is in both content-authoring 'Task provenance' ('Source reference never reaches the child') and practice-flow 'Task screen' ('Source reference hidden'). The rules are identical.",
+      "NFR-1 (child endpoints cannot change content) has three normative requirements: content-authoring 'Authoring requires an admin session', practice-flow 'Child side cannot change content' and admin-access 'Child endpoints cannot change content'. practice-flow explicitly defers to admin-access; content-authoring only partly does. This is the overlap that produces contradiction #1 below.",
+      "Re-evaluation XP and bonus is specified in both progress-stats ('Re-evaluation of a reported attempt', with XP amounts) and gamification ('XP is granted only by the server', 'Rank-up celebration'). The cross-references are consistent. Listed only because the bonus-on-re-evaluation rule appears only in progress-stats, while gamification 'Mission completion bonus' says completion is checked 'on every first resolution of a task' and does not mention re-evaluation."
+    ],
+    "contradictions": [
+      "1. Oversized answer input, same endpoint and input, two different responses. answer-checking says free-text input over 100 Unicode code points is UNPARSEABLE, and its endpoint requirement returns HTTP 200 with status UNPARSEABLE and a formatTip ('Oversized input refused without cost': a 10,000-letter TEXT answer gives 200/UNPARSEABLE/attemptsLeft 2). practice-flow 'Oversized input is refused without cost' says a part value over 100 *characters* gives HTTP 400 problem+json naming the part ('Very long answer part': 101 chars gives 400). A 10,000-char body is under the 16 KB 413 limit, so both rules apply to the same request. The unit also differs (code points vs characters).",
+      "2. Unknown fields in child request bodies. admin-access ('Child endpoints cannot change content') says fields a child request body does not define 'SHALL be ignored, not rejected'. child-profile ('Invalid settings are refused without side effects') says an unknown top-level field on the child endpoint PATCH /api/child/profile/settings gives HTTP 400 (for example `displayName`). gamification ('XP is granted only by the server') says client-sent XP, rank or count fields 'SHALL have no effect' and also that 'a request that tries to write them SHALL be refused'. Its own attempt scenario then accepts the request and ignores them (200, xpAwarded 10). That is three different policies, and gamification's text is internally inconsistent.",
+      "3. Who can trigger the checker. answer-checking ('Who can trigger a check') says the checker 'SHALL be reachable only through two endpoints': the child submission and the admin answer tester. progress-stats ('Re-evaluation of a reported attempt') re-checks the attached attempt with the current spec via POST /api/admin/reports/{reportId}/reevaluate, which is a third path.",
+      "4. Mixed-number expected values. content-authoring ('Answer spec authoring', scenario 'Valid mixed-number fraction') stores the admin's expected `1 1/2` normalized as `3/2`, and says 'numeric values SHALL be stored normalized'. answer-checking ('Fraction input', scenario 'Mixed number required in the same form') needs an accepted answer `1 1/2` to be kept as a mixed number, so that on a part without equivalent forms `1 1/2` is CORRECT and `3/2` is WRONG. Plain fractions have the same risk: answer-checking matches 'only the same N and D', so if `2/4` were stored reduced, a non-equivalent `2/4` key would break. As written, that scenario cannot be authored.",
+      "5. TEXT expected-answer length vs checker input cap. content-authoring allows TEXT expected answers of 1–200 characters ('Field limits', 'Answer spec authoring'). answer-checking makes any input over 100 code points UNPARSEABLE, and practice-flow cuts the child input field off at 100 characters. An expected answer of 101–200 characters can be saved but can never be answered correctly.",
+      "6. Rank-up celebration repeat. gamification says the celebration plays once per rank-up, never repeats, and 'where a mission-complete screen is shown, the rank-up is part of it'. Its scenario 'Rank-up on a task award' plays it immediately on the task award. practice-flow 'Mission complete screen' / 'Rank-up on completion' shows the celebration when 'the mission's XP' (whole run) crosses a threshold. A rank-up caused mid-mission (say task 3) would play at task 3 and again on the mission-complete screen. The specs do not say which wins.",
+      "7. Minor tone conflict. practice-flow requires that 'Špatně' and 'Chyba' appear nowhere on the reveal screen, yet the report dialog reached from a revealed task ('Report after a reveal') shows its own validation copy 'Napiš prosím krátce, co je špatně.' That breaks the no-negative-wording intent (FR-38 spirit, answer-checking's forbidden-word list) on the same screen.",
+      "8. Terminology drift (no behavioral conflict, but it will leak into the API): content-authoring calls mission ordering 'position' (1–999, unique per topic), while practice-flow says 'mission order' / 'order 1 and 2'. Statuses (DRAFT/PUBLISHED, REVEALED, OPEN/FIXED/DISMISSED), verdicts (CORRECT/WRONG/UNPARSEABLE), answer modes (DIRECT/GUIDED) and role names (admin, child, single profile) are otherwise consistent across all seven specs."
+    ]
+  },
+  "deferred": [
+    "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+    "NFR-9 externalization of child UI strings",
+    "NFR-10 Docker volume and cross-platform backup command",
+    "NFR-11 module boundaries verified by tests",
+    "NFR-12 contract drift check in the build",
+    "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+    "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+    "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+  ]
+}

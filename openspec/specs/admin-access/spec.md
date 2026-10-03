@@ -104,8 +104,11 @@ or images (NFR-1). They may only record the child's own practice: attempts,
 opened hints, problem reports and the profile settings defined by the
 child-profile capability. An admin session cookie SHALL NOT be required or
 used by child endpoints, and child endpoints SHALL NOT grant access to admin
-operations. Fields in a child request body that the contract does not define
-SHALL be ignored, not rejected.
+operations. Top-level fields in a child request body that the contract's
+schema does not define SHALL be ignored, not rejected. This rule does not
+cover map keys that carry data, such as the part keys inside an attempt's
+`answers`: an unknown part key is a malformed submission and is refused as
+practice-flow and answer-checking specify.
 
 #### Scenario: Child client calls an admin operation
 
