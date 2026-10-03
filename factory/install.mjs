@@ -88,6 +88,7 @@ const ROLES = {
 const COMMON_SCRIPTS = [
   "check-traceability", "check-trajectory", "check-acceptance-methods", "check-process-ratchet",
   "check-factory-integrity", "qa-verify", "gate-status", "ledger", "ledger-report", "correct",
+  "run-workflow",
 ];
 const COMMON_PKG_SCRIPTS = {
   "qa:verify": "node scripts/qa-verify.mjs",
@@ -100,6 +101,7 @@ const COMMON_PKG_SCRIPTS = {
   "check:integrity": "node scripts/check-factory-integrity.mjs",
   correct: "node scripts/correct.mjs",
   "retro:digest": "node scripts/ledger-report.mjs",
+  workflow: "node scripts/run-workflow.mjs",
 };
 const COMMON_DIRS = ["docs/adr", "docs/qa/waivers", "trace", "retro/corrections", "quality"];
 

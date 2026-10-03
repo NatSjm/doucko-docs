@@ -104,6 +104,30 @@ npm run correct -- "..." # record a human correction of a factory claim
 
 Docs repo only: `npm run check:workspace` (cross-repo join).
 
+## Running workflows
+
+The workflows in `.claude/workflows/` (`spec-pipeline`, `review-gate`,
+`eval-suite`, …) run through `scripts/run-workflow.mjs`, because a Claude
+Code session may have no native workflow engine. Every `agent()` step is a
+fresh headless `claude -p` session (maker ≠ checker holds): `agentType`
+becomes `--agent <type>` from `.claude/agents/`, untyped steps get read-only
+tools, and `schema` becomes `--json-schema`.
+
+```bash
+npm run workflow -- spec-pipeline --args-file <args.json> --dry-run   # wiring check, no API calls
+npm run workflow -- spec-pipeline --args-file <args.json> --max-total-usd 15
+```
+
+- Needs a signed-in Claude Code CLI on the machine (`claude` → `/login`).
+  An unauthenticated CLI stops the run at the first step with a clear error.
+- Each step is billed. Caps: `--budget-usd` per step (default 2),
+  `--max-total-usd` per run (default 20); `--concurrency` (default 4).
+- Each run writes `trace/workflow-runs/<stamp>-<name>.json` (every step's
+  label, agent, duration, cost, session id, result) and a `workflow-run`
+  ledger event. Commit real-run records as evidence; dry runs are scratch.
+- Steps that write files run with `--permission-mode acceptEdits` and the
+  tools their agent definition grants (e.g. `spec-writer` has Bash).
+
 ## Updating the harness
 
 1. Edit the source under `docs/factory/` (never an installed copy).

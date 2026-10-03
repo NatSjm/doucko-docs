@@ -16,7 +16,8 @@
     "check": "npm run qa:verify",
     "check:workspace": "node scripts/check-workspace.mjs",
     "factory:check": "node factory/install.mjs --repo=docs --check",
-    "factory:install": "node factory/install.mjs --repo=docs"
+    "factory:install": "node factory/install.mjs --repo=docs",
+    "workflow": "node scripts/run-workflow.mjs"
   },
   "devDependencies": {
     "@fission-ai/openspec": "1.13.2"
