@@ -872,8 +872,8 @@ workbook (NFR-4).
   for the answer tester belong to admin-access, and the tester screen and its
   per-part results to content-authoring. The tester reports each part's
   verdict independently and does not apply the whole-submission refusal.
-- Malformed request shapes (unknown part keys, wrong JSON types, oversized
-  request bodies) are HTTP 400 at the API and belong to practice-flow and
-  the API contract. They are not checker verdicts.
+- Malformed request shapes (unknown part keys, wrong JSON types) are HTTP
+  400 and request bodies over 16 KB are HTTP 413 at the API; they belong to
+  practice-flow and the API contract. They are not checker verdicts.
 - Editing an answer spec does not re-check past attempts. Re-evaluation
   belongs to the flag queue in the progress-stats capability.

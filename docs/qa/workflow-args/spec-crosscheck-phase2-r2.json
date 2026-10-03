@@ -1,0 +1,108 @@
+{
+  "requirementsPath": "docs/requirements.md",
+  "capabilities": [
+    {
+      "name": "content-authoring",
+      "frIds": [
+        "FR-1",
+        "FR-2",
+        "FR-3",
+        "FR-4",
+        "FR-5",
+        "FR-6",
+        "FR-7",
+        "FR-8",
+        "FR-9",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-55",
+        "FR-56",
+        "FR-57"
+      ]
+    },
+    {
+      "name": "answer-checking",
+      "frIds": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20",
+        "FR-21",
+        "FR-22",
+        "FR-23"
+      ]
+    },
+    {
+      "name": "practice-flow",
+      "frIds": [
+        "FR-24",
+        "FR-25",
+        "FR-26",
+        "FR-27",
+        "FR-28",
+        "FR-29",
+        "FR-30",
+        "FR-31",
+        "FR-32",
+        "FR-33",
+        "FR-44"
+      ]
+    },
+    {
+      "name": "gamification",
+      "frIds": [
+        "FR-34",
+        "FR-35",
+        "FR-36",
+        "FR-37",
+        "FR-38",
+        "FR-39",
+        "FR-58"
+      ]
+    },
+    {
+      "name": "progress-stats",
+      "frIds": [
+        "FR-40",
+        "FR-41",
+        "FR-42"
+      ]
+    },
+    {
+      "name": "child-profile",
+      "frIds": [
+        "FR-43"
+      ]
+    },
+    {
+      "name": "admin-access",
+      "frIds": []
+    }
+  ],
+  "previous": {
+    "gaps": [
+      "docs/requirements.md §6.6 (line 320) says 'The rows they narrow carry a pointer here', but the pointers were put into the H1 title (line 1) instead. The rows FR-1 (61), FR-6 (66), FR-55 (74), FR-56 (75) and NFR-16 (177) have no pointer to CA-D3/CA-D4/CA-D13/OQ-30/OQ-31. This is a traceability defect in requirements.md, not in a spec.",
+      "content-authoring:538 ('Text expected answer') still tests refusal at 201 characters. The limit is now 100 code points (lines 77, 437), so the boundary case of 101 refused / 100 accepted is not tested. The scenario is stale, not contradictory."
+    ],
+    "duplicates": [],
+    "contradictions": [
+      "content-authoring contradicts itself on how expected values are stored. 'Answer spec authoring' (lines 422-424) says 'Accepted answers SHALL be stored in the notation the admin entered', because the checker compares notation. Its own scenarios store normalized values: 'Expected value in Czech notation' (444-446) saves `1 250,75` as `1250.75`, and 'Unit spelling is normalized on save' (510-512) saves `24 cm2` as `24 cm²`. Only the FRACTION scenario (496-500) keeps the entered form. Either limit the 'as entered' rule to FRACTION (where answer-checking:289-293 needs it), or change the DECIMAL and unit scenarios to 'stored as entered, shown normalized'.",
+      "Possible ambiguity (low risk): admin-access:107-108 says fields in a child request body 'that the contract does not define SHALL be ignored, not rejected'. practice-flow:318-322 ('Submission naming an unknown part') and answer-checking:875-877 return 400 for an unknown part key `c` inside `answers`. These agree if `answers` is a map whose keys are values rather than schema fields. admin-access should say that its ignore rule covers top-level/schema fields only and not keys inside `answers`."
+    ]
+  },
+  "deferred": [
+    "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+    "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+    "NFR-10 Docker volume and cross-platform backup command",
+    "NFR-11 module boundaries verified by tests",
+    "NFR-12 contract drift check in the build",
+    "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+    "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+    "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+  ]
+}

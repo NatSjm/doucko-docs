@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Doučko API
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Contract between the Doučko backend (Kotlin/Spring Boot) and frontend
     (React/Vite). Single source of truth (NFR-12): server interfaces and the
@@ -20,6 +20,16 @@ info:
     Product behavior is defined in `openspec/specs/*/spec.md`; this file
     defines only shapes and status codes. v0 = draft, change
     `add-api-contract-v0`.
+
+    v0.2: aligned with the re-authored baseline specs after the independent
+    contract review (trace/workflow-runs/20261003-053111-contract-review.json).
+
+    Skin ownership: the backend owns the rank ladder (names, thresholds) and
+    computes rank and rank-ups from it; the frontend owns the rest of the skin
+    (school, mentor, copy, illustrations, colours). Task locales are
+    configuration: allowed values come from getReferenceData, not from enums.
+    Attempt validation errors name the part as `answers.<partKey>` in
+    `Problem.errors[].field`.
 servers:
   - url: http://localhost:8080
     description: Home laptop (LAN only, NFR-2)
@@ -47,7 +57,7 @@ paths:
   # ------------------------------------------------------------------ child
   /api/child/hq:
     get:
-      tags: [child-hq]
+      tags: [ child-hq ]
       operationId: getHq
       summary: HQ view — rank, XP bar, continue target, missions by topic
       responses:
@@ -61,7 +71,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/MissionId"
     get:
-      tags: [child-hq]
+      tags: [ child-hq ]
       operationId: getMissionBriefing
       summary: Mission briefing — topic, tasks and their states, XP available
       responses:
@@ -76,7 +86,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/MissionId"
     get:
-      tags: [child-practice]
+      tags: [ child-practice ]
       operationId: getCurrentTask
       summary: First unresolved task of the mission's current run (resume)
       responses:
@@ -93,12 +103,12 @@ paths:
     parameters:
       - $ref: "#/components/parameters/MissionId"
     post:
-      tags: [child-practice]
+      tags: [ child-practice ]
       operationId: startReplay
       summary: Start a replay run of a completed mission (no XP, no bonus)
       responses:
         "200":
-          description: Replay started; first task of the new run
+          description: Replay started, or the unfinished replay run returned unchanged; first unresolved task of that run
           content:
             application/json:
               schema: { $ref: "#/components/schemas/TaskView" }
@@ -109,7 +119,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/MissionId"
     get:
-      tags: [child-hq]
+      tags: [ child-hq ]
       operationId: getMissionSummary
       summary: Mission-complete screen for the latest completed run
       responses:
@@ -126,7 +136,7 @@ paths:
       - $ref: "#/components/parameters/MissionId"
       - $ref: "#/components/parameters/TaskId"
     get:
-      tags: [child-practice]
+      tags: [ child-practice ]
       operationId: getTask
       summary: A task within the mission's current run
       responses:
@@ -142,7 +152,7 @@ paths:
       - $ref: "#/components/parameters/MissionId"
       - $ref: "#/components/parameters/TaskId"
     post:
-      tags: [child-practice]
+      tags: [ child-practice ]
       operationId: submitAttempt
       summary: Submit all parts of a task
       description: |
@@ -163,13 +173,15 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/Conflict" }
+        "413":
+          $ref: "#/components/responses/TooLarge"
 
   /api/child/missions/{missionId}/tasks/{taskId}/hints:
     parameters:
       - $ref: "#/components/parameters/MissionId"
       - $ref: "#/components/parameters/TaskId"
     post:
-      tags: [child-practice]
+      tags: [ child-practice ]
       operationId: openNextHint
       summary: Open the next hint in order
       responses:
@@ -185,29 +197,11 @@ paths:
             application/problem+json:
               schema: { $ref: "#/components/schemas/Problem" }
 
-  /api/child/tasks/{taskId}/reports:
-    parameters:
-      - $ref: "#/components/parameters/TaskId"
-    post:
-      tags: [child-practice]
-      operationId: reportProblem
-      summary: Report a problem with a task
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: "#/components/schemas/ReportRequest" }
-      responses:
-        "201":
-          description: Report stored
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "404": { $ref: "#/components/responses/NotFound" }
-
   /api/child/images/{imageId}:
     parameters:
       - $ref: "#/components/parameters/ImageId"
     get:
-      tags: [child-practice]
+      tags: [ child-practice ]
       operationId: getChildImage
       summary: Image of a task that is served to the child
       responses:
@@ -222,7 +216,7 @@ paths:
 
   /api/child/profile/settings:
     get:
-      tags: [child-profile]
+      tags: [ child-profile ]
       operationId: getProfileSettings
       responses:
         "200":
@@ -231,7 +225,7 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ProfileSettings" }
     patch:
-      tags: [child-profile]
+      tags: [ child-profile ]
       operationId: updateProfileSettings
       requestBody:
         required: true
@@ -250,43 +244,67 @@ paths:
           content:
             application/problem+json:
               schema: { $ref: "#/components/schemas/Problem" }
+        "413":
+          $ref: "#/components/responses/TooLarge"
 
   # ------------------------------------------------------------------ admin
   /api/admin/session:
     get:
-      tags: [admin-session]
+      tags: [ admin-session ]
       operationId: getAdminSession
       summary: Whether the caller has an admin session
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "204": { description: Signed in }
         "401": { $ref: "#/components/responses/Unauthorized" }
     post:
-      tags: [admin-session]
+      tags: [ admin-session ]
       operationId: signIn
       summary: Sign in (creates the HttpOnly, SameSite=Strict session cookie)
       security: []
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema: { $ref: "#/components/schemas/SignInRequest" }
       responses:
-        "204": { description: Signed in; session and XSRF-TOKEN cookies set }
-        "401": { $ref: "#/components/responses/Unauthorized" }
+        "204":
+          description: Signed in
+          headers:
+            Set-Cookie:
+              description: "`SESSION` (HttpOnly; SameSite=Strict) and `XSRF-TOKEN` (readable by JS, sent back as X-XSRF-TOKEN)"
+              schema:
+                type: string
+        "401":
+          description: Invalid credentials (fixed title; bodies identical apart from instance)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              example:
+                type: about:blank
+                title: Invalid credentials
+                status: 401
+      description: Any missing, empty, null, malformed or oversized body, and any wrong password, is answered 401 with title `Invalid credentials` and never 400. Extra fields (e.g. username) are ignored.
     delete:
-      tags: [admin-session]
+      tags: [ admin-session ]
       operationId: signOut
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "204": { description: Signed out }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /api/admin/reference:
     get:
-      tags: [admin-reference]
+      tags: [ admin-reference ]
       operationId: getReferenceData
       summary: Seeded topics and configured task locales
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Reference data
@@ -297,9 +315,9 @@ paths:
 
   /api/admin/sources:
     get:
-      tags: [admin-sources]
+      tags: [ admin-sources ]
       operationId: listSources
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Sources
@@ -310,10 +328,12 @@ paths:
                 items: { $ref: "#/components/schemas/Source" }
         "401": { $ref: "#/components/responses/Unauthorized" }
     post:
-      tags: [admin-sources]
+      tags: [ admin-sources ]
       operationId: uploadSource
       summary: Upload a PDF source (PDF only, ≤ 50 MB)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -335,9 +355,9 @@ paths:
     parameters:
       - $ref: "#/components/parameters/SourceId"
     get:
-      tags: [admin-sources]
+      tags: [ admin-sources ]
       operationId: getSource
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Source
@@ -347,9 +367,11 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
     patch:
-      tags: [admin-sources]
+      tags: [ admin-sources ]
       operationId: updateSource
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -365,11 +387,15 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          $ref: "#/components/responses/Conflict"
     delete:
-      tags: [admin-sources]
+      tags: [ admin-sources ]
       operationId: deleteSource
-      summary: Delete — refused (409) when any attempt references it (FR-56)
-      security: [{ adminSession: [] }]
+      summary: Delete — refused (409) while any task references it (CA-D4, FR-56)
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "204": { description: Deleted }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -381,10 +407,10 @@ paths:
     parameters:
       - $ref: "#/components/parameters/SourceId"
     get:
-      tags: [admin-sources]
+      tags: [ admin-sources ]
       operationId: getSourceFile
       summary: The PDF itself, for the viewer
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: PDF bytes
@@ -396,10 +422,10 @@ paths:
 
   /api/admin/tasks:
     get:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: listTasks
       summary: Filter and search tasks (FR-11)
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       parameters:
         - { name: grade, in: query, schema: { type: integer } }
         - { name: topicId, in: query, schema: { type: string, format: uuid } }
@@ -407,7 +433,7 @@ paths:
         - { name: page, in: query, schema: { type: integer, minimum: 1 } }
         - { name: modality, in: query, schema: { $ref: "#/components/schemas/Modality" } }
         - { name: status, in: query, schema: { $ref: "#/components/schemas/PublishStatus" } }
-        - { name: q, in: query, description: Search in the Czech prompt, schema: { type: string } }
+        - { name: q, in: query, description: Search in the Czech prompt, schema: { type: string, maxLength: 200 } }
       responses:
         "200":
           description: Matching tasks
@@ -417,11 +443,15 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/TaskSummary" }
         "401": { $ref: "#/components/responses/Unauthorized" }
+        "400":
+          $ref: "#/components/responses/BadRequest"
     post:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: createTask
       summary: Create a task (starts as DRAFT)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -437,41 +467,13 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
 
-  /api/admin/tasks/publish:
-    post:
-      tags: [admin-tasks]
-      operationId: bulkPublishTasks
-      security: [{ adminSession: [] }]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [taskIds]
-              properties:
-                taskIds:
-                  type: array
-                  minItems: 1
-                  items: { type: string, format: uuid }
-      responses:
-        "200":
-          description: Per-task result
-          content:
-            application/json:
-              schema:
-                type: array
-                items: { $ref: "#/components/schemas/PublishResult" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-
   /api/admin/tasks/{taskId}:
     parameters:
       - $ref: "#/components/parameters/TaskId"
     get:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: getAdminTask
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Task with full answer specs and provenance
@@ -481,10 +483,12 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
     put:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: updateTask
       summary: Edit every field (FR-55); new specs apply to future checks only
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -500,11 +504,15 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          $ref: "#/components/responses/Conflict"
     delete:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: deleteTask
       summary: Delete — refused (409) with attempts or in a published mission (FR-56)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "204": { description: Deleted }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -516,10 +524,12 @@ paths:
     parameters:
       - $ref: "#/components/parameters/TaskId"
     put:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: setTaskStatus
       summary: Publish or unpublish — 409 when a published mission holds it (FR-57)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -540,17 +550,19 @@ paths:
     parameters:
       - $ref: "#/components/parameters/TaskId"
     post:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: addTaskImage
       summary: Attach a PNG/JPG image (≤ 5 MB), appended last
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
-              required: [file]
+              required: [ file ]
               properties:
                 file: { type: string, format: binary }
       responses:
@@ -564,17 +576,25 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "413": { $ref: "#/components/responses/TooLarge" }
         "415": { $ref: "#/components/responses/UnsupportedType" }
+        "409":
+          description: The task already has 10 images
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
     put:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: reorderTaskImages
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [imageIds]
+              required: [ imageIds ]
               properties:
                 imageIds:
                   type: array
@@ -598,9 +618,9 @@ paths:
       - $ref: "#/components/parameters/TaskId"
       - $ref: "#/components/parameters/ImageId"
     get:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: getAdminImage
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Image bytes
@@ -612,9 +632,11 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
     delete:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: deleteTaskImage
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "204": { description: Removed }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -625,10 +647,10 @@ paths:
     parameters:
       - $ref: "#/components/parameters/TaskId"
     get:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: previewTask
       summary: The task exactly as the child would see it (FR-10)
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       parameters:
         - name: locale
           in: query
@@ -636,7 +658,7 @@ paths:
           schema: { $ref: "#/components/schemas/TaskLocale" }
       responses:
         "200":
-          description: Child view of the task, with every hint opened
+          description: "Child view of the task with every hint opened; outside a mission: missionId null, position 1, attemptsUsed 0, state UNRESOLVED, lastFeedback null"
           content:
             application/json:
               schema: { $ref: "#/components/schemas/TaskView" }
@@ -647,10 +669,12 @@ paths:
     parameters:
       - $ref: "#/components/parameters/TaskId"
     post:
-      tags: [admin-tasks]
+      tags: [ admin-tasks ]
       operationId: testAnswers
       summary: Answer tester — verdicts only, nothing recorded (FR-10)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -671,9 +695,9 @@ paths:
 
   /api/admin/missions:
     get:
-      tags: [admin-missions]
+      tags: [ admin-missions ]
       operationId: listMissions
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Missions
@@ -684,9 +708,11 @@ paths:
                 items: { $ref: "#/components/schemas/AdminMission" }
         "401": { $ref: "#/components/responses/Unauthorized" }
     post:
-      tags: [admin-missions]
+      tags: [ admin-missions ]
       operationId: createMission
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -706,9 +732,9 @@ paths:
     parameters:
       - $ref: "#/components/parameters/MissionId"
     get:
-      tags: [admin-missions]
+      tags: [ admin-missions ]
       operationId: getAdminMission
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       responses:
         "200":
           description: Mission
@@ -718,10 +744,12 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
     put:
-      tags: [admin-missions]
+      tags: [ admin-missions ]
       operationId: updateMission
-      summary: Edit position and tasks (all tasks must share the mission's topic)
-      security: [{ adminSession: [] }]
+      summary: Edit topic (only while empty), position and the ordered task list
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -737,11 +765,15 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          $ref: "#/components/responses/Conflict"
     delete:
-      tags: [admin-missions]
+      tags: [ admin-missions ]
       operationId: deleteMission
       summary: Delete — refused (409) when any attempt references it (FR-56)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "204": { description: Deleted }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -753,10 +785,12 @@ paths:
     parameters:
       - $ref: "#/components/parameters/MissionId"
     put:
-      tags: [admin-missions]
+      tags: [ admin-missions ]
       operationId: setMissionStatus
       summary: Publish — 409 unless every task is PUBLISHED and TEXT (FR-57)
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       requestBody:
         required: true
         content:
@@ -775,15 +809,15 @@ paths:
 
   /api/admin/stats:
     get:
-      tags: [admin-stats]
+      tags: [ admin-stats ]
       operationId: getStats
       summary: Weekly practice statistics and the success metric (FR-40)
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       parameters:
         - name: weeks
           in: query
           description: Number of most recent weeks (Mon–Sun, Europe/Prague)
-          schema: { type: integer, minimum: 1, maximum: 52, default: 4 }
+          schema: { type: integer, minimum: 1, maximum: 52, default: 4, format: int32 }
       responses:
         "200":
           description: Stats
@@ -791,13 +825,15 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Stats" }
         "401": { $ref: "#/components/responses/Unauthorized" }
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /api/admin/reports:
     get:
-      tags: [admin-stats]
+      tags: [ admin-stats ]
       operationId: listReports
       summary: Flag queue — OPEN first, oldest first (FR-41)
-      security: [{ adminSession: [] }]
+      security: [ { adminSession: [] } ]
       parameters:
         - name: status
           in: query
@@ -811,15 +847,19 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Report" }
         "401": { $ref: "#/components/responses/Unauthorized" }
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /api/admin/reports/{reportId}/reevaluate:
     parameters:
       - $ref: "#/components/parameters/ReportId"
     post:
-      tags: [admin-stats]
+      tags: [ admin-stats ]
       operationId: reevaluateReport
       summary: Re-check the attached attempt with the current spec; only ever adds XP
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "200":
           description: Result of the re-evaluation
@@ -830,14 +870,18 @@ paths:
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/Conflict" }
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /api/admin/reports/{reportId}/dismiss:
     parameters:
       - $ref: "#/components/parameters/ReportId"
     post:
-      tags: [admin-stats]
+      tags: [ admin-stats ]
       operationId: dismissReport
-      security: [{ adminSession: [] }]
+      security:
+        - adminSession: []
+          csrfToken: []
       responses:
         "200":
           description: Dismissed
@@ -848,6 +892,41 @@ paths:
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/Conflict" }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /api/child/missions/{missionId}/tasks/{taskId}/reports:
+    parameters:
+      - $ref: "#/components/parameters/MissionId"
+      - $ref: "#/components/parameters/TaskId"
+    post:
+      tags:
+        - child-practice
+      operationId: reportProblem
+      summary: Report a problem with a task; the latest raw attempt of the current run of this mission is attached
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportRequest"
+      responses:
+        "201":
+          description: Report stored
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          $ref: "#/components/responses/TooLarge"
+  /api/child/hq/rank-up-ack:
+    post:
+      tags:
+        - child-hq
+      operationId: ackRankUp
+      summary: Mark the pending rank-up as celebrated so it never plays again
+      responses:
+        "204":
+          description: Acknowledged (also when nothing was pending)
 
 components:
   securitySchemes:
@@ -860,18 +939,18 @@ components:
         after 8 h without admin activity (NFR-15). Data-changing requests
         must also send the `X-XSRF-TOKEN` header matching the `XSRF-TOKEN`
         cookie, otherwise 403.
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-XSRF-TOKEN
+      description: Value of the XSRF-TOKEN cookie; required on every data-changing admin request except signIn (NFR-15)
 
   parameters:
-    MissionId:
-      { name: missionId, in: path, required: true, schema: { type: string, format: uuid } }
-    TaskId:
-      { name: taskId, in: path, required: true, schema: { type: string, format: uuid } }
-    SourceId:
-      { name: sourceId, in: path, required: true, schema: { type: string, format: uuid } }
-    ImageId:
-      { name: imageId, in: path, required: true, schema: { type: string, format: uuid } }
-    ReportId:
-      { name: reportId, in: path, required: true, schema: { type: string, format: uuid } }
+    MissionId: { name: missionId, in: path, required: true, schema: { type: string, format: uuid } }
+    TaskId: { name: taskId, in: path, required: true, schema: { type: string, format: uuid } }
+    SourceId: { name: sourceId, in: path, required: true, schema: { type: string, format: uuid } }
+    ImageId: { name: imageId, in: path, required: true, schema: { type: string, format: uuid } }
+    ReportId: { name: reportId, in: path, required: true, schema: { type: string, format: uuid } }
 
   responses:
     BadRequest:
@@ -900,7 +979,7 @@ components:
         application/problem+json:
           schema: { $ref: "#/components/schemas/Problem" }
     TooLarge:
-      description: File larger than allowed (PDF 50 MB, image 5 MB)
+      description: "Too large: a source PDF over 50 MB, an image over 5 MB, or a child request body over 16 KB"
       content:
         application/problem+json:
           schema: { $ref: "#/components/schemas/Problem" }
@@ -914,7 +993,7 @@ components:
     # ------------------------------------------------------------ common
     Problem:
       type: object
-      required: [title, status]
+      required: [ title, status ]
       properties:
         type: { type: string, format: uri, default: "about:blank" }
         title: { type: string }
@@ -924,7 +1003,7 @@ components:
           type: array
           items:
             type: object
-            required: [field, message]
+            required: [ field, message ]
             properties:
               field: { type: string }
               message: { type: string }
@@ -932,47 +1011,74 @@ components:
           type: array
           description: Ids of the entities that block the action (e.g. the draft task blocking a mission publish)
           items: { type: string, format: uuid }
+        instance:
+          type: string
+          format: uri-reference
 
     PublishStatus:
       type: string
-      enum: [DRAFT, PUBLISHED]
+      enum: [ DRAFT, PUBLISHED ]
     StatusChange:
       type: object
-      required: [status]
+      required: [ status ]
       properties:
         status: { $ref: "#/components/schemas/PublishStatus" }
     Modality:
       type: string
-      enum: [TEXT, GRAPHIC]
+      enum: [ TEXT, GRAPHIC ]
     TaskLocale:
       type: string
-      description: Configured secondary task locales; MVP supports `uk` only
-      enum: [uk]
+      pattern: ^[a-z]{2}$
+      description: A configured secondary task locale (MVP configures `uk`). Allowed values come from getReferenceData; adding a locale is configuration only (FR-8, NFR-9).
     LocalizedText:
       type: object
-      required: [cs]
+      required:
+        - cs
+        - secondary
       properties:
-        cs: { type: string }
-        uk: { type: string, description: Present only when translated and the toggle is on }
+        cs:
+          type: string
+        secondary:
+          type: object
+          nullable: true
+          description: Present only when a translation exists and the secondary locale is on
+          required:
+            - locale
+            - text
+          properties:
+            locale:
+              $ref: "#/components/schemas/TaskLocale"
+            text:
+              type: string
 
     # ------------------------------------------------------------ child
     HqView:
       type: object
-      required: [displayName, totalXp, solvedTasks, rank, topics]
+      required:
+        - displayName
+        - totalXp
+        - solvedTasks
+        - rank
+        - nextRank
+        - pendingRankUp
+        - topics
       properties:
-        displayName: { type: string }
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 50
         totalXp: { type: integer, minimum: 0 }
         solvedTasks: { type: integer, minimum: 0 }
         rank: { $ref: "#/components/schemas/Rank" }
         nextRank:
-          allOf: [{ $ref: "#/components/schemas/Rank" }]
+          allOf: [ { $ref: "#/components/schemas/Rank" } ]
           nullable: true
           description: Null at the top rank
         continueTarget:
           nullable: true
           description: The "Pokračovat" target; null when no mission is in progress
           type: object
-          required: [missionId, taskId]
+          required: [ missionId, taskId ]
           properties:
             missionId: { type: string, format: uuid }
             taskId: { type: string, format: uuid }
@@ -980,26 +1086,31 @@ components:
           type: array
           items:
             type: object
-            required: [topicId, name, missions]
+            required: [ topicId, name, missions ]
             properties:
               topicId: { type: string, format: uuid }
               name: { type: string }
               missions:
                 type: array
                 items: { $ref: "#/components/schemas/MissionCard" }
+        pendingRankUp:
+          allOf:
+            - $ref: "#/components/schemas/Rank"
+          nullable: true
+          description: Highest rank reached outside a child session (publish-time bonus, admin re-evaluation) and not yet celebrated; cleared by ackRankUp
     Rank:
       type: object
-      required: [index, name, minXp]
+      required: [ index, name, minXp ]
       properties:
         index: { type: integer, minimum: 0, description: 0-based position in the skin's ladder }
         name: { type: string }
-        minXp: { type: integer, minimum: 0 }
+        minXp: { type: integer, minimum: 0, maximum: 1000000 }
     MissionState:
       type: string
-      enum: [NEW, IN_PROGRESS, COMPLETE]
+      enum: [ NEW, IN_PROGRESS, COMPLETE ]
     MissionCard:
       type: object
-      required: [missionId, position, taskCount, resolvedCount, state]
+      required: [ missionId, position, taskCount, resolvedCount, state ]
       properties:
         missionId: { type: string, format: uuid }
         position: { type: integer, minimum: 1, maximum: 999, description: Position within the topic (missions have no name, CA-D17) }
@@ -1008,7 +1119,7 @@ components:
         state: { $ref: "#/components/schemas/MissionState" }
     MissionBriefing:
       type: object
-      required: [missionId, position, topicName, state, xpAvailable, tasks]
+      required: [ missionId, position, topicName, state, xpAvailable, tasks ]
       properties:
         missionId: { type: string, format: uuid }
         position: { type: integer, minimum: 1, maximum: 999 }
@@ -1022,17 +1133,17 @@ components:
           type: array
           items:
             type: object
-            required: [taskId, position, state]
+            required: [ taskId, position, state ]
             properties:
               taskId: { type: string, format: uuid }
               position: { type: integer, minimum: 1 }
               state: { $ref: "#/components/schemas/TaskState" }
     TaskState:
       type: string
-      enum: [UNRESOLVED, CORRECT_FIRST_TRY, CORRECT_SECOND_TRY, REVEALED]
+      enum: [ UNRESOLVED, CORRECT_FIRST_TRY, CORRECT_SECOND_TRY, REVEALED ]
     TaskView:
       type: object
-      required: [taskId, missionId, position, prompt, images, parts, hints, maxAttempts, attemptsUsed, state, translationAvailable]
+      required: [ taskId, missionId, position, prompt, images, parts, hints, maxAttempts, attemptsUsed, state, translationAvailable ]
       properties:
         taskId: { type: string, format: uuid }
         missionId: { type: string, format: uuid, nullable: true, description: Null in the admin preview }
@@ -1043,7 +1154,7 @@ components:
           type: array
           items:
             type: object
-            required: [imageId, url]
+            required: [ imageId, url ]
             properties:
               imageId: { type: string, format: uuid }
               url: { type: string }
@@ -1052,19 +1163,19 @@ components:
           minItems: 1
           items: { $ref: "#/components/schemas/PartView" }
         hints: { $ref: "#/components/schemas/HintState" }
-        maxAttempts: { type: integer, enum: [2] }
+        maxAttempts: { type: integer, enum: [ 2 ] }
         attemptsUsed: { type: integer, minimum: 0, maximum: 2 }
         state: { $ref: "#/components/schemas/TaskState" }
         lastFeedback:
-          allOf: [{ $ref: "#/components/schemas/AttemptResult" }]
+          allOf: [ { $ref: "#/components/schemas/AttemptResult" } ]
           nullable: true
-          description: Result of the latest graded attempt in this run, so a reload shows wrong or locked parts
+          description: "Result of the latest graded attempt in this run, so a reload shows wrong or locked parts. Its rankUp is always null: a celebration never replays."
     AnswerType:
       type: string
-      enum: [INTEGER, DECIMAL, FRACTION, NUMBER_WITH_UNIT, CHOICE_SINGLE, CHOICE_MULTI, TEXT]
+      enum: [ INTEGER, DECIMAL, FRACTION, NUMBER_WITH_UNIT, CHOICE_SINGLE, CHOICE_MULTI, TEXT ]
     PartView:
       type: object
-      required: [key, label, type]
+      required: [ key, label, type ]
       properties:
         key: { type: string, example: a }
         label: { $ref: "#/components/schemas/LocalizedText" }
@@ -1075,13 +1186,13 @@ components:
           description: Choice options (CHOICE_* only)
           items:
             type: object
-            required: [key, text]
+            required: [ key, text ]
             properties:
               key: { type: string }
               text: { $ref: "#/components/schemas/LocalizedText" }
     HintState:
       type: object
-      required: [total, opened]
+      required: [ total, opened ]
       properties:
         total: { type: integer, minimum: 0 }
         opened:
@@ -1089,56 +1200,92 @@ components:
           items: { $ref: "#/components/schemas/OpenedHint" }
     OpenedHint:
       type: object
-      required: [index, text, remaining]
+      required: [ index, text, remaining ]
       properties:
         index: { type: integer, minimum: 1 }
         text: { $ref: "#/components/schemas/LocalizedText" }
         remaining: { type: integer, minimum: 0 }
     AttemptRequest:
       type: object
-      required: [answers]
+      required: [ answers ]
       properties:
         answers:
           type: object
-          description: Raw input per part key. Choice parts send option keys.
+          description: "Raw input per part key. CHOICE_SINGLE and CHOICE_MULTI parts send an array of option keys (may be empty or repeat keys); every other type sends a string. A shape that does not match the part type, or an unknown part key, is refused with 400 naming `answers.<partKey>`. An over-long string is not refused: it is graded UNPARSEABLE."
           additionalProperties:
             oneOf:
               - type: string
               - type: array
-                items: { type: string }
+                maxItems: 20
+                items:
+                  type: string
+                  maxLength: 100
     Verdict:
       type: string
-      enum: [CORRECT, WRONG, UNPARSEABLE]
+      enum: [ CORRECT, WRONG, UNPARSEABLE ]
     PartResult:
       type: object
-      required: [key, verdict]
+      required:
+        - key
+        - verdict
+        - normalized
+        - formatTip
       properties:
         key: { type: string }
         verdict: { $ref: "#/components/schemas/Verdict" }
-        normalized: { type: string, nullable: true, description: Normalized interpretation of the input }
-        formatTip: { type: string, nullable: true, description: Czech format message when UNPARSEABLE }
+        normalized: { type: string, nullable: true, description: Normalized interpretation (format defined in answer-checking); null exactly when the verdict is UNPARSEABLE }
+        formatTip:
+          type: string
+          nullable: true
+          maxLength: 120
+          description: Czech format tip; present only when the verdict is UNPARSEABLE, otherwise null
         locked: { type: boolean, description: Correct on an earlier attempt; not re-entered }
     AttemptResult:
       type: object
-      required: [status, parts, taskState, attemptsLeft, xpAwarded]
+      required:
+        - status
+        - attemptNo
+        - parts
+        - taskState
+        - attemptsLeft
+        - xpAwarded
+        - bonusXp
+        - completedMissionIds
+        - feedback
+        - rankUp
+        - missionComplete
       properties:
         status:
           type: string
-          enum: [GRADED, UNPARSEABLE]
+          enum: [ GRADED, UNPARSEABLE ]
           description: UNPARSEABLE — nothing graded, no attempt used or stored
-        attemptNo: { type: integer, minimum: 1, maximum: 2, nullable: true }
+        attemptNo: { type: integer, minimum: 1, maximum: 2, nullable: true, description: Null exactly when status is UNPARSEABLE }
         parts:
           type: array
           items: { $ref: "#/components/schemas/PartResult" }
         taskState: { $ref: "#/components/schemas/TaskState" }
         attemptsLeft: { type: integer, minimum: 0, maximum: 2 }
-        xpAwarded: { type: integer, minimum: 0, description: XP for this task's first resolution; 0 otherwise }
-        feedback: { $ref: "#/components/schemas/Feedback" }
-        rankUp:
-          allOf: [{ $ref: "#/components/schemas/Rank" }]
+        xpAwarded: { type: integer, minimum: 0, description: Task XP for this first resolution only; 0 otherwise. Excludes completion bonuses (see bonusXp). }
+        feedback:
+          allOf:
+            - $ref: "#/components/schemas/Feedback"
           nullable: true
-          description: The new rank when this result crossed a threshold
+          description: Present when status is GRADED; null when UNPARSEABLE
+        rankUp:
+          allOf: [ { $ref: "#/components/schemas/Rank" } ]
+          nullable: true
+          description: The new rank when this task award crossed a threshold mid-mission (animate now). Null when the crossing happened together with mission completion; it is then celebrated on the mission summary.
         missionComplete: { type: boolean, description: True when this resolved the run's last task }
+        bonusXp:
+          type: integer
+          minimum: 0
+          description: Completion bonuses paid by this resolution, for every mission it completed (OQ-28)
+        completedMissionIds:
+          type: array
+          description: Every mission this resolution completed for the first time, including other missions sharing the task
+          items:
+            type: string
+            format: uuid
     Feedback:
       type: object
       description: Deterministic MVP feedback from the tutor seam (FR-44)
@@ -1150,13 +1297,26 @@ components:
           description: Present only once the task is REVEALED
           items:
             type: object
-            required: [key, answer]
+            required: [ key, answer ]
             properties:
               key: { type: string }
-              answer: { type: string }
+              answer:
+                description: The first accepted answer as entered; for CHOICE_* the correct option keys
+                oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
     MissionSummary:
       type: object
-      required: [missionId, xpEarned, firstTryCount, taskCount, replay]
+      required:
+        - missionId
+        - xpEarned
+        - firstTryCount
+        - taskCount
+        - replay
+        - rankUp
+        - rankReachedDuringRun
       properties:
         missionId: { type: string, format: uuid }
         xpEarned: { type: integer, minimum: 0, description: Task XP plus bonus earned in this run }
@@ -1164,23 +1324,32 @@ components:
         taskCount: { type: integer, minimum: 1 }
         replay: { type: boolean }
         rankUp:
-          allOf: [{ $ref: "#/components/schemas/Rank" }]
+          allOf: [ { $ref: "#/components/schemas/Rank" } ]
           nullable: true
+          description: "Rank crossed by the completing award or bonus: animate on this screen"
+        rankReachedDuringRun:
+          allOf:
+            - $ref: "#/components/schemas/Rank"
+          nullable: true
+          description: "Rank reached earlier in this run and already celebrated: show as a static line only"
     ReportReason:
       type: string
-      enum: [ANSWER_IS_CORRECT, UNCLEAR_PROMPT, OTHER]
+      enum: [ ANSWER_IS_CORRECT, UNCLEAR_PROMPT, OTHER ]
     ReportRequest:
       type: object
-      required: [reason]
+      required: [ reason ]
       properties:
         reason: { $ref: "#/components/schemas/ReportReason" }
-        note: { type: string, maxLength: 1000, description: Required for OTHER }
+        note:
+          type: string
+          maxLength: 1000
+          description: Required (non-blank after trimming) when reason is OTHER; otherwise optional; refused with 400
     ProfileSettings:
       type: object
-      required: [secondaryTaskLocale, answerMode]
+      required: [ secondaryTaskLocale, answerMode ]
       properties:
         secondaryTaskLocale:
-          allOf: [{ $ref: "#/components/schemas/TaskLocale" }]
+          allOf: [ { $ref: "#/components/schemas/TaskLocale" } ]
           nullable: true
         answerMode: { $ref: "#/components/schemas/AnswerMode" }
     ProfileSettingsPatch:
@@ -1188,29 +1357,38 @@ components:
       properties:
         secondaryTaskLocale:
           type: string
+          pattern: ^[a-z]{2}$
           nullable: true
-          description: A configured locale or null; others are refused with 400
-        answerMode: { $ref: "#/components/schemas/AnswerMode" }
+          description: A configured task locale, or null to turn the translation off; an unconfigured value is refused with 400
+        answerMode:
+          allOf:
+            - $ref: "#/components/schemas/AnswerMode"
+          description: "Not nullable: null is refused with 400; GUIDED is refused with 422"
+      x-patch-semantics: json-merge-patch
+      description: "JSON merge-patch semantics (RFC 7396): an absent field is unchanged; `secondaryTaskLocale: null` clears it; `answerMode: null` is refused with 400. Unknown top-level fields are ignored. The backend must bind this body with a presence-aware type (e.g. JsonNullable) to tell absent from null."
     AnswerMode:
       type: string
-      enum: [DIRECT, GUIDED]
+      enum: [ DIRECT, GUIDED ]
       description: GUIDED exists for later phases and is refused (422) in MVP
 
     # ------------------------------------------------------------ admin
     SignInRequest:
       type: object
-      required: [password]
+      required: []
       properties:
-        password: { type: string, format: password }
+        password:
+          type: string
+          format: password
+          nullable: true
     ReferenceData:
       type: object
-      required: [topics, taskLocales]
+      required: [ topics, taskLocales ]
       properties:
         topics:
           type: array
           items:
             type: object
-            required: [topicId, code, grade, name]
+            required: [ topicId, code, grade, name ]
             properties:
               topicId: { type: string, format: uuid }
               code: { type: string }
@@ -1221,92 +1399,113 @@ components:
           items: { $ref: "#/components/schemas/TaskLocale" }
     SourceMetadata:
       type: object
-      required: [title, grade, subject]
+      required: [ title, grade, subject ]
       properties:
-        title: { type: string, minLength: 1 }
-        publisher: { type: string }
-        edition: { type: string }
+        title: { type: string, minLength: 1, maxLength: 200 }
+        publisher: { type: string, maxLength: 200, nullable: true }
+        edition: { type: string, maxLength: 50, nullable: true }
         grade: { type: integer, minimum: 1, maximum: 9 }
         subject: { type: string, minLength: 1 }
     SourceUpload:
       allOf:
         - $ref: "#/components/schemas/SourceMetadata"
         - type: object
-          required: [file]
+          required: [ file ]
           properties:
             file: { type: string, format: binary, description: PDF, at most 50 MB }
     Source:
       allOf:
         - $ref: "#/components/schemas/SourceMetadata"
         - type: object
-          required: [sourceId, pageCount]
+          required: [ sourceId, pageCount ]
           properties:
             sourceId: { type: string, format: uuid }
             pageCount: { type: integer, minimum: 1 }
     SourceRef:
       type: object
-      required: [sourceId, page, taskNo]
+      required: [ sourceId, page, taskNo ]
       properties:
         sourceId: { type: string, format: uuid }
         page: { type: integer, minimum: 1 }
-        taskNo: { type: string, minLength: 1 }
-        subPart: { type: string, nullable: true }
+        taskNo: { type: string, minLength: 1, maxLength: 20 }
+        subPart: { type: string, nullable: true, maxLength: 10 }
     AnswerSpec:
       type: object
       description: |
         Rules per type are defined in the answer-checking spec. `accepted`
         lists every accepted answer (FR-20); numeric types compare by value.
-      required: [type, accepted]
+      required: [ type, accepted ]
       properties:
         type: { $ref: "#/components/schemas/AnswerType" }
         accepted:
           type: array
           minItems: 1
-          description: Accepted answers as the admin writes them; for CHOICE_* the correct option keys
-          items: { type: string }
+          maxItems: 10
+          description: Accepted answers stored as the admin entered them (FR-20); for CHOICE_* the correct option keys. TEXT answers are at most 100 code points.
+          items:
+            type: string
+            maxLength: 100
         tolerance: { type: string, nullable: true, description: Absolute tolerance for numeric types; null = exact }
-        exactDecimals: { type: integer, minimum: 0, nullable: true, description: DECIMAL — required number of decimal places }
+        exactDecimals: { type: integer, minimum: 0, nullable: true, description: DECIMAL — required number of decimal places, maximum: 6 }
         allowEquivalent: { type: boolean, default: true, description: FRACTION — accept equal values in other forms }
-        requireLowestTerms: { type: boolean, default: false }
+        requireLowestTerms: { type: boolean, default: false, description: FRACTION only }
         unit: { type: string, nullable: true, description: NUMBER_WITH_UNIT — the unit asked for }
-        unitRequired: { type: boolean, default: true }
+        unitRequired: { type: boolean, default: true, description: "NUMBER_WITH_UNIT only: whether the unit must be given" }
         diacriticsStrict: { type: boolean, default: false, description: TEXT only }
         options:
           type: array
           description: CHOICE_* — all options, in display order
           items:
             type: object
-            required: [key, text]
+            required: [ key, text ]
             properties:
               key: { type: string }
-              text: { type: string }
+              text: { type: string, maxLength: 200 }
+          minItems: 2
+          maxItems: 10
+        acceptedNormalized:
+          type: array
+          readOnly: true
+          description: Normalized interpretation of each `accepted` value, same order; returned by the server, ignored on input
+          items:
+            type: string
     PartInput:
       type: object
-      required: [key, label, spec]
+      required: [ key, label, spec ]
       properties:
         key: { type: string, minLength: 1 }
-        label: { type: string }
+        label: { type: string, maxLength: 10 }
         spec: { $ref: "#/components/schemas/AnswerSpec" }
     Translation:
       type: object
       properties:
-        prompt: { type: string }
+        prompt:
+          type: string
+          maxLength: 4000
         partLabels:
           type: object
-          additionalProperties: { type: string }
+          additionalProperties:
+            type: string
+            maxLength: 10
         hints:
           type: array
+          maxItems: 10
           description: Same order as the Czech hints; missing entries fall back to Czech
-          items: { type: string, nullable: true }
+          items:
+            type: string
+            nullable: true
+            maxLength: 1000
         options:
           type: object
           description: Choice option texts by option key
-          additionalProperties: { type: string }
+          additionalProperties:
+            type: string
+            maxLength: 200
     TaskInput:
       type: object
-      required: [prompt, topicId, grade, difficulty, modality, sourceRef, parts, hints]
+      required: [ prompt, topicId, grade, difficulty, modality, sourceRef, parts, hints ]
       properties:
-        prompt: { type: string, minLength: 1, description: Czech prompt }
+        prompt: { type: string, minLength: 1, description: Czech prompt, maxLength: 4000 }
         topicId: { type: string, format: uuid }
         grade: { type: integer, minimum: 1, maximum: 9 }
         difficulty: { type: integer, minimum: 1, maximum: 3 }
@@ -1314,25 +1513,31 @@ components:
         sourceRef: { $ref: "#/components/schemas/SourceRef" }
         parts:
           type: array
-          description: At least one part is needed to publish a TEXT task
-          items: { $ref: "#/components/schemas/PartInput" }
+          maxItems: 10
+          description: "TEXT: 1-10 parts at every save; GRAPHIC: 0-10 (CA-D13)"
+          items:
+            $ref: "#/components/schemas/PartInput"
         hints:
           type: array
-          items: { type: string, minLength: 1 }
+          maxItems: 10
+          items:
+            type: string
+            minLength: 1
+            maxLength: 1000
         translations:
           type: object
           description: Keyed by configured task locale (MVP `uk`)
           additionalProperties: { $ref: "#/components/schemas/Translation" }
     TaskImage:
       type: object
-      required: [imageId, order, url]
+      required: [ imageId, order, url ]
       properties:
         imageId: { type: string, format: uuid }
         order: { type: integer, minimum: 1 }
         url: { type: string }
     Provenance:
       type: object
-      required: [sourceId, sourceTitle, page, taskNo]
+      required: [ sourceId, sourceTitle, page, taskNo ]
       properties:
         sourceId: { type: string, format: uuid }
         sourceTitle: { type: string }
@@ -1342,7 +1547,7 @@ components:
         subPart: { type: string, nullable: true }
     TaskSummary:
       type: object
-      required: [taskId, promptExcerpt, topicId, grade, difficulty, modality, status, provenance]
+      required: [ taskId, promptExcerpt, topicId, grade, difficulty, modality, status, provenance ]
       properties:
         taskId: { type: string, format: uuid }
         promptExcerpt: { type: string }
@@ -1356,7 +1561,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/TaskInput"
         - type: object
-          required: [taskId, status, images, provenance, attemptCount, missionIds]
+          required: [ taskId, status, images, provenance, attemptCount, missionIds ]
           properties:
             taskId: { type: string, format: uuid }
             status: { $ref: "#/components/schemas/PublishStatus" }
@@ -1368,29 +1573,26 @@ components:
             missionIds:
               type: array
               items: { type: string, format: uuid }
-    PublishResult:
-      type: object
-      required: [taskId, published]
-      properties:
-        taskId: { type: string, format: uuid }
-        published: { type: boolean }
-        reason: { type: string, nullable: true }
     MissionInput:
       type: object
-      required: [topicId, position, taskIds]
+      required: [ topicId, position, taskIds ]
       properties:
         topicId: { type: string, format: uuid }
         position: { type: integer, minimum: 1, maximum: 999, description: Position among the topic's missions on HQ; unique within the topic (CA-D17) }
         taskIds:
           type: array
-          minItems: 1
-          description: Ordered; every task must have the mission's topic (default size 10)
-          items: { type: string, format: uuid }
+          minItems: 0
+          maxItems: 50
+          uniqueItems: true
+          description: Ordered; every task must have the mission topic (default size 10, CA-D18). Any count 0-50 can be saved; publishing needs at least 1 (CA-D7). A task appears at most once (CA-D12).
+          items:
+            type: string
+            format: uuid
     AdminMission:
       allOf:
         - $ref: "#/components/schemas/MissionInput"
         - type: object
-          required: [missionId, status, hasAttempts]
+          required: [ missionId, status, hasAttempts ]
           properties:
             missionId: { type: string, format: uuid }
             status: { $ref: "#/components/schemas/PublishStatus" }
@@ -1398,16 +1600,17 @@ components:
 
     Stats:
       type: object
-      required: [weeks, firstTryRateByTopic, metricMet]
+      required: [ weeks, firstTryRateByTopic, metricMet ]
       properties:
         weeks:
           type: array
           items: { $ref: "#/components/schemas/WeekStats" }
+          description: Exactly `weeks` entries, one per week, oldest first; the current week is the last entry; empty weeks are zeros
         firstTryRateByTopic:
           type: array
           items:
             type: object
-            required: [topicId, topicName, resolved, firstTry]
+            required: [ topicId, topicName, resolved, firstTry ]
             properties:
               topicId: { type: string, format: uuid }
               topicName: { type: string }
@@ -1415,10 +1618,10 @@ components:
               firstTry: { type: integer, minimum: 0 }
         metricMet:
           type: boolean
-          description: ≥ 3 qualifying sessions (≥ 10 answered tasks) in each of the last 4 weeks
+          description: ≥ 3 qualifying sessions (≥ 10 answered tasks) in each of the 4 completed weeks before the current week, independent of `weeks`; too little history = false
     WeekStats:
       type: object
-      required: [weekStart, sessions, qualifyingSessions, tasksPerSession, hintsUsed, revealed]
+      required: [ weekStart, sessions, qualifyingSessions, tasksPerSession, hintsUsed, revealed ]
       properties:
         weekStart: { type: string, format: date, description: Monday, Europe/Prague }
         sessions: { type: integer, minimum: 0 }
@@ -1430,10 +1633,10 @@ components:
         revealed: { type: integer, minimum: 0 }
     ReportStatus:
       type: string
-      enum: [OPEN, FIXED, DISMISSED]
+      enum: [ OPEN, FIXED, DISMISSED ]
     Report:
       type: object
-      required: [reportId, taskId, reason, status, createdAt]
+      required: [ reportId, taskId, reason, status, createdAt ]
       properties:
         reportId: { type: string, format: uuid }
         taskId: { type: string, format: uuid }
@@ -1442,12 +1645,24 @@ components:
         status: { $ref: "#/components/schemas/ReportStatus" }
         createdAt: { type: string, format: date-time }
         attempt:
-          allOf: [{ $ref: "#/components/schemas/LoggedAttempt" }]
+          allOf: [ { $ref: "#/components/schemas/LoggedAttempt" } ]
           nullable: true
+        taskPromptExcerpt:
+          type: string
+          description: First characters of the Czech prompt, so the queue is readable without another call
     LoggedAttempt:
       type: object
       description: Attempt log entry (FR-42)
-      required: [attemptId, attemptNo, rawInput, normalized, verdicts, hintsUsed, createdAt]
+      required:
+        - attemptId
+        - attemptNo
+        - rawInput
+        - normalized
+        - verdicts
+        - hintsUsed
+        - createdAt
+        - replay
+        - reevaluation
       properties:
         attemptId: { type: string, format: uuid }
         attemptNo: { type: integer, minimum: 1, maximum: 2 }
@@ -1458,6 +1673,7 @@ components:
               - type: string
               - type: array
                 items: { type: string }
+          description: Raw input per part key, in the AttemptRequest.answers shape
         normalized:
           type: object
           additionalProperties: { type: string, nullable: true }
@@ -1466,13 +1682,44 @@ components:
           additionalProperties: { $ref: "#/components/schemas/Verdict" }
         hintsUsed: { type: integer, minimum: 0 }
         createdAt: { type: string, format: date-time }
+        replay:
+          type: boolean
+          description: True for attempts made in a replay run (they never earn XP)
+        reevaluation:
+          type: object
+          nullable: true
+          description: Null until the attempt is re-evaluated; the original verdicts stay unchanged
+          required:
+            - verdicts
+            - reevaluatedAt
+          properties:
+            verdicts:
+              type: object
+              additionalProperties:
+                $ref: "#/components/schemas/Verdict"
+            reevaluatedAt:
+              type: string
+              format: date-time
     ReevaluationResult:
       type: object
-      required: [changed, xpAwarded, report]
+      required:
+        - changed
+        - xpAwarded
+        - bonusXp
+        - completedMissionIds
+        - report
       properties:
         changed: { type: boolean, description: False when the new verdict would not improve the outcome }
         newTaskState:
-          allOf: [{ $ref: "#/components/schemas/TaskState" }]
+          allOf: [ { $ref: "#/components/schemas/TaskState" } ]
           nullable: true
-        xpAwarded: { type: integer, minimum: 0 }
+        xpAwarded: { type: integer, minimum: 0, description: Task XP difference awarded; excludes bonuses (see bonusXp) }
         report: { $ref: "#/components/schemas/Report" }
+        bonusXp:
+          type: integer
+          minimum: 0
+        completedMissionIds:
+          type: array
+          items:
+            type: string
+            format: uuid

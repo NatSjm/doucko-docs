@@ -39,7 +39,7 @@ recorded decision.
 | CA-D17 | A mission has a topic and a position within that topic, and no name. Positions are unique within a topic. | practice-flow orders missions by position within each topic. FR-9 defines no name. |
 | CA-D18 | The FR-9 default size of 10 is a target shown in the mission editor. It never blocks saving or publishing. | FR-9 says "default", not "fixed". |
 | CA-D19 | Task search is a case- and diacritics-insensitive substring match on the Czech prompt. An empty or whitespace-only query does not filter. | FR-11. The admin types on an English keyboard, so `obdelnik` must find `obdélník`. |
-| CA-D20 | Expected values are parsed with the checker's input grammar (answer-checking). Numeric expected values have an absolute value below 10^12 and at most 6 decimal places. | answer-checking..answer-checking: admin and child notation then agree, so a dot decimal is accepted and a dot or comma is never a thousands separator. The bounds make overflow testable. |
+| CA-D20 | Expected values are parsed with the checker's input grammar (answer-checking). Numeric expected values have an absolute value below 10^12 and at most 6 decimal places. | answer-checking (integer, decimal, fraction and unit input): admin and child notation then agree, so a dot decimal is accepted and a dot or comma is never a thousands separator. The bounds make overflow testable. |
 | CA-D21 | Each code repo carries a fixture provenance manifest, and a check fails on any unlisted fixture file. | NFR-4 needs an executable mechanism, not a human review. |
 
 ## Requirements

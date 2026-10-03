@@ -1,0 +1,26 @@
+{
+  "contractPath": "api/openapi.yaml",
+  "capabilities": [
+    {
+      "name": "content-authoring"
+    },
+    {
+      "name": "answer-checking"
+    },
+    {
+      "name": "practice-flow"
+    },
+    {
+      "name": "gamification"
+    },
+    {
+      "name": "progress-stats"
+    },
+    {
+      "name": "child-profile"
+    },
+    {
+      "name": "admin-access"
+    }
+  ]
+}

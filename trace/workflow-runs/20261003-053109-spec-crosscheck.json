@@ -1,0 +1,223 @@
+{
+  "workflow": "spec-crosscheck",
+  "file": "./.claude/workflows/spec-crosscheck.js",
+  "description": "Independent cross-capability check of the baseline OpenSpec specs (the Cross-check phase of spec-pipeline on its own), plus verification that previously reported findings are resolved.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T05:31:09.575Z",
+  "finishedAt": "2026-10-03T05:32:20.216Z",
+  "args": {
+    "requirementsPath": "docs/requirements.md",
+    "capabilities": [
+      {
+        "name": "content-authoring",
+        "frIds": [
+          "FR-1",
+          "FR-2",
+          "FR-3",
+          "FR-4",
+          "FR-5",
+          "FR-6",
+          "FR-7",
+          "FR-8",
+          "FR-9",
+          "FR-10",
+          "FR-11",
+          "FR-12",
+          "FR-13",
+          "FR-55",
+          "FR-56",
+          "FR-57"
+        ]
+      },
+      {
+        "name": "answer-checking",
+        "frIds": [
+          "FR-14",
+          "FR-15",
+          "FR-16",
+          "FR-17",
+          "FR-18",
+          "FR-19",
+          "FR-20",
+          "FR-21",
+          "FR-22",
+          "FR-23"
+        ]
+      },
+      {
+        "name": "practice-flow",
+        "frIds": [
+          "FR-24",
+          "FR-25",
+          "FR-26",
+          "FR-27",
+          "FR-28",
+          "FR-29",
+          "FR-30",
+          "FR-31",
+          "FR-32",
+          "FR-33",
+          "FR-44"
+        ]
+      },
+      {
+        "name": "gamification",
+        "frIds": [
+          "FR-34",
+          "FR-35",
+          "FR-36",
+          "FR-37",
+          "FR-38",
+          "FR-39",
+          "FR-58"
+        ]
+      },
+      {
+        "name": "progress-stats",
+        "frIds": [
+          "FR-40",
+          "FR-41",
+          "FR-42"
+        ]
+      },
+      {
+        "name": "child-profile",
+        "frIds": [
+          "FR-43"
+        ]
+      },
+      {
+        "name": "admin-access",
+        "frIds": []
+      }
+    ],
+    "previous": {
+      "gaps": [
+        "docs/requirements.md §6.6 (line 320) says 'The rows they narrow carry a pointer here', but the pointers were put into the H1 title (line 1) instead. The rows FR-1 (61), FR-6 (66), FR-55 (74), FR-56 (75) and NFR-16 (177) have no pointer to CA-D3/CA-D4/CA-D13/OQ-30/OQ-31. This is a traceability defect in requirements.md, not in a spec.",
+        "content-authoring:538 ('Text expected answer') still tests refusal at 201 characters. The limit is now 100 code points (lines 77, 437), so the boundary case of 101 refused / 100 accepted is not tested. The scenario is stale, not contradictory."
+      ],
+      "duplicates": [],
+      "contradictions": [
+        "content-authoring contradicts itself on how expected values are stored. 'Answer spec authoring' (lines 422-424) says 'Accepted answers SHALL be stored in the notation the admin entered', because the checker compares notation. Its own scenarios store normalized values: 'Expected value in Czech notation' (444-446) saves `1 250,75` as `1250.75`, and 'Unit spelling is normalized on save' (510-512) saves `24 cm2` as `24 cm²`. Only the FRACTION scenario (496-500) keeps the entered form. Either limit the 'as entered' rule to FRACTION (where answer-checking:289-293 needs it), or change the DECIMAL and unit scenarios to 'stored as entered, shown normalized'.",
+        "Possible ambiguity (low risk): admin-access:107-108 says fields in a child request body 'that the contract does not define SHALL be ignored, not rejected'. practice-flow:318-322 ('Submission naming an unknown part') and answer-checking:875-877 return 400 for an unknown part key `c` inside `answers`. These agree if `answers` is a map whose keys are values rather than schema fields. admin-access should say that its ignore rule covers top-level/schema fields only and not keys inside `answers`."
+      ]
+    },
+    "deferred": [
+      "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+      "NFR-9 externalization of child UI strings",
+      "NFR-10 Docker volume and cross-platform backup command",
+      "NFR-11 module boundaries verified by tests",
+      "NFR-12 contract drift check in the build",
+      "NFR-13 WCAG AA contrast and reduced motion for screens outside gamification, including the admin UI",
+      "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+      "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 5,
+    "maxTotalUsd": 6,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 1.1507,
+  "steps": [
+    {
+      "label": "coverage-check",
+      "phase": "Cross-check",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 5 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 3774,
+      "durationMs": 70636,
+      "sessionId": "112ac143-fe56-4df9-8be1-b0d066af3c32",
+      "costUsd": 1.150659,
+      "numTurns": 12,
+      "result": {
+        "allCovered": false,
+        "gaps": [
+          "FR coverage: no gaps. Every MVP FR in the ownership map is specified in its owning spec: content-authoring covers FR-1..13 and FR-55..57, answer-checking FR-14..23, practice-flow FR-24..33 and FR-44, gamification FR-34..39 and FR-58, progress-stats FR-40..42, child-profile FR-43. admin-access correctly owns no FR (admin-access:325).",
+          "NFR-9 (cross-cutting, admin half) is effectively owned only by content-authoring. The only externalization check, content-authoring:605-614 'Externalized admin strings', renders only 'the source list, task editor, mission editor and preview'. Other admin UI is English but has no externalization requirement in any spec: the sign-in form (admin-access:73-77, 'Admin UI copy is English' at admin-access:23), the stats page and the flag queue (progress-stats:11). The deliberate exclusion list covers only the child-UI half of NFR-9, so this admin half is silently partial. Either widen the content-authoring scenario to every admin screen, or list admin-UI externalization outside authoring as a Phase 3 owner item.",
+          "Traceability defect in content-authoring:42 (CA-D20 justification). It reads 'answer-checking..answer-checking: admin and child notation then agree'. This looks like a stale or garbled requirement-range reference and does not point at a resolvable requirement. It should name the answer-checking requirements it means (e.g. 'Numeric notation', 'Decimal input')."
+        ],
+        "duplicates": [],
+        "contradictions": [
+          "Oversized child request body: the status code is inconsistent. practice-flow:343-346 (requirement text) says the API SHALL refuse with HTTP 400 '... and any child request body over 16 KB'. practice-flow's own scenario 'Request body too large' (practice-flow:387-391) requires HTTP 413 for a body over 16 KB. answer-checking:875-877 also lists 'oversized request bodies' among the HTTP 400 cases. The specs disagree on 400 vs 413. Pick one (413 is the conventional status) and align practice-flow:346 and answer-checking:876 with it.",
+          "Expected-value range: content-authoring vs practice-flow. content-authoring:420-421 (CA-D20, line 42) and its scenario at content-authoring:466-470 refuse to save any numeric expected value with absolute value ≥ 10^12, explicitly including `99999999999999999999`. practice-flow:375-379 ('Huge integer that is the expected answer') requires a stored, child-served INTEGER part 'expecting `100000000000000000000`'. An admin cannot author that, so the practice-flow e2e scenario is unreachable. answer-checking:156-160 uses the same kind of value, but there it is a pure-checker or golden case and does not depend on stored content, so it is not in conflict. Fix: change practice-flow:375-379 to an expected value below 10^12 with a submitted value written with grouping separators (e.g. `999 999 999 999` vs expected `999999999999`), or state there that the part is seeded directly, bypassing authoring validation."
+        ],
+        "previousFindings": [
+          {
+            "id": "G1",
+            "resolved": true,
+            "evidence": "docs/requirements.md:1 is now the plain title '# Requirements Document'. The narrowed rows carry inline pointers to §6.6: FR-1 at :61 '(§6.6 OQ-31: publisher and edition are optional.)', FR-6 at :66 '(§6.6 CA-D13 ...)', FR-55 at :74 '(§6.6 CA-D3 ...)', FR-56 at :75 '(§6.6 CA-D4 ...)', NFR-16 at :177 '(§6.6 OQ-30: at most 72 bytes.)'. This matches the promise at :319-320."
+          },
+          {
+            "id": "G2",
+            "resolved": true,
+            "evidence": "openspec/specs/content-authoring/spec.md:533-539 'Text expected answer' now tests the boundary: ':538 an expected answer of exactly 100 code points is saved' and ':539 ... or of 101 code points, is refused'. This matches the 100-code-point limit at :77 and :437."
+          },
+          {
+            "id": "C1",
+            "resolved": true,
+            "evidence": "content-authoring:421-425 keeps the 'stored in the notation the admin entered' rule and adds 'The editor SHALL show each value's normalized interpretation next to it'. The scenarios now agree with it. :444-446 saves `1 250,75` 'as entered' and shows normalized `1250.75`. :508-512 (renamed 'Unit spelling is shown normalized') saves `24 cm2` 'as entered' and shows `24 cm²`. :496-500 does the same for FRACTION (`1 1/2` shown as `3/2`). The self-contradiction is gone."
+          },
+          {
+            "id": "C2",
+            "resolved": true,
+            "evidence": "openspec/specs/admin-access/spec.md:107-111 now says 'Top-level fields in a child request body that the contract's schema does not define SHALL be ignored ... This rule does not cover map keys that carry data, such as the part keys inside an attempt's `answers`: an unknown part key is a malformed submission and is refused as practice-flow and answer-checking specify.' This is consistent with practice-flow:318-322 (400 naming `c`), answer-checking:875-877, child-profile:261-264 and gamification:126-129."
+          }
+        ]
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Cross-check",
+      "message": "Open - new gaps: 3, duplicates: 0, contradictions: 2; previous findings unresolved: 0"
+    }
+  ],
+  "returned": {
+    "coverage": {
+      "allCovered": false,
+      "gaps": [
+        "FR coverage: no gaps. Every MVP FR in the ownership map is specified in its owning spec: content-authoring covers FR-1..13 and FR-55..57, answer-checking FR-14..23, practice-flow FR-24..33 and FR-44, gamification FR-34..39 and FR-58, progress-stats FR-40..42, child-profile FR-43. admin-access correctly owns no FR (admin-access:325).",
+        "NFR-9 (cross-cutting, admin half) is effectively owned only by content-authoring. The only externalization check, content-authoring:605-614 'Externalized admin strings', renders only 'the source list, task editor, mission editor and preview'. Other admin UI is English but has no externalization requirement in any spec: the sign-in form (admin-access:73-77, 'Admin UI copy is English' at admin-access:23), the stats page and the flag queue (progress-stats:11). The deliberate exclusion list covers only the child-UI half of NFR-9, so this admin half is silently partial. Either widen the content-authoring scenario to every admin screen, or list admin-UI externalization outside authoring as a Phase 3 owner item.",
+        "Traceability defect in content-authoring:42 (CA-D20 justification). It reads 'answer-checking..answer-checking: admin and child notation then agree'. This looks like a stale or garbled requirement-range reference and does not point at a resolvable requirement. It should name the answer-checking requirements it means (e.g. 'Numeric notation', 'Decimal input')."
+      ],
+      "duplicates": [],
+      "contradictions": [
+        "Oversized child request body: the status code is inconsistent. practice-flow:343-346 (requirement text) says the API SHALL refuse with HTTP 400 '... and any child request body over 16 KB'. practice-flow's own scenario 'Request body too large' (practice-flow:387-391) requires HTTP 413 for a body over 16 KB. answer-checking:875-877 also lists 'oversized request bodies' among the HTTP 400 cases. The specs disagree on 400 vs 413. Pick one (413 is the conventional status) and align practice-flow:346 and answer-checking:876 with it.",
+        "Expected-value range: content-authoring vs practice-flow. content-authoring:420-421 (CA-D20, line 42) and its scenario at content-authoring:466-470 refuse to save any numeric expected value with absolute value ≥ 10^12, explicitly including `99999999999999999999`. practice-flow:375-379 ('Huge integer that is the expected answer') requires a stored, child-served INTEGER part 'expecting `100000000000000000000`'. An admin cannot author that, so the practice-flow e2e scenario is unreachable. answer-checking:156-160 uses the same kind of value, but there it is a pure-checker or golden case and does not depend on stored content, so it is not in conflict. Fix: change practice-flow:375-379 to an expected value below 10^12 with a submitted value written with grouping separators (e.g. `999 999 999 999` vs expected `999999999999`), or state there that the part is seeded directly, bypassing authoring validation."
+      ],
+      "previousFindings": [
+        {
+          "id": "G1",
+          "resolved": true,
+          "evidence": "docs/requirements.md:1 is now the plain title '# Requirements Document'. The narrowed rows carry inline pointers to §6.6: FR-1 at :61 '(§6.6 OQ-31: publisher and edition are optional.)', FR-6 at :66 '(§6.6 CA-D13 ...)', FR-55 at :74 '(§6.6 CA-D3 ...)', FR-56 at :75 '(§6.6 CA-D4 ...)', NFR-16 at :177 '(§6.6 OQ-30: at most 72 bytes.)'. This matches the promise at :319-320."
+        },
+        {
+          "id": "G2",
+          "resolved": true,
+          "evidence": "openspec/specs/content-authoring/spec.md:533-539 'Text expected answer' now tests the boundary: ':538 an expected answer of exactly 100 code points is saved' and ':539 ... or of 101 code points, is refused'. This matches the 100-code-point limit at :77 and :437."
+        },
+        {
+          "id": "C1",
+          "resolved": true,
+          "evidence": "content-authoring:421-425 keeps the 'stored in the notation the admin entered' rule and adds 'The editor SHALL show each value's normalized interpretation next to it'. The scenarios now agree with it. :444-446 saves `1 250,75` 'as entered' and shows normalized `1250.75`. :508-512 (renamed 'Unit spelling is shown normalized') saves `24 cm2` 'as entered' and shows `24 cm²`. :496-500 does the same for FRACTION (`1 1/2` shown as `3/2`). The self-contradiction is gone."
+        },
+        {
+          "id": "C2",
+          "resolved": true,
+          "evidence": "openspec/specs/admin-access/spec.md:107-111 now says 'Top-level fields in a child request body that the contract's schema does not define SHALL be ignored ... This rule does not cover map keys that carry data, such as the part keys inside an attempt's `answers`: an unknown part key is a malformed submission and is refused as practice-flow and answer-checking specify.' This is consistent with practice-flow:318-322 (400 naming `c`), answer-checking:875-877, child-profile:261-264 and gamification:126-129."
+        }
+      ]
+    },
+    "unresolvedPrevious": []
+  }
+}

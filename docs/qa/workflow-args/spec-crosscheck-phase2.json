@@ -120,7 +120,7 @@
   },
   "deferred": [
     "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
-    "NFR-9 externalization of child UI strings",
+    "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
     "NFR-10 Docker volume and cross-platform backup command",
     "NFR-11 module boundaries verified by tests",
     "NFR-12 contract drift check in the build",

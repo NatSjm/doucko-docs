@@ -343,7 +343,8 @@ UNPARSEABLE`), as the answer-checking capability specifies. The API SHALL
 refuse with HTTP 400 only malformed request shapes: more than 20 elements
 in a choice list, a choice element longer than 100 code points, a report
 note longer than 1000 code points (the `ReportRequest.note` limit in
-`api/openapi.yaml`), and any child request body over 16 KB. The task
+`api/openapi.yaml`). Any child request body over 16 KB SHALL be refused
+with HTTP 413 (the contract's `TooLarge` response). The task
 screen inputs SHALL NOT accept more than 100 code points. A number that fits the length limit but is
 larger than any machine integer is still a readable number and SHALL be
 graded by value, never cause a server error.
@@ -374,8 +375,8 @@ graded by value, never cause a server error.
 
 #### Scenario: Huge integer that is the expected answer
 
-- **GIVEN** an INTEGER part expecting `100000000000000000000`
-- **WHEN** the child submits `100 000 000 000 000 000 000` (with non-breaking spaces)
+- **GIVEN** an INTEGER part expecting `999999999999` (the largest value an admin can author, content-authoring CA-D20)
+- **WHEN** the child submits `999 999 999 999` (with non-breaking spaces)
 - **THEN** the part is graded `CORRECT`
 
 #### Scenario: Report note too long

@@ -38,7 +38,7 @@ const ROLES = {
   docs: {
     scripts: ["check-workspace"],
     agents: ["requirements-analyst", "spec-writer", "spec-compliance-auditor", "process-auditor", "qa-documenter", "bug-triage-analyst"],
-    workflows: ["spec-pipeline", "spec-crosscheck", "uat-triage"],
+    workflows: ["spec-pipeline", "spec-crosscheck", "contract-review", "uat-triage"],
     ci: "docs.yml",
     pkgScripts: {
       check: "npm run qa:verify",

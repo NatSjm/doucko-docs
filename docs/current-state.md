@@ -25,11 +25,16 @@
   - Spec-derived rulings accepted 2026-10-03: `docs/requirements.md` §6.5-6.6.
   - Specs validate (`npx openspec validate --all --strict`) and trace
     (`node scripts/check-traceability.mjs`, Result: PASS).
-  - `api/openapi.yaml` v0.1.0 in change `add-api-contract-v0` (draft, not
-    archived; no independent review yet).
-- **Next task:** decide on a final cross-check run and a contract review;
-  archive `add-api-contract-v0`; merge `phase2-specs` → `main`. Then
-  Phase 3 (capability plan incl. owners for the deferred NFRs, checkpoint 2).
+  - Round-2 cross-check confirmed the 4 follow-up fixes resolved; its 4 new
+    minor items were fixed (evidence: `trace/workflow-runs/20261003-053109-spec-crosscheck.json`).
+  - `api/openapi.yaml` v0.2.0 in change `add-api-contract-v0` (draft): the
+    independent contract review of v0.1 found 57 mismatches (4 blocker), all
+    applied — evidence: `trace/workflow-runs/20261003-053111-contract-review.json`.
+    v0.2 itself is not yet re-reviewed.
+- **Next task:** optional verification re-runs (contract-review on v0.2,
+  spec-crosscheck); archive `add-api-contract-v0`; merge `phase2-specs` →
+  `main`. Then Phase 3 (capability plan incl. owners for the deferred NFRs,
+  and NFR-9's admin half; checkpoint 2).
 - **Claims:**
   - Harness installed and not drifted — evidence: `node factory/install.mjs --repo=docs --check`
   - G0 PASS; G1 signed off — evidence: `node scripts/gate-status.mjs` + `docs/qa/checkpoint-1-scope-signoff.md`
