@@ -6,7 +6,7 @@ repos**, so every slice names the repos that implement it, and every MVP
 requirement names its **owner repo(s)**. The gate scripts read that column.
 
 > Inputs: `docs/product-brief.md`, `docs/requirements.md`, the product specs
-> under `openspec/specs/`, and `api/openapi.yaml` v0.5.0 (change
+> under `openspec/specs/`, and `api/openapi.yaml` v0.5.1 (change
 > `add-api-contract-v0`). This plan lives in the docs repo. The code repos
 > read it through their pinned `contract/` submodule.
 >
@@ -118,7 +118,7 @@ frontend run in parallel once the contract is pinned.
   route gate, Playwright browser projects, provenance manifest, logging
   policy. Frontend app shell with OS light/dark theme and no toggle (FR-58).
 - **Scope out:** any product endpoint or screen beyond the shell.
-- **Contract impact:** none (consumes v0.5).
+- **Contract impact:** none (consumes v0.5.1).
 - **Definition of done:** backend: `mvnw verify` green with the generator
   on the pinned contract, `ModularityTest` green, backup/restore test green
   on Windows, log-policy test green. frontend: `npm run qa:verify` green,

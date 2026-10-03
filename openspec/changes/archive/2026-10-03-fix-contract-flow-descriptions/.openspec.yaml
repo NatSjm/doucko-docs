@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-03
+# Contract fix: three schema descriptions were parsed as extra keys. No
+# behavior changes, so it carries no spec deltas.
+skip_specs: true

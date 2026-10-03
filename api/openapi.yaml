@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Doučko API
-  version: 0.5.0
+  version: 0.5.1
   description: |
     Contract between the Doučko backend (Kotlin/Spring Boot) and frontend
     (React/Vite). Single source of truth (NFR-12): server interfaces and the
@@ -26,7 +26,9 @@ info:
     v0.3: applies the review of v0.2
     (trace/workflow-runs/20261003-060056-contract-review.json); v0.4 applies
     the review of v0.3 (trace/workflow-runs/20261003-150844-contract-review.json);
-    v0.5 applies the review of v0.4 (trace/workflow-runs/20261003-151524-contract-review.json).
+    v0.5 applies the review of v0.4 (trace/workflow-runs/20261003-151524-contract-review.json);
+    v0.5.1 quotes three descriptions that YAML split into stray keys
+    (change fix-contract-flow-descriptions).
 
     Conventions:
     - Field paths. `Problem.errors[].field` names the invalid input with a
@@ -1247,7 +1249,7 @@ components:
       required: [ missionId, position, taskCount, resolvedCount, state ]
       properties:
         missionId: { type: string, format: uuid }
-        position: { type: integer, minimum: 1, maximum: 999, description: Position within the topic (missions have no name, CA-D17) }
+        position: { type: integer, minimum: 1, maximum: 999, description: "Position within the topic (missions have no name, CA-D17)" }
         taskCount: { type: integer, minimum: 1 }
         resolvedCount: { type: integer, minimum: 0 }
         state: { $ref: "#/components/schemas/MissionState" }
@@ -1569,7 +1571,7 @@ components:
         - type: object
           required: [ file ]
           properties:
-            file: { type: string, format: binary, description: PDF, at most 50 MB }
+            file: { type: string, format: binary, description: "PDF, at most 50 MB" }
     Source:
       allOf:
         - $ref: "#/components/schemas/SourceMetadata"
@@ -1784,7 +1786,7 @@ components:
       type: object
       required: [ weekStart, sessions, qualifyingSessions, tasksPerSession, hintsUsed, revealed ]
       properties:
-        weekStart: { type: string, format: date, description: Monday, Europe/Prague }
+        weekStart: { type: string, format: date, description: "Monday, Europe/Prague" }
         sessions: { type: integer, minimum: 0 }
         qualifyingSessions: { type: integer, minimum: 0 }
         tasksPerSession:

@@ -1,0 +1,6 @@
+{
+  "change": "fix-contract-flow-descriptions",
+  "clean": true,
+  "note": "Mechanical fix verified by the generator (maker != checker: openapi-generator validateSpec). Backend mvnw compile and frontend api:generate + typecheck pass on 0.5.1; the stray-key scan finds none.",
+  "reviews": [ { "version": "0.5.1", "checker": "openapi-generator-maven-plugin 7.25.0 validateSpec + kotlin-spring generation", "result": "pass" } ]
+}

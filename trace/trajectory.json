@@ -22,6 +22,13 @@
         "progress-stats"
       ],
       "processComplete": false
+    },
+    {
+      "slice": "2026-10-03-fix-contract-flow-descriptions",
+      "reviewEvidence": "clean",
+      "trailerCommits": 0,
+      "libDomains": [],
+      "processComplete": false
     }
   ],
   "overlaps": [],
@@ -46,6 +53,14 @@
     {
       "check": "process",
       "msg": "2026-10-03-add-api-contract-v0: archived change is missing design.md and/or tasks.md"
+    },
+    {
+      "check": "process",
+      "msg": "2026-10-03-fix-contract-flow-descriptions: archived change is missing design.md and/or tasks.md"
+    },
+    {
+      "check": "trailer",
+      "msg": "2026-10-03-fix-contract-flow-descriptions: no commit carries a \"Slice: fix-contract-flow-descriptions\" trailer"
     }
   ]
 }
