@@ -6,7 +6,7 @@
 
 ## Last Updated
 
-- **Date and time:** 2026-10-02 (Europe/Prague)
+- **Date and time:** 2026-10-03 (Europe/Prague)
 - **Current phase:** Phase 2
 - **Last completed gate:** G1
 - **Active change:** `add-api-contract-v0` (draft, not archived) — Phase 2 work on branch `phase2-specs`
