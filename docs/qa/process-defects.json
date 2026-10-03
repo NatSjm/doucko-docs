@@ -322,6 +322,41 @@
         "COR-2"
       ],
       "note": "Entry written by the orchestrator (maker), not the process-auditor; status left for the next auditor run, as with PD-1."
+    },
+    {
+      "id": "PD-9",
+      "class": "declared-method-without-mechanism",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "factory/install.mjs:72",
+          "quote": "workflows: [\"review-gate\", \"trajectory-eval\", \"eval-suite\", \"vision-verify\"]",
+          "note": "Pre-fix: the frontend got the vision-verify workflow but no check:vision script or scripts/check-vision.*, which is what check-acceptance-methods resolves."
+        },
+        {
+          "pointer": "factory/scripts/check-acceptance-methods.mjs:133",
+          "quote": "artifactGlobs: [\"docs/qa/vision-report.md\", \"docs/qa/vision-report.json\"]",
+          "note": "Pre-fix: the workflow writes vision-report.md as a table with no met: line; every match is evaluated and a failing one vetoes, so a met run would fail."
+        },
+        {
+          "pointer": "docs/qa/evidence/pd-9-vision-mechanism-proof.md",
+          "quote": "acceptance (existence): ... 0 failure(s) ... Result: PASS",
+          "note": "Red at G3 (FR-36, FR-37), green after the fix; gate branches exercised."
+        }
+      ],
+      "metric": {
+        "name": "frontend acceptance existence failures for vision-verify",
+        "current": "2 (FR-36, FR-37)",
+        "expectedMovement": "2 -> 0"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-vision.mjs",
+        "sketch": "Deterministic gate over the workflow verdicts in docs/qa/**/manifest.json, writing docs/qa/vision-report.json; installed in frontend as check:vision; artifact glob narrowed to the JSON.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Found by check-acceptance-methods at G3; fix chosen by the product owner at checkpoint 2 (docs/qa/checkpoint-2-plan-signoff.md). Entry written by the orchestrator (maker), not the process-auditor; status left for the next auditor run, as with PD-8."
     }
   ]
 }

@@ -64,7 +64,7 @@ const ROLES = {
     dirs: [],
   },
   frontend: {
-    scripts: ["check-coverage-ratchet", "check-recordings", "check-a11y", "record-demos", "check-eval-ratchet"],
+    scripts: ["check-coverage-ratchet", "check-recordings", "check-a11y", "check-vision", "record-demos", "check-eval-ratchet"],
     agents: [
       "spec-writer", "capability-implementer", "test-engineer", "code-reviewer", "security-reviewer",
       "spec-compliance-auditor", "process-auditor", "bug-triage-analyst", "eval-judge", "vision-judge", "qa-documenter",
@@ -76,6 +76,7 @@ const ROLES = {
       "check:coverage": "node scripts/check-coverage-ratchet.mjs",
       "check:recordings": "node scripts/check-recordings.mjs",
       "check:a11y": "node scripts/check-a11y.mjs",
+      "check:vision": "node scripts/check-vision.mjs",
       "check:eval": "node scripts/check-eval-ratchet.mjs",
       "qa:record-demos": "node scripts/record-demos.mjs",
       "qa:record-proof": "node scripts/record-demos.mjs",
