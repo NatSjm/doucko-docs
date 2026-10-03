@@ -230,7 +230,8 @@ decision OQ-23).
 The `ADMIN_PASSWORD` value SHALL be at least 12 characters, counted as
 Unicode code points of the value exactly as given (no normalization), not as
 bytes (NFR-16, decision OQ-23). Because bcrypt uses only the first 72 bytes
-of its input (NFR-1), the value SHALL also be at most 72 bytes in UTF-8.
+of its input (NFR-1), the value SHALL also be at most 72 bytes in UTF-8
+(decision OQ-30).
 Otherwise the backend SHALL refuse to start and print a clear message that
 names `ADMIN_PASSWORD` and the violated limit (12-character minimum or 72-byte
 maximum) but never the value. Sign-in SHALL compare the full submitted value,

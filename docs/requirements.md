@@ -1,4 +1,4 @@
-# Requirements Document
+# Requirements Document *(§6.6 OQ-31: publisher and edition are optional.)* *(§6.6 CA-D13: a GRAPHIC task may have zero parts.)* *(§6.6 CA-D3: a source's PDF file cannot be replaced.)* *(§6.6 CA-D4: a source referenced by any task cannot be deleted.)* *(§6.6 OQ-30: at most 72 bytes.)*
 
 **Doučko — a home math tutor for a Czech 6th-grader**
 
@@ -304,10 +304,29 @@ Signed off 2026-10-02: the product owner accepted every recommended default
 
 ### 6.5 New: raised during gamification spec authoring (2026-10-03)
 
-These are proposed defaults that the product owner still has to confirm. The
-gamification spec uses them until a decision replaces them.
+Raised by the spec-writer agents in the Phase 2 `spec-pipeline` run.
+**Accepted by the product owner on 2026-10-03** ("accept all"), together
+with §6.6.
 
-| # | Question | Proposed default (pending confirmation) |
+| # | Question | Decision (accepted default) |
 |---|---|---|
 | OQ-28 | Missions that share tasks (OQ-15): does each mission pay its own completion bonus, and when does a mission complete if its last unresolved tasks were resolved in another mission? | Each mission pays its own bonus once, on its first completion (OQ-4). A mission is complete when all its tasks are resolved, wherever they were resolved (OQ-13, OQ-15). Completion is checked on every first resolution of a task. That resolution completes every mission that contains the task and has no other unresolved task, and pays each of those bonuses in the same award. A mission that is published when all its tasks are already resolved is complete at publish time, and its bonus is credited then. No task XP is awarded in that case. Any rank-up this causes is celebrated the next time the child opens HQ. |
 | OQ-29 | Valid range and format of XP values (FR-34/35) and rank thresholds (FR-36) | Every task award, the hint cost and the mission bonus must be a plain integer from 0 to 1000. The minimum award must be from 1 to 1000. Every rank threshold must be a plain integer from 0 to 1 000 000. Values are machine numbers: strings, decimals and locale formats (`"1 500"`, `"10,5"`, `2.5`) are invalid. A missing key is invalid; there are no silent defaults. Invalid XP config stops the backend from starting, and an invalid skin is refused. In both cases the error names the offending key or entry. |
+
+### 6.6 Spec-derived rulings confirmed (2026-10-03)
+
+The Phase 2 spec authors made these rulings where a requirement was silent or
+too literal. The product owner accepted all of them on 2026-10-03. The rows
+they narrow carry a pointer here.
+
+| # | Ruling | Affects | Where it is specified |
+|---|---|---|---|
+| CA-D3 | A source's PDF file cannot be replaced; only its metadata is editable. A new file means a new source. | narrows FR-55 | content-authoring, Derived decisions |
+| CA-D4 | A source cannot be deleted while any task references it, even if no attempt references that task. | narrows FR-56 | content-authoring, Derived decisions |
+| CA-D13 | A `GRAPHIC` task may have zero answer parts; every `TEXT` task has 1..n parts. | departs from FR-6 | content-authoring, Derived decisions |
+| OQ-30 | The admin password is at most 72 bytes in UTF-8, because bcrypt reads only the first 72 bytes. The backend refuses to start otherwise. | amends NFR-16 | admin-access, Admin password policy |
+| OQ-31 | When uploading a source, title, grade and subject are required; publisher and edition are optional. | clarifies FR-1 | content-authoring, PDF sources |
+
+The other derived decisions in the content-authoring spec (CA-D1..CA-D21)
+refine behavior without narrowing a requirement row; they were accepted with
+this sign-off.

@@ -51,7 +51,7 @@ can be reached from the practice flow.
 ### Requirement: Mission list on HQ
 
 HQ SHALL list every published mission, grouped by topic and ordered by
-mission order within each topic, each showing its progress as "x/N vyřešeno"
+mission position within each topic, each showing its progress as "x/N vyřešeno"
 and its state: new, in progress or complete (FR-25). A task counts as
 resolved when it was answered correctly or revealed; a mission is complete
 when all its tasks are resolved (decision OQ-13). All published missions are
@@ -62,7 +62,7 @@ resolution shared by all of them: once resolved in any mission it counts as
 resolved in the x/N progress and completion of every mission that contains
 it, is skipped when continuing those missions, and earns no further XP
 anywhere (rules in gamification). The completion bonus is still paid once per
-mission (FR-35, gamification).
+mission (gamification).
 
 #### Scenario: Mission states
 
@@ -84,9 +84,9 @@ mission (FR-35, gamification).
 
 #### Scenario: Grouping and order
 
-- **GIVEN** published missions in topics "Zlomky" and "Desetinná čísla", each topic with missions of order 1 and 2
+- **GIVEN** published missions in topics "Zlomky" and "Desetinná čísla", each topic with missions at position 1 and 2
 - **WHEN** the child opens HQ
-- **THEN** missions appear under their topic heading, order 1 before order 2 within each topic
+- **THEN** missions appear under their topic heading, position 1 before position 2 within each topic
 
 #### Scenario: All published missions are open
 
@@ -163,9 +163,9 @@ complete).
 The task screen SHALL show the Czech prompt, the task's images, and one
 input per answer part, labelled with the part label; the child submits all
 parts together (FR-26). The whole screen SHALL be operable by keyboard alone
-and Enter SHALL submit (NFR-7). The source reference (workbook location)
-SHALL NOT be shown to the child or returned by the child-facing API
-(decision OQ-7).
+and Enter SHALL submit (NFR-7). The task screen shows only what the
+child-facing task data contains; that the source reference is never part of
+it is owned by content-authoring ("Task provenance", decision OQ-7).
 
 The task screen SHALL load in under 1.5 s (NFR-5). A load is measured in the
 browser from the moment the child activates the control that opens the task
@@ -200,12 +200,6 @@ for the local check. The same threshold applies on both.
 - **WHEN** the child submits with part b empty
 - **THEN** nothing is sent for checking, part b shows "Vyplň prosím odpověď", and the child still has 2 attempts left
 
-#### Scenario: Source reference hidden
-
-- **GIVEN** a task whose source reference is "PS str. 34, cv. 5"
-- **WHEN** the child-facing task data is fetched and the task screen renders
-- **THEN** neither the response nor the screen contains the source reference
-
 #### Scenario: Load time
 
 - **GIVEN** the Docker Compose stack with a seeded published task containing one image of at most 500 KB, and a browser with an empty cache
@@ -218,20 +212,15 @@ for the local check. The same threshold applies on both.
 - **WHEN** the child opens its URL directly
 - **THEN** the API answers 404 with a problem+json body, and the child sees "Tuhle misi jsem nenašel." with a button back to HQ
 
-#### Scenario: Graphic tasks are never served
-
-- **GIVEN** a `GRAPHIC` task stored in the content
-- **WHEN** the child requests it by id through the child-facing API
-- **THEN** the API answers 404 and the task is never shown on the task screen
-
 ### Requirement: Task-scoped requests are checked against the content
 
-Every child request that names a task — submitting an attempt, opening a
-hint or reporting a problem — SHALL be refused with HTTP 404 and an
+Which content is served to the child is decided by content-authoring
+("Draft and published status", "Graphic tasks are never served in MVP").
+Every child request that names a task — fetching it, submitting an attempt,
+opening a hint or reporting a problem — SHALL be refused with HTTP 404 and an
 `application/problem+json` body, storing nothing, when the task does not
-exist, is not published, is a `GRAPHIC` task (TC-8), or, for requests whose
-URL names a mission, is not part of that published mission (FR-26, FR-28,
-FR-30, NFR-1). A refused request SHALL NOT change any attempt count, hint
+exist, is not served under that rule, or, for requests whose URL names a
+mission, is not part of that published mission (FR-26, FR-28, FR-30). A refused request SHALL NOT change any attempt count, hint
 count, task state or XP.
 
 #### Scenario: Attempt for a task that does not exist
@@ -246,10 +235,10 @@ count, task state or XP.
 - **WHEN** an attempt, a hint request and a report are each sent for its id
 - **THEN** each is answered with 404 and a problem+json body, and no attempt, opened hint or report is stored
 
-#### Scenario: Attempt, hint or report for a graphic task
+#### Scenario: Fetch, attempt, hint or report for a graphic task
 
 - **GIVEN** a `GRAPHIC` task with 1 hint that is stored with status published
-- **WHEN** an attempt, a hint request and a report are each sent for its id
+- **WHEN** the task is fetched by id, and an attempt, a hint request and a report are each sent for its id
 - **THEN** each is answered with 404 and a problem+json body, and no attempt, opened hint or report is stored
 
 #### Scenario: Task not in the mission of the URL
@@ -346,28 +335,36 @@ local check.
 
 ### Requirement: Oversized input is refused without cost
 
-The child-facing API SHALL refuse oversized input before checking it, with
-no attempt consumed and nothing stored (FR-26, FR-30, decision OQ-12 spirit:
-input the app cannot take never costs an attempt). The limits are: 100
-characters per answer part value (each element of a choice list counts
-separately), at most 20 elements in a choice list, 1000 characters for a
-report note (the `ReportRequest.note` limit in `api/openapi.yaml`), and 16 KB
-for any child request body. The task screen inputs SHALL NOT accept more
-characters than these limits. A number that fits the length limit but is
+Oversized input SHALL never cost an attempt or store anything (FR-26, FR-30,
+decision OQ-12 spirit: input the app cannot take never costs an attempt).
+An answer part value longer than 100 Unicode code points is the checker's
+case: it is `UNPARSEABLE` with a format tip (HTTP 200, `status:
+UNPARSEABLE`), as the answer-checking capability specifies. The API SHALL
+refuse with HTTP 400 only malformed request shapes: more than 20 elements
+in a choice list, a choice element longer than 100 code points, a report
+note longer than 1000 code points (the `ReportRequest.note` limit in
+`api/openapi.yaml`), and any child request body over 16 KB. The task
+screen inputs SHALL NOT accept more than 100 code points. A number that fits the length limit but is
 larger than any machine integer is still a readable number and SHALL be
 graded by value, never cause a server error.
 
 #### Scenario: Very long answer part
 
 - **GIVEN** a task with 2 attempts left
-- **WHEN** an attempt is submitted through the API whose part a is a string of 101 characters
+- **WHEN** an attempt is submitted through the API whose part a is a string of 101 code points
+- **THEN** the response is HTTP 200 with `status: UNPARSEABLE` and a `formatTip` on part a, no attempt is stored, and 2 attempts are still left
+
+#### Scenario: Oversized choice list
+
+- **GIVEN** a CHOICE_MULTI task with 2 attempts left
+- **WHEN** an attempt is submitted through the API with 21 elements in part a's list
 - **THEN** the API answers 400 with a problem+json body naming part a, no attempt is stored, and 2 attempts are still left
 
 #### Scenario: Input field stops at the limit
 
 - **GIVEN** the task screen of a TEXT part
 - **WHEN** the child types or pastes 150 characters into its input
-- **THEN** the input holds only the first 100 characters
+- **THEN** the input holds only the first 100 code points
 
 #### Scenario: Huge integer
 
@@ -398,7 +395,8 @@ graded by value, never cause a server error.
 When a task has hints, the child SHALL be able to open them one at a time,
 in order, at any point (FR-28) — including before the first attempt
 (decision OQ-5) and after the task is resolved or revealed (FR-28 "at any
-point"). Each opened hint SHALL be recorded with the task, once. The hint
+point"). Each opened hint SHALL be recorded with the task once, together
+with the time it was opened (progress-stats counts hint use per week). The hint
 button shows how many hints remain; a task without hints shows no hint
 button. Once every hint is open the button is disabled and a further hint
 request is refused with 409 (derived from FR-28 "one at a time, in order";
@@ -505,7 +503,7 @@ XP. Reports are handled in the admin flag queue (see progress-stats).
 
 - **GIVEN** the report dialog is open
 - **WHEN** the child chooses "Jiné" and sends without a note
-- **THEN** the report is not sent and the note field shows "Napiš prosím krátce, co je špatně."
+- **THEN** the report is not sent and the note field shows "Napiš prosím krátce, co nesedí."
 
 #### Scenario: Other reason without a note through the API
 
@@ -561,7 +559,7 @@ When the last unresolved task of a mission is resolved, a mission-complete
 screen SHALL show the XP earned in this run of the mission (task XP plus any
 completion bonus), the number of tasks solved on the first try, and a
 rank-up if one happened (FR-32). XP values and ranks come from gamification
-(FR-34, FR-35, decision OQ-4).
+(gamification, decision OQ-4).
 
 #### Scenario: Mission summary
 
@@ -583,9 +581,15 @@ rank-up if one happened (FR-32). XP values and ranks come from gamification
 
 #### Scenario: Rank-up on completion
 
-- **GIVEN** the mission's XP takes the child over the next rank threshold
+- **GIVEN** the last task's award plus the completion bonus takes the child over the next rank threshold
 - **WHEN** the mission-complete screen opens
-- **THEN** it includes the rank-up celebration with the new rank name
+- **THEN** it includes the rank-up celebration with the new rank name, and the celebration has not played before
+
+#### Scenario: Rank-up earlier in the mission
+
+- **GIVEN** a task award at task 3 crossed a rank threshold and the celebration played then
+- **WHEN** the mission-complete screen opens at the end of the same run
+- **THEN** it lists the new rank name as a static line and does not play the celebration again
 
 #### Scenario: No rank-up
 

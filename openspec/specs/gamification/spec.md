@@ -46,7 +46,7 @@ checker classifies as `UNPARSEABLE` SHALL neither award nor cost XP.
 
 - **GIVEN** a task that has never been resolved and a total of 40 XP
 - **WHEN** the child submits `5,,2` and the checker returns `UNPARSEABLE`
-- **THEN** the total stays 40 XP, and a later correct 1st attempt on that task without hints still earns 10 XP (whether the attempt is consumed is specified by answer-checking, FR-22)
+- **THEN** the total stays 40 XP, and a later correct 1st attempt on that task without hints still earns 10 XP (whether the attempt is consumed is specified by answer-checking)
 
 #### Scenario: Same task in a second mission
 
@@ -74,7 +74,7 @@ bonus. Each value SHALL be a plain integer. Task awards, the hint cost and
 the mission bonus SHALL be from 0 to 1000. The minimum award SHALL be from 1
 to 1000. Strings, decimals and locale-formatted numbers SHALL be invalid.
 Every key SHALL be present; a missing key SHALL NOT fall back to a built-in
-value (proposed default OQ-29, pending confirmation). If any value is
+value (decision OQ-29). If any value is
 invalid, the backend SHALL refuse to start, and its error SHALL name the
 offending configuration key. No XP is ever computed from an invalid
 configuration.
@@ -120,10 +120,13 @@ configuration.
 XP SHALL be granted only by the backend. It is granted in two cases: when the
 backend resolves a task from its own check of a submitted attempt, or when it
 completes a mission (FR-34, FR-35). It is also granted by an authenticated
-admin re-evaluation (FR-41). No API operation SHALL accept an XP amount, a
-total, a rank or a solved-task count from a client. Fields of that kind in a
-request SHALL have no effect. A request that tries to write them SHALL be
-refused without changing any stored progress. Award integrity and "XP never
+admin re-evaluation (progress-stats). No API operation SHALL accept an XP amount, a
+total, a rank or a solved-task count from a client: no operation writes
+them, so a request to a write method on a progress resource (for example
+`PUT /api/child/hq`) is refused with a 4xx status. Fields of that kind
+inside any other request SHALL be ignored like every unknown field
+(admin-access, "Child endpoints cannot change content") and SHALL have no
+effect on stored progress. Award integrity and "XP never
 decreases" (FR-38) depend on this.
 
 #### Scenario: No write operation for progress
@@ -154,12 +157,13 @@ first completion. Replaying the mission or completing it again pays nothing
 
 Tasks MAY be shared between missions (decision OQ-15). A task counts as
 resolved for every mission that contains it, wherever it was resolved.
-Completion SHALL be checked on every first resolution of a task. That
+Completion SHALL be checked on every first resolution of a task, including
+a resolution created by an admin re-evaluation (progress-stats). That
 resolution SHALL complete every mission that contains the task and has no
 other unresolved task, and SHALL pay each of those missions' bonuses in the
 same award. A mission that is published when all its tasks are already
 resolved is complete at publish time, and its bonus is credited then, with no
-task XP (proposed default OQ-28, pending confirmation).
+task XP (decision OQ-28).
 
 #### Scenario: First completion
 
@@ -218,7 +222,7 @@ the skin configuration (FR-36). The child's rank SHALL be the highest rank
 whose threshold the child's total XP has reached. The first rank SHALL have
 threshold 0 and thresholds SHALL strictly increase. Each threshold SHALL be a
 plain integer from 0 to 1 000 000. Strings, decimals and locale-formatted
-numbers are invalid (proposed default OQ-29, pending confirmation). MVP ships
+numbers are invalid (decision OQ-29). MVP ships
 a placeholder ladder of five ranks at 0, 150, 400, 800 and 1500 XP with
 placeholder original names, to be co-designed with the child later. These
 values are tuned after the first week of use (decisions OQ-1, OQ-4).
@@ -246,8 +250,12 @@ values are tuned after the first week of use (decisions OQ-1, OQ-4).
 Crossing one or more rank thresholds SHALL trigger a rank-up celebration
 animation that names the new rank (FR-36). The celebration SHALL play once
 per rank-up, never repeat on later visits, and SHALL respect
-`prefers-reduced-motion` (NFR-13). Where a mission-complete screen is shown,
-the rank-up is part of it. A rank-up caused outside a child session SHALL be
+`prefers-reduced-motion` (NFR-13). It plays at the award that crosses the
+threshold: on the task's feedback when a task award crosses it mid-mission,
+or on the mission-complete screen when the last task's award or the
+completion bonus crosses it. A mission-complete screen after a mid-mission
+rank-up lists the new rank as a static line and does not play the
+animation again. A rank-up caused outside a child session SHALL be
 celebrated the next time the child opens HQ. This covers a bonus credited
 when a mission is published already complete (OQ-28) and an admin
 re-evaluation.
@@ -328,7 +336,7 @@ penalties and no leaderboards (FR-38). XP SHALL be kept as an append-only
 history of awards. No operation removes or lowers an award, including a hint
 opening, a reveal, a replay, a content edit or an admin re-evaluation. No
 child screen SHALL show a negative XP amount or an XP deduction. The wording
-of wrong-answer and reveal feedback is specified by practice flow (FR-27) and
+of wrong-answer and reveal feedback is specified by practice-flow and
 the skin. This capability owns only the XP effect of that feedback.
 
 #### Scenario: XP never goes down
@@ -451,7 +459,7 @@ OQ-25). Both themes SHALL meet WCAG AA contrast (NFR-13).
 - Wrong-answer, reveal and format-tip wording (for example the Czech
   encouragement copy) is specified by practice flow, answer checking and the
   skin, not here. Whether an `UNPARSEABLE` submission consumes an attempt is
-  specified by answer checking (FR-22).
+  specified by answer-checking.
 - The final rank names, school name and mentor character are not part of
   MVP acceptance; placeholders are expected.
 - Judging whether art is "recognizable" as borrowed IP is a human review, not

@@ -720,7 +720,7 @@ paths:
     put:
       tags: [admin-missions]
       operationId: updateMission
-      summary: Edit title, order and tasks (all tasks must share the mission's topic)
+      summary: Edit position and tasks (all tasks must share the mission's topic)
       security: [{ adminSession: [] }]
       requestBody:
         required: true
@@ -999,19 +999,19 @@ components:
       enum: [NEW, IN_PROGRESS, COMPLETE]
     MissionCard:
       type: object
-      required: [missionId, title, taskCount, resolvedCount, state]
+      required: [missionId, position, taskCount, resolvedCount, state]
       properties:
         missionId: { type: string, format: uuid }
-        title: { type: string }
+        position: { type: integer, minimum: 1, maximum: 999, description: Position within the topic (missions have no name, CA-D17) }
         taskCount: { type: integer, minimum: 1 }
         resolvedCount: { type: integer, minimum: 0 }
         state: { $ref: "#/components/schemas/MissionState" }
     MissionBriefing:
       type: object
-      required: [missionId, title, topicName, state, xpAvailable, tasks]
+      required: [missionId, position, topicName, state, xpAvailable, tasks]
       properties:
         missionId: { type: string, format: uuid }
-        title: { type: string }
+        position: { type: integer, minimum: 1, maximum: 999 }
         topicName: { type: string }
         state: { $ref: "#/components/schemas/MissionState" }
         xpAvailable:
@@ -1377,11 +1377,10 @@ components:
         reason: { type: string, nullable: true }
     MissionInput:
       type: object
-      required: [title, topicId, order, taskIds]
+      required: [topicId, position, taskIds]
       properties:
-        title: { type: string, minLength: 1 }
         topicId: { type: string, format: uuid }
-        order: { type: integer, minimum: 1, description: Position among the topic's missions on HQ }
+        position: { type: integer, minimum: 1, maximum: 999, description: Position among the topic's missions on HQ; unique within the topic (CA-D17) }
         taskIds:
           type: array
           minItems: 1

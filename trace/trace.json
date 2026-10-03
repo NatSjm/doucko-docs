@@ -273,8 +273,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/answer-checking/spec.md",
-        "openspec/specs/content-authoring/spec.md"
+        "openspec/specs/answer-checking/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -307,8 +306,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/answer-checking/spec.md",
-        "openspec/specs/content-authoring/spec.md"
+        "openspec/specs/answer-checking/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -341,8 +339,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/answer-checking/spec.md",
-        "openspec/specs/content-authoring/spec.md"
+        "openspec/specs/answer-checking/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -353,8 +350,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/answer-checking/spec.md",
-        "openspec/specs/content-authoring/spec.md"
+        "openspec/specs/answer-checking/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -365,8 +361,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/answer-checking/spec.md",
-        "openspec/specs/gamification/spec.md"
+        "openspec/specs/answer-checking/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -399,7 +394,6 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/content-authoring/spec.md",
         "openspec/specs/practice-flow/spec.md"
       ],
       "planned": null,
@@ -411,7 +405,6 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/content-authoring/spec.md",
         "openspec/specs/practice-flow/spec.md"
       ],
       "planned": null,
@@ -423,7 +416,6 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/gamification/spec.md",
         "openspec/specs/practice-flow/spec.md"
       ],
       "planned": null,
@@ -435,8 +427,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/practice-flow/spec.md",
-        "openspec/specs/progress-stats/spec.md"
+        "openspec/specs/practice-flow/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -491,8 +482,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/practice-flow/spec.md",
-        "openspec/specs/progress-stats/spec.md"
+        "openspec/specs/practice-flow/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -503,9 +493,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/gamification/spec.md",
-        "openspec/specs/practice-flow/spec.md",
-        "openspec/specs/progress-stats/spec.md"
+        "openspec/specs/gamification/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -516,9 +504,7 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/gamification/spec.md",
-        "openspec/specs/practice-flow/spec.md",
-        "openspec/specs/progress-stats/spec.md"
+        "openspec/specs/gamification/spec.md"
       ],
       "planned": null,
       "tests": [],
@@ -595,7 +581,6 @@
       "owners": [],
       "ownedHere": null,
       "specs": [
-        "openspec/specs/gamification/spec.md",
         "openspec/specs/progress-stats/spec.md"
       ],
       "planned": null,

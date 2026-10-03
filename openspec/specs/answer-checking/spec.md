@@ -760,14 +760,18 @@ the attempt log belongs to progress-stats.
 
 ### Requirement: Who can trigger a check
 
-The checker SHALL be reachable only through two endpoints. The first is the
+The checker SHALL be reachable only through three endpoints. The first is the
 child submission endpoint, which needs no credentials because MVP has
 exactly one child profile and no child login (practice-flow, child-profile).
 Its request carries no profile identifier, so there is no "wrong profile"
 case. The second is the admin answer tester (`POST
 /api/admin/tasks/{taskId}/check`), which SHALL require a valid admin session.
 A tester request without one SHALL be refused before any checking, with no
-verdicts in the response. Session, CSRF and 403 rules are owned by
+verdicts in the response. The third is the admin re-evaluation of a
+reported attempt (`POST /api/admin/reports/{reportId}/reevaluate`), which
+re-checks that attempt's stored raw input with the task's current answer
+spec; it also requires a valid admin session, and its effects on outcome and
+XP belong to progress-stats. Session, CSRF and 403 rules are owned by
 admin-access, and tester behavior by content-authoring.
 
 #### Scenario: Answer tester without an admin session
@@ -775,6 +779,12 @@ admin-access, and tester behavior by content-authoring.
 - **GIVEN** an existing task and a request with no admin session cookie
 - **WHEN** it posts answers to the answer tester endpoint for that task
 - **THEN** the response is HTTP 401 with an `application/problem+json` body and contains no verdict, normalized value or format tip
+
+#### Scenario: Re-evaluation without an admin session
+
+- **GIVEN** an open report with an attached attempt and a request with no admin session cookie
+- **WHEN** it posts to the re-evaluation endpoint for that report
+- **THEN** the response is HTTP 401 with an `application/problem+json` body and the attempt is not re-checked
 
 #### Scenario: Child submission needs no credentials
 

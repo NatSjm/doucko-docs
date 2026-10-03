@@ -121,7 +121,7 @@ any other attempt.
 The weekly **hints used** figure SHALL be the number of hints opened in that
 week, each hint counted in the week (Europe/Prague) in which it was opened
 (FR-40). It SHALL be derived from the hint-open records of practice-flow
-(FR-28), each of which SHALL carry the time the hint was opened — not from
+(practice-flow), each of which SHALL carry the time the hint was opened — not from
 the cumulative "hints used" stored on attempts (FR-42), which says nothing
 about when a hint was opened. A hint opened on a task with no later attempt
 SHALL still count. The weekly **revealed tasks** figure SHALL be the number of
@@ -335,7 +335,7 @@ attempt belongs to the task's first resolution (not a replay) and the new
 verdict improves the task's outcome, the outcome SHALL change, the child
 SHALL receive the XP difference between the new and the old outcome as a new
 award (computed by the gamification rules with the hints used at that
-attempt), and the report SHALL become `FIXED` (FR-41, FR-34). Re-evaluation
+attempt), and the report SHALL become `FIXED` (FR-41, gamification). Re-evaluation
 SHALL only ever add XP: if the new verdict would not improve the outcome,
 nothing about the task, attempts or XP SHALL change, the report stays `OPEN`,
 and the admin is told that nothing changed (decision OQ-20). Only the
@@ -343,7 +343,7 @@ attached attempt is re-checked.
 
 If the re-evaluation resolves the last unresolved task of a mission that was
 never completed before, the mission SHALL become complete and its completion
-bonus (FR-35, once per mission, decision OQ-4) SHALL be awarded in the same
+bonus (gamification, once per mission, decision OQ-4) SHALL be awarded in the same
 re-evaluation; this applies to every mission containing the task that becomes
 complete. No mission-complete screen is shown because the child is not
 practising; HQ shows the mission as complete, and a rank-up caused by the
@@ -352,7 +352,7 @@ gamification).
 
 A report whose attached attempt is a replay attempt SHALL never change the
 task's first-resolution outcome, the first-try rate, mission completion or
-XP, because replay attempts earn nothing (FR-33, decision OQ-17). If the new
+XP, because replay attempts earn nothing (practice-flow, decision OQ-17). If the new
 verdict is better than the attempt's recorded verdict, it is recorded
 alongside the original, the report becomes `FIXED`, and 0 XP is awarded;
 otherwise nothing changes and the report stays `OPEN`.

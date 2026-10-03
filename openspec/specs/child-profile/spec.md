@@ -11,7 +11,7 @@ local database and never leaves the laptop.
 
 Some rules below are design decisions made in this spec rather than stated by
 a requirement row: display-name validation and startup refusal, the
-partial-update rules, and the handling of unknown fields and wrong types. They
+partial-update rules, and the handling of wrong types. They
 are labeled "Design decision". HTTP status codes and the problem+json error
 shape come from `api/openapi.yaml` (operations `getProfileSettings` and
 `updateProfileSettings`). This spec does not redefine them.
@@ -182,9 +182,19 @@ Design decision, partial-update semantics of `PATCH`:
 - An empty object `{}` SHALL succeed with HTTP 200, change nothing and return
   the current settings.
 
-The practice flow's Ukrainian translation toggle uses these endpoints. Its UI
-behavior, including how a failed save is shown, belongs to the practice-flow
-capability.
+The practice flow's Ukrainian translation toggle uses these endpoints and is
+stored in exactly one place: turning "Zobrazit ukrajinsky" on SHALL set
+`secondaryTaskLocale` to `"uk"`, and turning it off SHALL set it to `null`
+(FR-43 stores what practice-flow remembers). Its UI behavior, including how a failed
+save is shown, belongs to the practice-flow capability.
+
+#### Scenario: Translation toggle maps to the setting
+
+- **GIVEN** `secondaryTaskLocale` is `null`
+- **WHEN** the child turns "Zobrazit ukrajinsky" on
+- **THEN** a following `GET` returns `secondaryTaskLocale: "uk"`
+- **WHEN** the child turns it off again
+- **THEN** a following `GET` returns `secondaryTaskLocale: null`
 
 #### Scenario: Defaults of a new profile
 
@@ -245,12 +255,13 @@ own (FR-43).
     `""` and strings of any length;
   - an `answerMode` outside the enum, or `null`;
   - a value of the wrong JSON type (number, boolean, object, array);
-  - design decision: an unknown top-level field (e.g. `displayName`,
-    `secondaryLocale`), so a typo or an attempt to rename is never silently
-    ignored;
   - a body that is not valid JSON or is not a JSON object.
 - The locale error SHALL list the supported task locales. Error responses
   SHALL NOT echo the submitted value back.
+- An unknown top-level field (e.g. `displayName`, `secondaryLocale`) SHALL
+  be ignored: it never changes anything and never makes the request fail.
+  This is the one policy for every child request body (admin-access, "Child
+  endpoints cannot change content").
 
 #### Scenario: Guided mode is not available yet
 
@@ -300,12 +311,12 @@ own (FR-43).
 - **WHEN** `PATCH` sends `{"secondaryTaskLocale": 5}`, `{"answerMode": true}`, `{"secondaryTaskLocale": ["uk"]}` or `{"answerMode": {"value": "DIRECT"}}`
 - **THEN** each response is HTTP 400 problem+json naming the field, and no setting changes
 
-#### Scenario: Unknown fields are refused
+#### Scenario: Unknown fields are ignored
 
 - **GIVEN** `secondaryTaskLocale` is `null`
 - **WHEN** `PATCH` sends `{"secondaryTaskLocale": "uk", "displayName": "Někdo"}`
-- **THEN** the response is HTTP 400 problem+json naming `displayName`
-- **AND** a following `GET` returns `secondaryTaskLocale: null`, and the HQ `displayName` is unchanged
+- **THEN** the response is HTTP 200 with `secondaryTaskLocale: "uk"`
+- **AND** the HQ `displayName` is unchanged
 
 #### Scenario: Oversized locale value
 

@@ -14,8 +14,9 @@ and the admin UI is English.
 The requirements below implement FR-1..FR-13 and FR-55..FR-57. Where this
 spec adds a rule that no FR, NFR or OQ decision states, the rule cites one of
 the derived decisions listed here. Entries marked **narrows** or **deviates**
-restrict or depart from an FR's literal wording. They stand until the human
-owner confirms them or a correction is recorded with `npm run correct`.
+restrict or depart from an FR's literal wording. The product owner accepted
+all of them on 2026-10-03 (`docs/requirements.md` §6.6); changing one needs a
+recorded decision.
 
 | Id | Decision | Derived from / justification |
 |---|---|---|
@@ -25,75 +26,36 @@ owner confirms them or a correction is recorded with `npm run correct`.
 | CA-D4 | **Narrows FR-56:** a source cannot be deleted while any task references it, even if no attempt references that task. | FR-3 makes the source reference mandatory, so deleting the source would orphan its tasks. The alternative, deleting the tasks along with it, silently loses authored work. |
 | CA-D5 | Deleting a source also removes its file from the storage volume. | NFR-17 and NFR-4 (no stray workbook copies). |
 | CA-D6 | A task in a published mission cannot be deleted. | Protects the FR-57 invariant and FR-12. FR-56 already offers "unpublish instead". |
-| CA-D7 | An empty mission cannot be published, and the last task cannot be removed from a published mission. | Without this, FR-57's "every task" would hold vacuously, and HQ would show "0/0" (FR-25). |
+| CA-D7 | An empty mission cannot be published, and the last task cannot be removed from a published mission. | Without this, FR-57's "every task" would hold vacuously, and HQ would show "0/0" (practice-flow). |
 | CA-D8 | A task in a published mission cannot change its modality to `GRAPHIC`. | FR-57 names only the return to `DRAFT`, but a modality change breaks the same invariant. Also FR-5. |
 | CA-D9 | Only a `PUBLISHED` `TEXT` task can be added to a published mission. | Keeps the FR-57 invariant true while a mission is edited (FR-55). |
 | CA-D10 | A mission's topic can change only while the mission is empty. A task's topic or grade cannot change while the task is in any mission. | Keeps the FR-9 rule (all tasks in a mission belong to its topic) true while editing (FR-55). |
-| CA-D11 | Part labels are unique within a task. | FR-6 and FR-26: the child sees one input per label, so a repeated label would be ambiguous. |
-| CA-D12 | A task appears at most once in one mission. | FR-25 counts resolved tasks as x/N. A repeated task would be counted twice. |
+| CA-D11 | Part labels are unique within a task. | FR-6 and practice-flow: the child sees one input per label, so a repeated label would be ambiguous. |
+| CA-D12 | A task appears at most once in one mission. | practice-flow counts resolved tasks as x/N. A repeated task would be counted twice. |
 | CA-D13 | **Deviates from FR-6:** a `GRAPHIC` task may have zero answer parts. Every `TEXT` task has 1..n parts. | FR-5: no answer spec type can express a graphic answer, and graphic tasks are never checked or served in MVP. |
 | CA-D14 | A part is saved only when it is complete (see "Answer parts"). A half-filled part is never stored. | FR-6: "each part has … its own answer spec". A part without a valid spec has none. |
 | CA-D15 | Length and count limits (see "Field limits"). | Bounded input is a precondition for objectively testable oversized-input errors. The values were chosen generously for grade-6 workbook tasks. |
 | CA-D16 | Allowed grades and subjects come from configuration. MVP configures grade `6` and subject `math` only. A task's grade equals its source's grade, and its topic belongs to that grade. | The product targets one grade-6 pupil's math. More grades and subjects are FR-54 (Future). Topics are seeded per grade (OQ-2, OQ-21). |
-| CA-D17 | A mission has a topic and a position within that topic, and no name. Positions are unique within a topic. | FR-25 and practice-flow order missions by "mission order within each topic". FR-9 defines no name. |
+| CA-D17 | A mission has a topic and a position within that topic, and no name. Positions are unique within a topic. | practice-flow orders missions by position within each topic. FR-9 defines no name. |
 | CA-D18 | The FR-9 default size of 10 is a target shown in the mission editor. It never blocks saving or publishing. | FR-9 says "default", not "fixed". |
 | CA-D19 | Task search is a case- and diacritics-insensitive substring match on the Czech prompt. An empty or whitespace-only query does not filter. | FR-11. The admin types on an English keyboard, so `obdelnik` must find `obdélník`. |
-| CA-D20 | Expected values are parsed with the checker's input grammar (answer-checking). Numeric expected values have an absolute value below 10^12 and at most 6 decimal places. | FR-14..FR-17: admin and child notation then agree, so a dot decimal is accepted and a dot or comma is never a thousands separator. The bounds make overflow testable. |
+| CA-D20 | Expected values are parsed with the checker's input grammar (answer-checking). Numeric expected values have an absolute value below 10^12 and at most 6 decimal places. | answer-checking..answer-checking: admin and child notation then agree, so a dot decimal is accepted and a dot or comma is never a thousands separator. The bounds make overflow testable. |
 | CA-D21 | Each code repo carries a fixture provenance manifest, and a check fails on any unlisted fixture file. | NFR-4 needs an executable mechanism, not a human review. |
 
 ## Requirements
 
 ### Requirement: Authoring requires an admin session
 
-Every authoring read and write in this spec SHALL require a signed-in admin
-session, as defined by admin-access (NFR-1). That covers upload, create,
-edit, delete, publish, unpublish, preview and the answer tester. A request
-without a session SHALL be refused with HTTP 401 and an
-`application/problem+json` body, and SHALL change nothing. Every
-content-changing operation of this spec SHALL live under `/api/admin/**`.
-Child-facing operations SHALL NOT be able to create, change or delete any
-content this spec owns (NFR-1).
+Every authoring read and write in this spec SHALL be an admin operation
+under `/api/admin/**`: upload, create, edit, delete, publish, unpublish,
+preview and the answer tester. Their authentication, the 401/403 responses
+and the rule that child-facing operations cannot change content are owned by
+admin-access (NFR-1); this spec does not restate them.
 
-#### Scenario: Unauthenticated create is refused
+#### Scenario: Every authoring operation is an admin operation
 
-- **GIVEN** no admin session
-- **WHEN** a request to create a task or upload a source reaches the API
-- **THEN** it is refused with HTTP 401 and no task or source is created
-
-#### Scenario: Unauthenticated edit and delete are refused
-
-- **GIVEN** no admin session and an existing source S, task T and mission M
-- **WHEN** a request to edit S, edit T, edit M, delete S, delete T or delete M reaches the API
-- **THEN** each request is refused with HTTP 401, and S, T and M are unchanged when read back afterwards with an admin session
-
-#### Scenario: Unauthenticated publish and unpublish are refused
-
-- **GIVEN** no admin session, a `DRAFT` task T and a `PUBLISHED` mission M
-- **WHEN** a request to publish T or to unpublish M reaches the API
-- **THEN** both are refused with HTTP 401, T stays `DRAFT` and M stays `PUBLISHED`
-
-#### Scenario: Unauthenticated answer tester is refused
-
-- **GIVEN** no admin session and a task with a DECIMAL part
-- **WHEN** a request to run the answer tester or to fetch the task preview reaches the API
-- **THEN** it is refused with HTTP 401 and the response body contains no task text, verdict or expected value
-
-#### Scenario: Content changes exist only under the admin API
-
-- **WHEN** the operations in `api/openapi.yaml` that create, update or delete a source, task, part, hint, translation, image or mission, or change a status, are listed
-- **THEN** every one of them has a path under `/api/admin/**` and none under `/api/child/**`
-
-#### Scenario: Child endpoints cannot change a task
-
-- **GIVEN** a published task T in a published mission
-- **WHEN** a client with no admin session sends `PUT`, `PATCH` or `DELETE` to `/api/child/tasks/{id of T}`, and a `POST` to `/api/child/tasks` with a full task body
-- **THEN** each request is answered with HTTP 401, 404 or 405, and T, its parts and its text are unchanged
-
-#### Scenario: Child UI cannot open authoring screens
-
-- **GIVEN** the child's browser on HQ, with no admin session
-- **WHEN** the admin task list URL is opened
-- **THEN** the admin sign-in page is shown instead of any task data
+- **WHEN** the operations of `api/openapi.yaml` that upload, create, edit, delete, publish, unpublish, preview or test content are listed
+- **THEN** every one of them has a path under `/api/admin/**` and declares the admin session security scheme
 
 ### Requirement: Field limits
 
@@ -111,7 +73,8 @@ names the limit, and nothing SHALL be stored.
 | Hint (Czech or translated) | 1000 characters |
 | Task number | 20 characters |
 | Sub-part, part label (Czech or translated) | 10 characters |
-| Choice option text, TEXT expected answer | 200 characters |
+| Choice option text | 200 characters |
+| TEXT expected answer | 100 code points (the child's input limit, practice-flow and answer-checking) |
 | Task search query | 200 characters |
 | Images per task | 0–10 |
 | Hints per task | 0–10 |
@@ -157,7 +120,7 @@ field.
 
 The admin SHALL be able to upload a PDF as a **source** with title,
 publisher, edition, grade and subject (FR-1). Title, grade and subject SHALL
-be required. Publisher and edition are optional. Grade and subject SHALL be
+be required. Publisher and edition are optional (decision OQ-31). Grade and subject SHALL be
 one of the configured values. MVP configures grade `6` and subject `math`
 only (derived decision CA-D16). After upload, the source SHALL be listed with
 its metadata and page count.
@@ -446,7 +409,7 @@ decision CA-D14).
 ### Requirement: Answer spec authoring
 
 Each answer spec type SHALL be authored and validated as follows (FR-6,
-FR-14..FR-21). Expected values SHALL be parsed with the same input grammar
+answer-checking). Expected values SHALL be parsed with the same input grammar
 the checker uses for the child's answers (derived decision CA-D20). That
 grammar accepts:
 
@@ -454,9 +417,12 @@ grammar accepts:
   the English admin UI);
 - space, no-break-space or thin-space thousands separators.
 
-A dot or comma SHALL never be a thousands separator. Numeric values SHALL be
-stored normalized, with absolute value below 10^12 and at most 6 decimal
-places. Every part SHALL have 1 to 10 accepted answers (FR-20), each
+A dot or comma SHALL never be a thousands separator. Numeric values SHALL
+have an absolute value below 10^12 and at most 6 decimal places. Accepted
+answers SHALL be stored in the notation the admin entered, because the
+checker compares notation when a part does not allow equivalent forms
+(answer-checking, "Fraction input"): `1 1/2` and `3/2` stay distinct. The
+editor SHALL show each value's normalized interpretation next to it. Every part SHALL have 1 to 10 accepted answers (answer-checking), each
 validated by the part's type. An invalid value SHALL be refused with an
 inline message on that value, and nothing SHALL be stored.
 
@@ -468,9 +434,9 @@ inline message on that value, and nothing SHALL be stored.
 | NUMBER_WITH_UNIT | one or more number + unit values; flag "unit required" | a value with no unit (even when the unit is optional); a unit with no number; an unparseable number |
 | CHOICE_SINGLE | 2–10 option texts, lettered `A`, `B`, `C` … in order, and exactly one option marked correct | fewer than 2 options; an empty option text; two options with the same text (compared trimmed and case-insensitively); no correct option; more than one correct option |
 | CHOICE_MULTI | 2–10 option texts lettered as above; one or more options marked correct | fewer than 2 options; empty or duplicate option texts; no correct option |
-| TEXT | one or more expected texts of 1–200 characters; flag "diacritics-strict" | an empty or whitespace-only expected text; a text over 200 characters |
+| TEXT | one or more expected texts of 1–100 code points; flag "diacritics-strict" | an empty or whitespace-only expected text; a text over 100 code points |
 
-An optional numeric tolerance (FR-21) SHALL be a number ≥ 0 and is offered
+An optional numeric tolerance (answer-checking) SHALL be a number ≥ 0 and is offered
 only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT parts.
 
 #### Scenario: Expected value in Czech notation
@@ -531,7 +497,7 @@ only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT parts.
 
 - **GIVEN** a FRACTION part in the editor
 - **WHEN** the admin enters the expected value `1 1/2`
-- **THEN** the part is saved with the expected value `3/2`
+- **THEN** the part is saved with the expected value `1 1/2`, and the editor shows its normalized interpretation `3/2`
 
 #### Scenario: Number with unit missing its unit or number
 
