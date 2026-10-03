@@ -14,7 +14,7 @@ specs so Phase 3 can plan slices against real operations.
 
 ## What changes
 
-`api/openapi.yaml` v0.2.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
+`api/openapi.yaml` v0.3.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
 
 | Area | Operations | Spec |
 |---|---|---|
@@ -67,12 +67,42 @@ applied. The notable shape changes:
   from the PRD §9.3 UX direction): 1-100 tasks, a result per task;
 - missions have a `position`, no title (CA-D17).
 
+## Revision v0.3 (2026-10-03)
+
+The independent review of v0.2 (record
+`trace/workflow-runs/20261003-060056-contract-review.json`) found 0 blocker,
+7 major and 24 minor mismatches. All of them were applied. The notable changes:
+
+- `ReferenceData` gains `grades` and `subjects` (CA-D16 is configuration);
+- one field-path convention for `Problem.errors[].field` (info, Conventions);
+- authoring text limits are `x-maxCodePoints` (server-enforced, after
+  trimming) instead of `maxLength`, so generated validators cannot refuse
+  what the spec accepts;
+- `updateSource` is now `PUT` with full replacement on a closed
+  `SourceMetadataUpdate` (a `file` field is 400, multipart is 415);
+- `getStats.weeks` and `listReports.status` are pattern-checked strings with
+  no schema default, so `weeks=`, `٤` and `status=` are 400 as the specs require;
+- `AttemptResult.rankUp` covers crossings from other missions' bonuses;
+  documented UNPARSEABLE values; `locked`, `continueTarget`, `Feedback`
+  fields and `taskPromptExcerpt` are required;
+- choice option keys are `A`…`J` in display order; translated options are
+  keyed `<part key>.<option key>`;
+- 400 on both status operations and on preview; mission field rules are 400
+  and state rules 409.
+
+Spec follow-ups in the same revision: practice-flow says per-part verdicts
+travel in `AttemptResult.parts`, not in `feedback`. content-authoring lets
+CHOICE_SINGLE carry several correct options, as FR-20 says, which resolves
+the round-3 cross-check contradiction
+(`trace/workflow-runs/20261003-060054-spec-crosscheck.json`). Its "file cannot
+be replaced" scenario accepts 400, 405 or 415.
+
 ## Validation
 
 - Structural check (YAML parses, every `$ref` resolves, unique operationIds,
-  path parameters declared, admin ops secured, child ops open): pass (v0.2).
-- Independent review against the specs: v0.1 reviewed, findings applied in
-  v0.2; v0.2 itself not yet re-reviewed.
+  admin ops secured with CSRF on mutations, child ops open): pass (v0.3).
+- Independent review against the specs: v0.1 and v0.2 reviewed, findings
+  applied in v0.2 and v0.3 respectively.
 - Not yet run: an OpenAPI linter and the two generators. Phase 4a runs the
   backend `openapi-generator-maven-plugin` and the frontend client generator
   against the pinned file.

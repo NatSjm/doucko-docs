@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Doučko API
-  version: 0.2.0
+  version: 0.3.0
   description: |
     Contract between the Doučko backend (Kotlin/Spring Boot) and frontend
     (React/Vite). Single source of truth (NFR-12): server interfaces and the
@@ -23,13 +23,30 @@ info:
 
     v0.2: aligned with the re-authored baseline specs after the independent
     contract review (trace/workflow-runs/20261003-053111-contract-review.json).
+    v0.3: applies the review of v0.2
+    (trace/workflow-runs/20261003-060056-contract-review.json).
+
+    Conventions:
+    - Field paths. `Problem.errors[].field` names the invalid input with a
+      dotted path that mirrors the request body, with zero-based array
+      indexes: `prompt`, `sourceRef.page`, `parts[1].label`,
+      `parts[1].spec.accepted[0]`, `parts[0].spec.options[2].text`,
+      `hints[0]`, `translations.uk.prompt`, `position`, `taskIds[3]`,
+      `file`. Query parameters use their own name (`weeks`, `status`, `q`).
+      Child attempts name the part as `answers.<partKey>`.
+    - Text limits. Authoring text limits (content-authoring "Field limits")
+      count Unicode code points after trimming leading and trailing
+      whitespace. They are published as `x-maxCodePoints` and enforced by
+      the server, not as schema `maxLength`, so generated validators (which
+      count raw UTF-16 units) cannot refuse a value the spec accepts. A text
+      that is empty after trimming counts as missing (400).
+    - Methods. A path answers only the methods declared here; any other
+      method is answered 405 with a problem+json body and changes nothing.
 
     Skin ownership: the backend owns the rank ladder (names, thresholds) and
     computes rank and rank-ups from it; the frontend owns the rest of the skin
     (school, mentor, copy, illustrations, colours). Task locales are
     configuration: allowed values come from getReferenceData, not from enums.
-    Attempt validation errors name the part as `answers.<partKey>` in
-    `Problem.errors[].field`.
 servers:
   - url: http://localhost:8080
     description: Home laptop (LAN only, NFR-2)
@@ -60,6 +77,7 @@ paths:
       tags: [ child-hq ]
       operationId: getHq
       summary: HQ view — rank, XP bar, continue target, missions by topic
+      description: Read-only. Progress has no write method; PUT, POST or PATCH here is 405 and changes nothing (gamification).
       responses:
         "200":
           description: HQ
@@ -158,7 +176,9 @@ paths:
       description: |
         `status: UNPARSEABLE` means no part was graded and no attempt was
         used or stored (FR-22, OQ-12). Parts locked as correct from attempt 1
-        may be omitted on attempt 2 (OQ-11).
+        may be omitted on attempt 2 (OQ-11). Unknown top-level body fields
+        (e.g. `xpAwarded`, `totalXp`, `rank`, `solvedTasks`) are ignored and
+        have no effect (gamification).
       requestBody:
         required: true
         content:
@@ -303,7 +323,7 @@ paths:
     get:
       tags: [ admin-reference ]
       operationId: getReferenceData
-      summary: Seeded topics and configured task locales
+      summary: Configured grades, subjects and task locales, and seeded topics
       security: [ { adminSession: [] } ]
       responses:
         "200":
@@ -331,6 +351,13 @@ paths:
       tags: [ admin-sources ]
       operationId: uploadSource
       summary: Upload a PDF source (PDF only, ≤ 50 MB)
+      description: |
+        The file content decides the type (CA-D1): content that is not a PDF
+        is 415. A file with the PDF signature whose page count cannot be read
+        (encrypted, truncated, unreadable page tree; CA-D2) is 400 with
+        `errors[].field = file` and the message "The PDF could not be read.
+        It may be damaged or password-protected." Nothing is stored on any
+        refusal.
       security:
         - adminSession: []
           csrfToken: []
@@ -366,9 +393,14 @@ paths:
               schema: { $ref: "#/components/schemas/Source" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
-    patch:
+    put:
       tags: [ admin-sources ]
       operationId: updateSource
+      summary: Replace the source's metadata; the PDF file itself is never replaced (CA-D3)
+      description: |
+        Full replacement: an absent or null `publisher` or `edition` clears
+        it. Unknown fields, including `file`, are refused with 400. A
+        multipart body is refused with 415. The stored file never changes.
       security:
         - adminSession: []
           csrfToken: []
@@ -376,7 +408,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/SourceMetadata" }
+            schema: { $ref: "#/components/schemas/SourceMetadataUpdate" }
       responses:
         "200":
           description: Updated
@@ -389,6 +421,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "409":
           $ref: "#/components/responses/Conflict"
+        "415": { $ref: "#/components/responses/UnsupportedType" }
     delete:
       tags: [ admin-sources ]
       operationId: deleteSource
@@ -433,7 +466,7 @@ paths:
         - { name: page, in: query, schema: { type: integer, minimum: 1 } }
         - { name: modality, in: query, schema: { $ref: "#/components/schemas/Modality" } }
         - { name: status, in: query, schema: { $ref: "#/components/schemas/PublishStatus" } }
-        - { name: q, in: query, description: Search in the Czech prompt, schema: { type: string, maxLength: 200 } }
+        - { name: q, in: query, description: "Search in the Czech prompt (CA-D19); trimmed; empty = no text filter; over 200 code points after trimming = 400", schema: { type: string, x-maxCodePoints: 200 } }
       responses:
         "200":
           description: Matching tasks
@@ -541,6 +574,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/AdminTask" }
+        "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -654,14 +688,15 @@ paths:
       parameters:
         - name: locale
           in: query
-          description: Show the secondary task locale next to Czech
+          description: Show the secondary task locale next to Czech; a value that is not a configured task locale is 400
           schema: { $ref: "#/components/schemas/TaskLocale" }
       responses:
         "200":
-          description: "Child view of the task with every hint opened; outside a mission: missionId null, position 1, attemptsUsed 0, state UNRESOLVED, lastFeedback null"
+          description: "Child view of the task, for any status (DRAFT included), with every hint opened. Outside a mission: missionId null, position 1, attemptsUsed 0, state UNRESOLVED, lastFeedback null. Image URLs point to getAdminImage. A GRAPHIC task with no parts (CA-D13) is previewed with an empty `parts` list."
           content:
             application/json:
               schema: { $ref: "#/components/schemas/TaskView" }
+        "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
@@ -710,6 +745,12 @@ paths:
     post:
       tags: [ admin-missions ]
       operationId: createMission
+      description: |
+        Field rules are 400 with `errors[].field`: a missing, duplicate or
+        out-of-range `position` (CA-D17), a task of another topic or a task
+        listed twice (`taskIds[i]`, FR-9, CA-D12), more than 50 tasks. 409
+        is reserved for state rules: publishing invariants (CA-D7, CA-D9) and
+        a topic change of a non-empty mission (CA-D10), with `conflicts`.
       security:
         - adminSession: []
           csrfToken: []
@@ -747,6 +788,10 @@ paths:
       tags: [ admin-missions ]
       operationId: updateMission
       summary: Edit topic (only while empty), position and the ordered task list
+      description: |
+        Same field rules as createMission (400 with `errors[].field`). 409
+        for state rules: publishing invariants (CA-D7, CA-D9) and a topic
+        change of a non-empty mission (CA-D10), with `conflicts`.
       security:
         - adminSession: []
           csrfToken: []
@@ -802,6 +847,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/AdminMission" }
+        "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -816,8 +862,16 @@ paths:
       parameters:
         - name: weeks
           in: query
-          description: Number of most recent weeks (Mon–Sun, Europe/Prague)
-          schema: { type: integer, minimum: 1, maximum: 52, default: 4, format: int32 }
+          description: |
+            Number of most recent weeks (Mon–Sun, Europe/Prague), ASCII digits
+            1-52. The server uses 4 only when the parameter is absent. A
+            present but empty value, or any other value (e.g. `0`, `53`,
+            `abc`, the Arabic-Indic digit `٤`), is 400 with
+            `errors[].field = weeks`. Declared as a string with no schema
+            default so that generated code cannot turn `weeks=` into 4 or
+            parse non-ASCII digits.
+          allowEmptyValue: false
+          schema: { type: string, pattern: "^([1-9]|[1-4][0-9]|5[0-2])$" }
       responses:
         "200":
           description: Stats
@@ -837,7 +891,14 @@ paths:
       parameters:
         - name: status
           in: query
-          schema: { $ref: "#/components/schemas/ReportStatus" }
+          description: |
+            Exact, case-sensitive ReportStatus value (`OPEN`, `FIXED`,
+            `DISMISSED`). Absent = no filter. A present but empty value or any
+            other value (e.g. `fixed`, `FOO`) is 400 with
+            `errors[].field = status`. Declared as a pattern-checked string
+            so that generated code cannot turn `status=` into "no filter".
+          allowEmptyValue: false
+          schema: { type: string, pattern: "^(OPEN|FIXED|DISMISSED)$" }
       responses:
         "200":
           description: Reports
@@ -1046,7 +1107,7 @@ components:
             type: object
             required: [ field, message ]
             properties:
-              field: { type: string }
+              field: { type: string, description: "Path of the invalid input (info: Conventions, Field paths), e.g. `parts[1].spec.accepted[0]`" }
               message: { type: string }
         conflicts:
           type: array
@@ -1101,6 +1162,7 @@ components:
         - solvedTasks
         - rank
         - nextRank
+        - continueTarget
         - pendingRankUp
         - topics
       properties:
@@ -1201,7 +1263,7 @@ components:
               url: { type: string }
         parts:
           type: array
-          minItems: 1
+          description: At least one part for every task served to the child; empty only in the admin preview of a GRAPHIC task with no parts (CA-D13)
           items: { $ref: "#/components/schemas/PartView" }
         hints: { $ref: "#/components/schemas/HintState" }
         maxAttempts: { type: integer, enum: [ 2 ] }
@@ -1249,10 +1311,11 @@ components:
     AttemptRequest:
       type: object
       required: [ answers ]
+      description: Unknown top-level fields (e.g. xpAwarded, totalXp, rank, solvedTasks) are ignored and have no effect.
       properties:
         answers:
           type: object
-          description: "Raw input per part key. CHOICE_SINGLE and CHOICE_MULTI parts send an array of option keys (may be empty or repeat keys); every other type sends a string. A shape that does not match the part type, or an unknown part key, is refused with 400 naming `answers.<partKey>`. An over-long string is not refused: it is graded UNPARSEABLE."
+          description: "Raw input per part key. CHOICE_SINGLE and CHOICE_MULTI parts send an array of option keys (may be empty or repeat keys; repeats collapse); every other type sends a string. A shape that does not match the part type, an unknown part key, an array of more than 20 items or a key longer than 100 characters is refused with 400 naming `answers.<partKey>` (request shape, not a verdict). An over-long string is not refused: it is graded UNPARSEABLE. An unknown option key within the limits is graded UNPARSEABLE."
           additionalProperties:
             oneOf:
               - type: string
@@ -1271,6 +1334,7 @@ components:
         - verdict
         - normalized
         - formatTip
+        - locked
       properties:
         key: { type: string }
         verdict: { $ref: "#/components/schemas/Verdict" }
@@ -1280,7 +1344,7 @@ components:
           nullable: true
           maxLength: 120
           description: Czech format tip; present only when the verdict is UNPARSEABLE, otherwise null
-        locked: { type: boolean, description: Correct on an earlier attempt; not re-entered }
+        locked: { type: boolean, description: Correct on an earlier attempt and not re-entered; always false in the answer tester }
     AttemptResult:
       type: object
       required:
@@ -1303,6 +1367,7 @@ components:
         attemptNo: { type: integer, minimum: 1, maximum: 2, nullable: true, description: Null exactly when status is UNPARSEABLE }
         parts:
           type: array
+          description: "GRADED: every part. UNPARSEABLE: only the unreadable parts, each with verdict UNPARSEABLE and formatTip set."
           items: { $ref: "#/components/schemas/PartResult" }
         taskState: { $ref: "#/components/schemas/TaskState" }
         attemptsLeft: { type: integer, minimum: 0, maximum: 2 }
@@ -1315,21 +1380,22 @@ components:
         rankUp:
           allOf: [ { $ref: "#/components/schemas/Rank" } ]
           nullable: true
-          description: The new rank when this task award crossed a threshold mid-mission (animate now). Null when the crossing happened together with mission completion; it is then celebrated on the mission summary.
-        missionComplete: { type: boolean, description: True when this resolved the run's last task }
+          description: "The new rank when this resolution crossed a threshold, animated now. That covers the task XP, and bonuses of other missions in completedMissionIds while missionComplete is false. Null when no threshold was crossed, when status is UNPARSEABLE, or when missionComplete is true: MissionSummary.rankUp then carries it."
+        missionComplete: { type: boolean, description: True when this resolved the run's last task; false when status is UNPARSEABLE }
         bonusXp:
           type: integer
           minimum: 0
-          description: Completion bonuses paid by this resolution, for every mission it completed (OQ-28)
+          description: Completion bonuses paid by this resolution, for every mission it completed (OQ-28); 0 when status is UNPARSEABLE
         completedMissionIds:
           type: array
-          description: Every mission this resolution completed for the first time, including other missions sharing the task
+          description: Every mission this resolution completed for the first time, including other missions sharing the task; empty when status is UNPARSEABLE
           items:
             type: string
             format: uuid
     Feedback:
       type: object
-      description: Deterministic MVP feedback from the tutor seam (FR-44)
+      description: Deterministic MVP feedback from the tutor seam (FR-44). Per-part verdicts are in AttemptResult.parts, not here.
+      required: [ nextHintIndex, revealedAnswers ]
       properties:
         nextHintIndex: { type: integer, minimum: 1, nullable: true }
         revealedAnswers:
@@ -1360,7 +1426,7 @@ components:
         - rankReachedDuringRun
       properties:
         missionId: { type: string, format: uuid }
-        xpEarned: { type: integer, minimum: 0, description: Task XP plus bonus earned in this run }
+        xpEarned: { type: integer, minimum: 0, description: "Sum of xpAwarded + bonusXp over this run: task XP, this mission's bonus, and bonuses of other missions completed through shared tasks during the run" }
         firstTryCount: { type: integer, minimum: 0 }
         taskCount: { type: integer, minimum: 1 }
         replay: { type: boolean }
@@ -1390,8 +1456,10 @@ components:
       required: [ secondaryTaskLocale, answerMode ]
       properties:
         secondaryTaskLocale:
-          allOf: [ { $ref: "#/components/schemas/TaskLocale" } ]
+          type: string
+          pattern: ^[a-z]{2}$
           nullable: true
+          description: A configured task locale (same shape as TaskLocale; keep the two identical), or null when the translation is off (the default)
         answerMode: { $ref: "#/components/schemas/AnswerMode" }
     ProfileSettingsPatch:
       type: object
@@ -1400,13 +1468,12 @@ components:
           type: string
           pattern: ^[a-z]{2}$
           nullable: true
-          description: A configured task locale, or null to turn the translation off; an unconfigured value is refused with 400
+          description: A configured task locale (same shape as TaskLocale; keep the two identical), or null to turn the translation off; an unconfigured value is refused with 400
         answerMode:
           allOf:
             - $ref: "#/components/schemas/AnswerMode"
           description: "Not nullable: null is refused with 400; GUIDED is refused with 422"
-      x-patch-semantics: json-merge-patch
-      description: "JSON merge-patch semantics (RFC 7396): an absent field is unchanged; `secondaryTaskLocale: null` clears it; `answerMode: null` is refused with 400. Unknown top-level fields are ignored. The backend must bind this body with a presence-aware type (e.g. JsonNullable) to tell absent from null."
+      description: "Partial update with the child-profile rules (not RFC 7396): an absent field is unchanged; `secondaryTaskLocale: null` clears it; `answerMode: null` is refused with 400. Unknown top-level fields are ignored. The backend must bind this body with a presence-aware type (e.g. JsonNullable) to tell absent from null."
     AnswerMode:
       type: string
       enum: [ DIRECT, GUIDED ]
@@ -1423,8 +1490,16 @@ components:
           nullable: true
     ReferenceData:
       type: object
-      required: [ topics, taskLocales ]
+      required: [ grades, subjects, topics, taskLocales ]
       properties:
+        grades:
+          type: array
+          description: Configured grades (CA-D16); MVP [6]
+          items: { type: integer, minimum: 1, maximum: 9 }
+        subjects:
+          type: array
+          description: Configured subjects (CA-D16); MVP ["math"]
+          items: { type: string }
         topics:
           type: array
           items:
@@ -1442,11 +1517,22 @@ components:
       type: object
       required: [ title, grade, subject ]
       properties:
-        title: { type: string, minLength: 1, maxLength: 200 }
-        publisher: { type: string, maxLength: 200, nullable: true }
-        edition: { type: string, maxLength: 50, nullable: true }
-        grade: { type: integer, minimum: 1, maximum: 9 }
-        subject: { type: string, minLength: 1 }
+        title: { type: string, minLength: 1, x-maxCodePoints: 200 }
+        publisher: { type: string, x-maxCodePoints: 200, nullable: true }
+        edition: { type: string, x-maxCodePoints: 50, nullable: true }
+        grade: { type: integer, minimum: 1, maximum: 9, description: One of ReferenceData.grades }
+        subject: { type: string, minLength: 1, description: One of ReferenceData.subjects }
+    SourceMetadataUpdate:
+      type: object
+      description: updateSource body. Same fields as SourceMetadata (keep the two identical) but closed, so a `file` field is refused with 400.
+      additionalProperties: false
+      required: [ title, grade, subject ]
+      properties:
+        title: { type: string, minLength: 1, x-maxCodePoints: 200 }
+        publisher: { type: string, x-maxCodePoints: 200, nullable: true }
+        edition: { type: string, x-maxCodePoints: 50, nullable: true }
+        grade: { type: integer, minimum: 1, maximum: 9, description: One of ReferenceData.grades; unchanged while any task references the source (CA-D16) }
+        subject: { type: string, minLength: 1, description: One of ReferenceData.subjects }
     SourceUpload:
       allOf:
         - $ref: "#/components/schemas/SourceMetadata"
@@ -1468,8 +1554,8 @@ components:
       properties:
         sourceId: { type: string, format: uuid }
         page: { type: integer, minimum: 1 }
-        taskNo: { type: string, minLength: 1, maxLength: 20 }
-        subPart: { type: string, nullable: true, maxLength: 10 }
+        taskNo: { type: string, minLength: 1, x-maxCodePoints: 20 }
+        subPart: { type: string, nullable: true, x-maxCodePoints: 10 }
     AnswerSpec:
       type: object
       description: |
@@ -1482,12 +1568,13 @@ components:
           type: array
           minItems: 1
           maxItems: 10
-          description: Accepted answers stored as the admin entered them (FR-20); for CHOICE_* the correct option keys. TEXT answers are at most 100 code points.
+          description: Accepted answers stored as the admin entered them (FR-20). For CHOICE_* the correct option keys, each one of `options[].key`; CHOICE_SINGLE may list several (each is an alternative), CHOICE_MULTI lists the one expected set. TEXT answers are at most 100 code points.
           items:
             type: string
-            maxLength: 100
+            minLength: 1
+            x-maxCodePoints: 100
         tolerance: { type: string, nullable: true, description: Absolute tolerance for numeric types; null = exact }
-        exactDecimals: { type: integer, minimum: 0, nullable: true, description: DECIMAL — required number of decimal places, maximum: 6 }
+        exactDecimals: { type: integer, minimum: 0, maximum: 6, nullable: true, description: "DECIMAL only: required number of decimal places, 0-6 (content-authoring answer-spec table)" }
         allowEquivalent: { type: boolean, default: true, description: FRACTION — accept equal values in other forms }
         requireLowestTerms: { type: boolean, default: false, description: FRACTION only }
         unit: { type: string, nullable: true, description: NUMBER_WITH_UNIT — the unit asked for }
@@ -1495,13 +1582,13 @@ components:
         diacriticsStrict: { type: boolean, default: false, description: TEXT only }
         options:
           type: array
-          description: CHOICE_* — all options, in display order
+          description: CHOICE_* — all options, in display order. Keys are `A`, `B`, `C` … in that order; any other key sequence is 400 on `parts[i].spec.options[j].key`.
           items:
             type: object
             required: [ key, text ]
             properties:
-              key: { type: string }
-              text: { type: string, maxLength: 200 }
+              key: { type: string, pattern: "^[A-J]$" }
+              text: { type: string, minLength: 1, x-maxCodePoints: 200 }
           minItems: 2
           maxItems: 10
         acceptedNormalized:
@@ -1514,20 +1601,21 @@ components:
       type: object
       required: [ key, label, spec ]
       properties:
-        key: { type: string, minLength: 1 }
-        label: { type: string, maxLength: 10 }
+        key: { type: string, minLength: 1, maxLength: 20, description: "Unique within the task (duplicate = 400 on `parts[i].key`); the key used by AttemptRequest.answers and Translation.partLabels" }
+        label: { type: string, minLength: 1, x-maxCodePoints: 10, description: Unique within the task (CA-D11) }
         spec: { $ref: "#/components/schemas/AnswerSpec" }
     Translation:
       type: object
       properties:
         prompt:
           type: string
-          maxLength: 4000
+          x-maxCodePoints: 4000
         partLabels:
           type: object
+          description: Translated part labels keyed by PartInput.key
           additionalProperties:
             type: string
-            maxLength: 10
+            x-maxCodePoints: 10
         hints:
           type: array
           maxItems: 10
@@ -1535,20 +1623,20 @@ components:
           items:
             type: string
             nullable: true
-            maxLength: 1000
+            x-maxCodePoints: 1000
         options:
           type: object
-          description: Choice option texts by option key
+          description: Translated choice option texts keyed by "<part key>.<option key>" (e.g. `a.B`), because option keys repeat across parts
           additionalProperties:
             type: string
-            maxLength: 200
+            x-maxCodePoints: 200
     TaskInput:
       type: object
       required: [ prompt, topicId, grade, difficulty, modality, sourceRef, parts, hints ]
       properties:
-        prompt: { type: string, minLength: 1, description: Czech prompt, maxLength: 4000 }
+        prompt: { type: string, minLength: 1, description: Czech prompt, x-maxCodePoints: 4000 }
         topicId: { type: string, format: uuid }
-        grade: { type: integer, minimum: 1, maximum: 9 }
+        grade: { type: integer, minimum: 1, maximum: 9, description: One of ReferenceData.grades; equals the source's grade (CA-D16) }
         difficulty: { type: integer, minimum: 1, maximum: 3 }
         modality: { $ref: "#/components/schemas/Modality" }
         sourceRef: { $ref: "#/components/schemas/SourceRef" }
@@ -1564,7 +1652,7 @@ components:
           items:
             type: string
             minLength: 1
-            maxLength: 1000
+            x-maxCodePoints: 1000
         translations:
           type: object
           description: Keyed by configured task locale (MVP `uk`)
@@ -1649,6 +1737,7 @@ components:
           description: Exactly `weeks` entries, one per week, oldest first; the current week is the last entry; empty weeks are zeros
         firstTryRateByTopic:
           type: array
+          description: One entry per topic with at least one published task; resolved = 0 means no rate yet (rendered as —)
           items:
             type: object
             required: [ topicId, topicName, resolved, firstTry ]
@@ -1677,7 +1766,7 @@ components:
       enum: [ OPEN, FIXED, DISMISSED ]
     Report:
       type: object
-      required: [ reportId, taskId, reason, status, createdAt ]
+      required: [ reportId, taskId, taskPromptExcerpt, reason, status, createdAt ]
       properties:
         reportId: { type: string, format: uuid }
         taskId: { type: string, format: uuid }
@@ -1750,7 +1839,7 @@ components:
         - completedMissionIds
         - report
       properties:
-        changed: { type: boolean, description: False when the new verdict would not improve the outcome }
+        changed: { type: boolean, description: "True when a re-evaluated verdict was recorded and the report became FIXED, including a replay attempt (xpAwarded 0, task outcome unchanged). False when nothing changed and the report stays OPEN." }
         newTaskState:
           allOf: [ { $ref: "#/components/schemas/TaskState" } ]
           nullable: true

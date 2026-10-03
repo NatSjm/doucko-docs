@@ -432,7 +432,7 @@ inline message on that value, and nothing SHALL be stored.
 | DECIMAL | one or more numbers; optional exact number of decimal places 0–6 | unparseable input; more than 6 decimal places; an expected value that has fewer decimal places than the exact form requires |
 | FRACTION | one or more `a/b` or mixed `w a/b` values; flags "equivalent forms allowed" and `requireLowestTerms` | a zero denominator; a malformed fraction; an expected value not in lowest terms while `requireLowestTerms` is set |
 | NUMBER_WITH_UNIT | one or more number + unit values; flag "unit required" | a value with no unit (even when the unit is optional); a unit with no number; an unparseable number |
-| CHOICE_SINGLE | 2–10 option texts, lettered `A`, `B`, `C` … in order, and exactly one option marked correct | fewer than 2 options; an empty option text; two options with the same text (compared trimmed and case-insensitively); no correct option; more than one correct option |
+| CHOICE_SINGLE | 2–10 option texts, lettered `A`, `B`, `C` … in order, and one or more options marked correct; each correct option is an accepted alternative and the child picks exactly one (FR-20) | fewer than 2 options; an empty option text; two options with the same text (compared trimmed and case-insensitively); no correct option |
 | CHOICE_MULTI | 2–10 option texts lettered as above; one or more options marked correct | fewer than 2 options; empty or duplicate option texts; no correct option |
 | TEXT | one or more expected texts of 1–100 code points; flag "diacritics-strict" | an empty or whitespace-only expected text; a text over 100 code points |
 
@@ -520,8 +520,14 @@ only for INTEGER, DECIMAL, FRACTION and NUMBER_WITH_UNIT parts.
 #### Scenario: Invalid single-choice spec
 
 - **GIVEN** a CHOICE_SINGLE part in the editor
-- **WHEN** the admin saves it with one option only, with no option marked correct, with options `A` and `B` both marked correct, or with options `4` and ` 4 `
-- **THEN** each save is refused with an inline message naming the problem (too few options, no correct option, more than one correct option, duplicate option), and nothing is stored
+- **WHEN** the admin saves it with one option only, with no option marked correct, or with options `4` and ` 4 `
+- **THEN** each save is refused with an inline message naming the problem (too few options, no correct option, duplicate option), and nothing is stored
+
+#### Scenario: Single-choice spec with two correct options
+
+- **GIVEN** a CHOICE_SINGLE part in the editor
+- **WHEN** the admin enters four options and marks `A` and `D` correct
+- **THEN** the part is saved with accepted keys `A` and `D`, and the child still picks exactly one option (answer-checking, "Accepted alternatives")
 
 #### Scenario: Multi-choice spec
 
@@ -978,7 +984,7 @@ narrows FR-55). To use a new file, the admin uploads a new source.
 
 - **GIVEN** a stored source
 - **WHEN** the admin opens its edit form, and when an API request tries to send a new file for that existing source
-- **THEN** the form offers no file field, and the request is refused with HTTP 400 or 405 while the stored file stays byte-identical
+- **THEN** the form offers no file field, and the request is refused with HTTP 400, 405 or 415 while the stored file stays byte-identical
 
 #### Scenario: Invalid edit is refused
 

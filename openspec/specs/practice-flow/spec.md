@@ -652,10 +652,11 @@ unchanged.
 ### Requirement: Deterministic feedback through the tutor seam
 
 Feedback after each attempt SHALL be produced only through the `TutorPort`
-seam, whose MVP implementation is deterministic: the per-part verdicts, a
-pointer to the next unused hint if there is one, and on the second wrong
-attempt the revealed answers (FR-44). The feedback object (`feedback` in
-`AttemptResult`, `api/openapi.yaml`) SHALL contain no ids and no timestamps.
+seam, whose MVP implementation is deterministic. The per-part verdicts are
+returned in `AttemptResult.parts`, next to `feedback`. The feedback object
+(`feedback` in `AttemptResult`, `api/openapi.yaml`) holds a pointer to the
+next unused hint if there is one, and on the second wrong attempt the
+revealed answers (FR-44). It SHALL contain no ids and no timestamps.
 Replacing the tutor implementation SHALL NOT change how attempts are
 submitted (`AttemptRequest` stays as it is). MVP calls no AI or LLM service
 (TC-6) and uses the `DIRECT` answer mode only (see child-profile).
@@ -664,13 +665,13 @@ submitted (`AttemptRequest` stays as it is). MVP calls no AI or LLM service
 
 - **GIVEN** a task with 2 hints, none opened
 - **WHEN** attempt 1 is wrong
-- **THEN** the feedback carries the per-part verdicts and points to hint 1, and no correct value
+- **THEN** `parts` carries the per-part verdicts, `feedback` points to hint 1, and no correct value is returned
 
 #### Scenario: Feedback after a wrong attempt with no hints left
 
 - **GIVEN** a task whose hints are all open
 - **WHEN** attempt 1 is wrong
-- **THEN** the feedback carries the per-part verdicts and no hint pointer
+- **THEN** `parts` carries the per-part verdicts and `feedback.nextHintIndex` is `null`
 
 #### Scenario: Same input, same feedback
 
