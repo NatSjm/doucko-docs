@@ -326,6 +326,7 @@ they narrow carry a pointer here.
 | CA-D13 | A `GRAPHIC` task may have zero answer parts; every `TEXT` task has 1..n parts. | departs from FR-6 | content-authoring, Derived decisions |
 | OQ-30 | The admin password is at most 72 bytes in UTF-8, because bcrypt reads only the first 72 bytes. The backend refuses to start otherwise. | amends NFR-16 | admin-access, Admin password policy |
 | OQ-31 | When uploading a source, title, grade and subject are required; publisher and edition are optional. | clarifies FR-1 | content-authoring, PDF sources |
+| OQ-32 | The task list offers a bulk publish action (PRD §9.3): the admin selects 1-100 tasks and publishes them in one step, each task independently, with a result per task. There is no bulk unpublish. | clarifies FR-12 | content-authoring, Bulk publish from the task list |
 
 The other derived decisions in the content-authoring spec (CA-D1..CA-D21)
 refine behavior without narrowing a requirement row; they were accepted with

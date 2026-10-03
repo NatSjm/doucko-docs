@@ -773,6 +773,34 @@ be served only `PUBLISHED` tasks inside `PUBLISHED` missions (FR-12).
 - **WHEN** the child requests it by id
 - **THEN** it is refused as not found
 
+### Requirement: Bulk publish from the task list
+
+The task list SHALL offer a bulk publish action: the admin selects 1 to 100
+tasks and publishes them in one step (FR-12, decision OQ-32). Each selected
+task SHALL be handled independently and the result SHALL list every task with
+whether it is now `PUBLISHED` and, if not, why. A task that is already
+`PUBLISHED` SHALL stay unchanged and be reported as published. A task id that
+does not exist SHALL be reported as not published, without affecting the
+others. There SHALL be no bulk unpublish, because unpublishing is limited by
+the mission publishing rules (FR-57).
+
+#### Scenario: Publish several drafts at once
+
+- **GIVEN** three `DRAFT` tasks and one `PUBLISHED` task
+- **WHEN** the admin selects all four in the task list and chooses "Publish"
+- **THEN** all four are `PUBLISHED` and the result lists each of them as published
+
+#### Scenario: One unknown id does not block the rest
+
+- **GIVEN** two `DRAFT` tasks and a task id that does not exist
+- **WHEN** a bulk publish request names all three
+- **THEN** the two tasks are `PUBLISHED`, and the result reports the unknown id as not published with the reason "not found"
+
+#### Scenario: Selection limits
+
+- **WHEN** a bulk publish request names no task, or 101 tasks
+- **THEN** it is refused with HTTP 400 and no task changes status
+
 ### Requirement: Mission publishing rules
 
 A mission SHALL be publishable only when every task in it is `PUBLISHED`
@@ -1097,8 +1125,8 @@ fixture file that is missing from the manifest or has another origin.
 - No automatic PDF text or image extraction, and no AI drafting of tasks,
   hints or translations.
 - No in-app image cropping; images are cropped outside the app.
-- No topic editor (UI or API), no content import or export, no bulk
-  operations.
+- No topic editor (UI or API), no content import or export, and no bulk
+  operation other than bulk publish (OQ-32).
 - Difficulty is stored only; it does not affect selection, XP or display.
 - The source reference is never shown to the child.
 - No task locales other than `uk`, no grade other than `6` and no subject

@@ -14,7 +14,7 @@ specs so Phase 3 can plan slices against real operations.
 
 ## What changes
 
-`api/openapi.yaml` v0.2.0 (OpenAPI 3.0.3): 31 paths, 45 operations.
+`api/openapi.yaml` v0.2.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
 
 | Area | Operations | Spec |
 |---|---|---|
@@ -23,7 +23,7 @@ specs so Phase 3 can plan slices against real operations.
 | `/api/child/missions/{id}/tasks/{id}/reports`, images | report a problem, task images | practice-flow |
 | `/api/child/profile/settings` | get/patch settings (`GUIDED` → 422) | child-profile |
 | `/api/admin/session` | sign in/out, session probe | admin-access |
-| `/api/admin/sources`, tasks, missions, reference | CRUD, uploads, publish rules, answer tester, preview (no bulk operations) | content-authoring |
+| `/api/admin/sources`, tasks, missions, reference | CRUD, uploads, publish rules, bulk publish, answer tester, preview | content-authoring |
 | `/api/admin/stats`, reports | weekly stats, flag queue, re-evaluate, dismiss | progress-stats |
 
 Conventions fixed by v0:
@@ -63,8 +63,8 @@ applied. The notable shape changes:
 - merge-patch semantics on `ProfileSettingsPatch`; sign-in never returns 400;
 - a `csrfToken` security scheme on every admin mutation; 400/409/413 where
   the specs require them; field and count limits from the specs;
-- `bulkPublishTasks` removed: content-authoring excludes bulk operations
-  (the PRD §9.3 UX direction mentioned one; restore only through a recorded decision);
+- `bulkPublishTasks` kept, now specified in content-authoring (decision OQ-32,
+  from the PRD §9.3 UX direction): 1-100 tasks, a result per task;
 - missions have a `position`, no title (CA-D17).
 
 ## Validation
