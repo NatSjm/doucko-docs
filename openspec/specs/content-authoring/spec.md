@@ -15,8 +15,8 @@ The requirements below implement FR-1..FR-13 and FR-55..FR-57. Where this
 spec adds a rule that no FR, NFR or OQ decision states, the rule cites one of
 the derived decisions listed here. Entries marked **narrows** or **deviates**
 restrict or depart from an FR's literal wording. The product owner accepted
-CA-D1..CA-D21 on 2026-10-03 (`docs/requirements.md` §6.6). CA-D22 is pending
-approval at checkpoint 2 (§6.7). Changing any of them needs a recorded
+CA-D1..CA-D21 on 2026-10-03 (`docs/requirements.md` §6.6) and CA-D22 at
+checkpoint 2 the same day (§6.7). Changing any of them needs a recorded
 decision.
 
 | Id | Decision | Derived from / justification |
@@ -42,7 +42,7 @@ decision.
 | CA-D19 | Task search is a case- and diacritics-insensitive substring match on the Czech prompt. An empty or whitespace-only query does not filter. | FR-11. The admin types on an English keyboard, so `obdelnik` must find `obdélník`. |
 | CA-D20 | Expected values are parsed with the checker's input grammar (answer-checking). Numeric expected values have an absolute value below 10^12 and at most 6 decimal places. | answer-checking (integer, decimal, fraction and unit input): admin and child notation then agree, so a dot decimal is accepted and a dot or comma is never a thousands separator. The bounds make overflow testable. |
 | CA-D21 | Each code repo carries a fixture provenance manifest, and a check fails on any unlisted fixture file. | NFR-4 needs an executable mechanism, not a human review. |
-| CA-D22 | *(Pending product-owner approval at checkpoint 2, `docs/requirements.md` §6.7.)* **Narrows FR-56:** a problem report or an opened-hint record blocks deletion the same way an attempt does. | practice-flow stores both without an attempt (a report filed before any attempt, every opened hint). progress-stats shows the task of each report and counts every opened hint. Deleting the task would orphan or silently drop that history. |
+| CA-D22 | **Narrows FR-56:** a problem report or an opened-hint record blocks deletion the same way an attempt does. | practice-flow stores both without an attempt (a report filed before any attempt, every opened hint). progress-stats shows the task of each report and counts every opened hint. Deleting the task would orphan or silently drop that history. |
 
 ## Requirements
 
@@ -1028,8 +1028,8 @@ Further delete rules derived from other requirements:
   decision CA-D4, which narrows FR-56).
 - A problem report or an opened-hint record SHALL block deletion of its
   task, and of any mission containing that task, as an attempt does
-  (derived decision CA-D22, which narrows FR-56; pending approval at
-  checkpoint 2, `docs/requirements.md` §6.7).
+  (derived decision CA-D22, which narrows FR-56; accepted at checkpoint 2,
+  `docs/requirements.md` §6.7).
 - A task in a published mission SHALL NOT be deletable (derived decision
   CA-D6).
 - Deleting a source SHALL remove its file from the storage volume (derived

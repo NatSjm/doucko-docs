@@ -10,7 +10,8 @@ requirement names its **owner repo(s)**. The gate scripts read that column.
 > `add-api-contract-v0`). This plan lives in the docs repo. The code repos
 > read it through their pinned `contract/` submodule.
 >
-> Status: **draft for checkpoint 2** (plan approval), 2026-10-03.
+> Status: **approved at checkpoint 2**, 2026-10-03, as drafted, with the
+> §7 recommendations accepted (`docs/qa/checkpoint-2-plan-signoff.md`).
 
 ## 1. Slicing principles
 
@@ -193,7 +194,7 @@ frontend run in parallel once the contract is pinned.
   The "referenced by attempts, reports or hints" guard goes through a
   content-module port (`ContentUsage`) that slice 7 implements, and is tested
   here with a fake. frontend e2e for FR-9 and FR-55.
-- **Risks:** CA-D22 is a pending ruling (§7).
+- **Risks:** none open (CA-D22 accepted at checkpoint 2).
 
 ### 4.7 `practice-flow`
 
@@ -318,9 +319,11 @@ Implement in dependency order (§3). After each archive, in the repo that
 archived: `npm run qa:verify`. In the docs repo: `node scripts/check-workspace.mjs`.
 Future-phase work (FR-45..FR-54, NFR-14) is NOT in this plan.
 
-## 7. Decisions for checkpoint 2
+## 7. Decisions taken at checkpoint 2
 
-| # | Decision | Recommendation |
+The product owner accepted every recommendation on 2026-10-03.
+
+| # | Decision | Accepted recommendation |
 |---|---|---|
 | D-P1 | Where the Compose stack and `npm run backup` live | **backend repo** (`compose.yaml`, `scripts/backup.mjs`). It owns Postgres, Flyway and the volume, and NFR-10 is `local-verifiable`, which backend proves. The nginx frontend service builds from the sibling `../frontend`. Frontend e2e starts the stack via `docker compose -f ../backend/compose.yaml`. |
 | D-P2 | How to pin `contract/` while no remote exists | a submodule with the **relative URL `../docs`** in both code repos. Locally it resolves to the sibling checkout. Once remotes exist with matching names, it resolves on the host without editing `.gitmodules`. |
