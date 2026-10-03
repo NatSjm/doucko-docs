@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Doučko API
-  version: 0.4.0
+  version: 0.5.0
   description: |
     Contract between the Doučko backend (Kotlin/Spring Boot) and frontend
     (React/Vite). Single source of truth (NFR-12): server interfaces and the
@@ -25,7 +25,8 @@ info:
     contract review (trace/workflow-runs/20261003-053111-contract-review.json).
     v0.3: applies the review of v0.2
     (trace/workflow-runs/20261003-060056-contract-review.json); v0.4 applies
-    the review of v0.3 (trace/workflow-runs/20261003-150844-contract-review.json).
+    the review of v0.3 (trace/workflow-runs/20261003-150844-contract-review.json);
+    v0.5 applies the review of v0.4 (trace/workflow-runs/20261003-151524-contract-review.json).
 
     Conventions:
     - Field paths. `Problem.errors[].field` names the invalid input with a
@@ -274,7 +275,7 @@ paths:
               schema: { $ref: "#/components/schemas/ProfileSettings" }
         "400": { $ref: "#/components/responses/BadRequest" }
         "422":
-          description: "`GUIDED` answer mode is not available yet"
+          description: "`GUIDED` answer mode is not available yet. Checked after validation: a request with any 400-class error is answered 400 even if it asks for GUIDED."
           content:
             application/problem+json:
               schema: { $ref: "#/components/schemas/Problem" }
@@ -556,7 +557,7 @@ paths:
     delete:
       tags: [ admin-tasks ]
       operationId: deleteTask
-      summary: Delete — refused (409) with attempts or in a published mission (FR-56)
+      summary: Delete — refused (409) with attempts, problem reports or opened hints, or while in a published mission (FR-56, CA-D6, CA-D22)
       security:
         - adminSession: []
           csrfToken: []
@@ -601,6 +602,7 @@ paths:
       tags: [ admin-tasks ]
       operationId: addTaskImage
       summary: Attach a PNG/JPG image (≤ 5 MB), appended last
+      description: A missing or empty file, or an 11th image (the limit is 10), is 400 with `errors[].field = file` and a message naming the limit.
       security:
         - adminSession: []
           csrfToken: []
@@ -625,12 +627,6 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "413": { $ref: "#/components/responses/TooLarge" }
         "415": { $ref: "#/components/responses/UnsupportedType" }
-        "409":
-          description: The task already has 10 images
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
     put:
       tags: [ admin-tasks ]
       operationId: reorderTaskImages
@@ -742,6 +738,7 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
+        "413": { $ref: "#/components/responses/TooLarge" }
 
   /api/admin/missions:
     get:
@@ -829,7 +826,7 @@ paths:
     delete:
       tags: [ admin-missions ]
       operationId: deleteMission
-      summary: Delete — refused (409) when any attempt references it (FR-56)
+      summary: Delete — refused (409) when any attempt, problem report or opened hint references one of its tasks (FR-56, CA-D22)
       security:
         - adminSession: []
           csrfToken: []
@@ -1018,6 +1015,7 @@ paths:
         "204":
           description: Acknowledged (also when nothing was pending)
         "400": { $ref: "#/components/responses/BadRequest" }
+        "413": { $ref: "#/components/responses/TooLarge" }
   /api/admin/tasks/publish:
     post:
       tags:
@@ -1070,7 +1068,9 @@ components:
         HttpOnly, SameSite=Strict session cookie set by `signIn`; expires
         after 8 h without admin activity (NFR-15). Data-changing requests
         must also send the `X-XSRF-TOKEN` header matching the `XSRF-TOKEN`
-        cookie, otherwise 403.
+        cookie, otherwise 403. The session is checked first: with no valid
+        session the answer is 401 whatever the CSRF token; 403 is only for a
+        valid session with a missing or wrong CSRF token.
     csrfToken:
       type: apiKey
       in: header
@@ -1096,7 +1096,7 @@ components:
         application/problem+json:
           schema: { $ref: "#/components/schemas/Problem" }
     Forbidden:
-      description: Missing or invalid CSRF token
+      description: Valid admin session, but a missing or invalid CSRF token
       content:
         application/problem+json:
           schema: { $ref: "#/components/schemas/Problem" }
@@ -1111,7 +1111,7 @@ components:
         application/problem+json:
           schema: { $ref: "#/components/schemas/Problem" }
     TooLarge:
-      description: "Too large: a source PDF over 50 MB, an image over 5 MB, or a child request body over 16 KB"
+      description: "Too large: a source PDF over 50 MB, an image over 5 MB, or a child request body or answer-tester body over 16 KB"
       content:
         application/problem+json:
           schema: { $ref: "#/components/schemas/Problem" }
@@ -1225,6 +1225,7 @@ components:
               name: { type: string }
               missions:
                 type: array
+                description: Published missions of the topic, ordered by position ascending (the server sorts)
                 items: { $ref: "#/components/schemas/MissionCard" }
         pendingRankUp:
           allOf:
@@ -1463,7 +1464,7 @@ components:
         rankUp:
           allOf: [ { $ref: "#/components/schemas/Rank" } ]
           nullable: true
-          description: "Highest rank crossed by the completing award or bonus, while its celebration is not yet acknowledged: animate on this screen, then call ackRankUp. Null on every GET after the acknowledgement."
+          description: "Highest rank crossed by the completing award or bonus, while its celebration is not yet acknowledged: animate on this screen, then call ackRankUp. The same crossing is also HqView.pendingRankUp until then; whichever screen is shown first plays it. Null on every GET after the acknowledgement (the rank then appears in rankReachedDuringRun)."
         rankReachedDuringRun:
           allOf:
             - $ref: "#/components/schemas/Rank"
@@ -1512,7 +1513,6 @@ components:
     # ------------------------------------------------------------ admin
     SignInRequest:
       type: object
-      required: []
       properties:
         password:
           type: string
@@ -1631,7 +1631,7 @@ components:
       type: object
       required: [ key, label, spec ]
       properties:
-        key: { type: string, minLength: 1, maxLength: 20, description: "Unique within the task (duplicate = 400 on `parts[i].key`); the key used by AttemptRequest.answers and Translation.partLabels" }
+        key: { type: string, pattern: "^[a-z0-9]{1,20}$", description: "Machine key of the part, separate from its label: assigned by the client when the part is created, kept stable across edits, never shown to the admin or the child. Unique within the task (duplicate = 400 on `parts[i].key`). Keys AttemptRequest.answers, LoggedAttempt maps, Translation.partLabels and Translation.options." }
         label: { type: string, minLength: 1, x-maxCodePoints: 10, description: Unique within the task (CA-D11) }
         spec: { $ref: "#/components/schemas/AnswerSpec" }
     Translation:
@@ -1720,8 +1720,9 @@ components:
       allOf:
         - $ref: "#/components/schemas/TaskInput"
         - type: object
-          required: [ taskId, status, images, provenance, attemptCount, missionIds ]
+          required: [ taskId, status, images, provenance, attemptCount, missionIds, deletable ]
           properties:
+            deletable: { type: boolean, readOnly: true, description: "True when deleteTask would succeed now: no attempt, problem report or opened hint, and not in a published mission (FR-56, CA-D6, CA-D22)" }
             taskId: { type: string, format: uuid }
             status: { $ref: "#/components/schemas/PublishStatus" }
             images:
@@ -1750,8 +1751,9 @@ components:
       allOf:
         - $ref: "#/components/schemas/MissionInput"
         - type: object
-          required: [ missionId, status, hasAttempts ]
+          required: [ missionId, status, hasAttempts, deletable ]
           properties:
+            deletable: { type: boolean, readOnly: true, description: "True when deleteMission would succeed now: no attempt, problem report or opened hint references any of its tasks (FR-56, CA-D22)" }
             missionId: { type: string, format: uuid }
             status: { $ref: "#/components/schemas/PublishStatus" }
             hasAttempts: { type: boolean }
@@ -1787,6 +1789,7 @@ components:
         qualifyingSessions: { type: integer, minimum: 0 }
         tasksPerSession:
           type: array
+          description: Answered-task count of each session counted in this week, in chronological order of the session's first attempt; length equals sessions
           items: { type: integer, minimum: 1 }
         hintsUsed: { type: integer, minimum: 0 }
         revealed: { type: integer, minimum: 0 }
@@ -1795,7 +1798,7 @@ components:
       enum: [ OPEN, FIXED, DISMISSED ]
     Report:
       type: object
-      required: [ reportId, taskId, taskPromptExcerpt, reason, status, createdAt ]
+      required: [ reportId, taskId, taskPromptExcerpt, reason, note, status, createdAt, attempt ]
       properties:
         reportId: { type: string, format: uuid }
         taskId: { type: string, format: uuid }
@@ -1838,6 +1841,7 @@ components:
           additionalProperties: { type: string, nullable: true }
         verdicts:
           type: object
+          description: Values are only CORRECT or WRONG; unparseable submissions are never logged
           additionalProperties: { $ref: "#/components/schemas/Verdict" }
         hintsUsed: { type: integer, minimum: 0 }
         createdAt: { type: string, format: date-time }
@@ -1854,6 +1858,7 @@ components:
           properties:
             verdicts:
               type: object
+              description: Values are only CORRECT or WRONG; a re-evaluation that would be unparseable records nothing
               additionalProperties:
                 $ref: "#/components/schemas/Verdict"
             reevaluatedAt:
@@ -1900,4 +1905,4 @@ components:
         reason:
           type: string
           nullable: true
-          description: Why the task is not published (e.g. "not found"); null when published
+          description: Why the task is not published; null when published. An unknown id gets exactly `not found` (normative, content-authoring). A task refused by a publish rule gets the same English message the single publish (setTaskStatus 409 `detail`) would give.

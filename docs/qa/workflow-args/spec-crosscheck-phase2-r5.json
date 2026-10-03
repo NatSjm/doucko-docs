@@ -1,0 +1,107 @@
+{
+  "requirementsPath": "docs/requirements.md",
+  "capabilities": [
+    {
+      "name": "content-authoring",
+      "frIds": [
+        "FR-1",
+        "FR-2",
+        "FR-3",
+        "FR-4",
+        "FR-5",
+        "FR-6",
+        "FR-7",
+        "FR-8",
+        "FR-9",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-55",
+        "FR-56",
+        "FR-57"
+      ]
+    },
+    {
+      "name": "answer-checking",
+      "frIds": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20",
+        "FR-21",
+        "FR-22",
+        "FR-23"
+      ]
+    },
+    {
+      "name": "practice-flow",
+      "frIds": [
+        "FR-24",
+        "FR-25",
+        "FR-26",
+        "FR-27",
+        "FR-28",
+        "FR-29",
+        "FR-30",
+        "FR-31",
+        "FR-32",
+        "FR-33",
+        "FR-44"
+      ]
+    },
+    {
+      "name": "gamification",
+      "frIds": [
+        "FR-34",
+        "FR-35",
+        "FR-36",
+        "FR-37",
+        "FR-38",
+        "FR-39",
+        "FR-58"
+      ]
+    },
+    {
+      "name": "progress-stats",
+      "frIds": [
+        "FR-40",
+        "FR-41",
+        "FR-42"
+      ]
+    },
+    {
+      "name": "child-profile",
+      "frIds": [
+        "FR-43"
+      ]
+    },
+    {
+      "name": "admin-access",
+      "frIds": []
+    }
+  ],
+  "previous": {
+    "gaps": [],
+    "duplicates": [],
+    "contradictions": [
+      "Deleting content vs. stored reports and hint-open records. content-authoring:1016-1018 allows deleting a task, mission or source when no attempt references it. It only checks attempts (scenario content-authoring:1032-1036). But practice-flow also stores data that points at a task with no attempt: a report filed before any attempt (practice-flow:491-495) and every opened hint (practice-flow:523-524). progress-stats depends on both. A flag-queue entry must show its task (progress-stats:282-284, 299-303). Weekly hint figures are built from hint-open records, and a hint opened on a task with no later attempt still counts (progress-stats:121-127). The path is reachable: unpublish the mission (CA-D6, content-authoring:1024-1025), then delete the task. That leaves a report with no task and hint records with no task, or silently drops them. Fix: extend the delete guard in content-authoring to cover reports and hint-open records (FR-56 says 'no attempt references it', so record this as a CA-D narrowing), or state in progress-stats what happens to those records.",
+      "NFR-9 overreach in content-authoring. The requirement 'Externalized admin strings' (content-authoring:611-614) says 'All admin UI strings SHALL be externalized'. Its only scenario checks just the authoring screens: source list, task editor, mission editor and preview (content-authoring:616-620). Admin strings outside authoring (sign-in in admin-access, stats and flag queue in progress-stats) are set aside for the Phase 3 plan. So the requirement text quietly claims scope it does not verify. Fix: scope line 613 to the authoring screens.",
+      "NFR-13 overreach in gamification. 'Light and dark theme' (gamification:418-420) says 'Both themes SHALL meet WCAG AA contrast (NFR-13)'. The scenario at gamification:436-438 applies the themes to 'any child or admin screen'. Read together, gamification owns WCAG AA contrast for the whole app, including the admin UI. But NFR-13 contrast outside gamification, admin UI included, is set aside for the Phase 3 plan. Fix: limit gamification:420 to the skin's colours on child-facing gamification screens, or say plainly that contrast on the other screens is owned elsewhere.",
+      "Undefined 'correct-answer celebration'. The reduced-motion scenario (gamification:296-298) covers 'a rank-up or a correct-answer celebration'. No spec defines a correct-answer celebration. practice-flow:273 only shows the text 'Výborně!' with '+10 XP', and no requirement owns an animation for it. So the reduced-motion rule points at an element no spec defines. Fix: define it in gamification or practice-flow, or drop it from gamification:297."
+    ]
+  },
+  "deferred": [
+    "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+    "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+    "NFR-10 Docker volume and cross-platform backup command",
+    "NFR-11 module boundaries verified by tests",
+    "NFR-12 contract drift check in the build",
+    "NFR-13 WCAG AA contrast and reduced motion outside the gamification child screens, including the admin UI",
+    "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+    "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+  ]
+}

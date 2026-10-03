@@ -1,0 +1,11 @@
+{
+  "change": "add-api-contract-v0",
+  "clean": false,
+  "note": "Every review found mismatches. All were applied, but the final version (v0.5.0) has no clean review of its own. Run contract-review again before release (G7).",
+  "reviews": [
+    { "version": "0.1.0", "record": "trace/workflow-runs/20261003-053111-contract-review.json", "blocker": 4, "major": 26, "minor": 27, "applied": "all, in v0.2.0" },
+    { "version": "0.2.0", "record": "trace/workflow-runs/20261003-060056-contract-review.json", "blocker": 0, "major": 7, "minor": 24, "applied": "all, in v0.3.0" },
+    { "version": "0.3.0", "record": "trace/workflow-runs/20261003-150844-contract-review.json", "blocker": 1, "major": 5, "minor": 14, "applied": "all, in v0.4.0" },
+    { "version": "0.4.0", "record": "trace/workflow-runs/20261003-151524-contract-review.json", "blocker": 0, "major": 1, "minor": 17, "applied": "all, in v0.5.0" }
+  ]
+}

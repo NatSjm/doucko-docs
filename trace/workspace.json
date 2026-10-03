@@ -1,0 +1,1292 @@
+{
+  "generatedBy": "scripts/check-workspace.mjs",
+  "rows": [
+    {
+      "id": "FR-1",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ],
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-2",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-3",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-4",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-5",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-6",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-7",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-8",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-9",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-10",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-11",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-12",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-13",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-55",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-56",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-57",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-14",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-15",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-16",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-17",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-18",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-19",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-20",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-21",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-22",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ],
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-23",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-24",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-25",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-26",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-27",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ],
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-28",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-29",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-30",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-31",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-32",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ],
+        "recording": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-33",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-34",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-35",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-36",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ],
+        "vision-verify": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-37",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ],
+        "vision-verify": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-38",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-39",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-58",
+      "owners": [
+        "frontend"
+      ],
+      "methods": {
+        "a11y": [
+          "frontend"
+        ],
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-40",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-41",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {
+        "backend": 0,
+        "frontend": 0
+      }
+    },
+    {
+      "id": "FR-42",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-43",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "FR-44",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {
+        "backend": 0
+      }
+    },
+    {
+      "id": "NFR-1",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-2",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-3",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-4",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-5",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ],
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-6",
+      "owners": [
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-7",
+      "owners": [
+        "frontend"
+      ],
+      "methods": {
+        "e2e": [
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-8",
+      "owners": [
+        "frontend"
+      ],
+      "methods": {
+        "recording": [
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-9",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-10",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-11",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-12",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-13",
+      "owners": [
+        "frontend"
+      ],
+      "methods": {
+        "a11y": [
+          "frontend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-15",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-16",
+      "owners": [
+        "backend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend"
+        ]
+      },
+      "tests": {}
+    },
+    {
+      "id": "NFR-17",
+      "owners": [
+        "backend",
+        "frontend"
+      ],
+      "methods": {
+        "local-verifiable": [
+          "backend",
+          "frontend"
+        ]
+      },
+      "tests": {}
+    }
+  ],
+  "failures": [],
+  "warnings": [
+    {
+      "check": "contract-pin",
+      "msg": "backend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)"
+    },
+    {
+      "check": "contract-pin",
+      "msg": "frontend: no committed contract/ submodule — the contract is unpinned (git submodule add <docs-remote> contract)"
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-1: owner backend has no test annotated \"@trace FR-1\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-1: owner frontend has no test annotated \"@trace FR-1\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-2: owner backend has no test annotated \"@trace FR-2\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-2: owner frontend has no test annotated \"@trace FR-2\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-3: owner backend has no test annotated \"@trace FR-3\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-3: owner frontend has no test annotated \"@trace FR-3\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-4: owner backend has no test annotated \"@trace FR-4\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-4: owner frontend has no test annotated \"@trace FR-4\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-5: owner backend has no test annotated \"@trace FR-5\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-6: owner backend has no test annotated \"@trace FR-6\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-6: owner frontend has no test annotated \"@trace FR-6\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-7: owner backend has no test annotated \"@trace FR-7\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-7: owner frontend has no test annotated \"@trace FR-7\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-8: owner backend has no test annotated \"@trace FR-8\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-8: owner frontend has no test annotated \"@trace FR-8\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-9: owner backend has no test annotated \"@trace FR-9\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-9: owner frontend has no test annotated \"@trace FR-9\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-10: owner backend has no test annotated \"@trace FR-10\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-10: owner frontend has no test annotated \"@trace FR-10\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-11: owner backend has no test annotated \"@trace FR-11\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-11: owner frontend has no test annotated \"@trace FR-11\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-12: owner backend has no test annotated \"@trace FR-12\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-13: owner backend has no test annotated \"@trace FR-13\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-13: owner frontend has no test annotated \"@trace FR-13\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-55: owner backend has no test annotated \"@trace FR-55\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-55: owner frontend has no test annotated \"@trace FR-55\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-56: owner backend has no test annotated \"@trace FR-56\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-57: owner backend has no test annotated \"@trace FR-57\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-14: owner backend has no test annotated \"@trace FR-14\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-15: owner backend has no test annotated \"@trace FR-15\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-16: owner backend has no test annotated \"@trace FR-16\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-17: owner backend has no test annotated \"@trace FR-17\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-18: owner backend has no test annotated \"@trace FR-18\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-19: owner backend has no test annotated \"@trace FR-19\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-20: owner backend has no test annotated \"@trace FR-20\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-21: owner backend has no test annotated \"@trace FR-21\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-22: owner backend has no test annotated \"@trace FR-22\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-22: owner frontend has no test annotated \"@trace FR-22\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-23: owner backend has no test annotated \"@trace FR-23\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-24: owner backend has no test annotated \"@trace FR-24\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-24: owner frontend has no test annotated \"@trace FR-24\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-25: owner backend has no test annotated \"@trace FR-25\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-25: owner frontend has no test annotated \"@trace FR-25\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-26: owner backend has no test annotated \"@trace FR-26\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-26: owner frontend has no test annotated \"@trace FR-26\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-27: owner backend has no test annotated \"@trace FR-27\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-27: owner frontend has no test annotated \"@trace FR-27\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-28: owner backend has no test annotated \"@trace FR-28\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-28: owner frontend has no test annotated \"@trace FR-28\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-29: owner backend has no test annotated \"@trace FR-29\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-29: owner frontend has no test annotated \"@trace FR-29\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-30: owner backend has no test annotated \"@trace FR-30\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-30: owner frontend has no test annotated \"@trace FR-30\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-31: owner backend has no test annotated \"@trace FR-31\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-31: owner frontend has no test annotated \"@trace FR-31\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-32: owner backend has no test annotated \"@trace FR-32\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-32: owner frontend has no test annotated \"@trace FR-32\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-33: owner backend has no test annotated \"@trace FR-33\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-33: owner frontend has no test annotated \"@trace FR-33\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-34: owner backend has no test annotated \"@trace FR-34\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-35: owner backend has no test annotated \"@trace FR-35\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-36: owner backend has no test annotated \"@trace FR-36\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-36: owner frontend has no test annotated \"@trace FR-36\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-37: owner backend has no test annotated \"@trace FR-37\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-37: owner frontend has no test annotated \"@trace FR-37\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-38: owner backend has no test annotated \"@trace FR-38\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-38: owner frontend has no test annotated \"@trace FR-38\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-39: owner backend has no test annotated \"@trace FR-39\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-39: owner frontend has no test annotated \"@trace FR-39\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-58: owner frontend has no test annotated \"@trace FR-58\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-40: owner backend has no test annotated \"@trace FR-40\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-40: owner frontend has no test annotated \"@trace FR-40\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-41: owner backend has no test annotated \"@trace FR-41\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-41: owner frontend has no test annotated \"@trace FR-41\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-42: owner backend has no test annotated \"@trace FR-42\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-43: owner backend has no test annotated \"@trace FR-43\""
+    },
+    {
+      "check": "test-trace",
+      "msg": "FR-44: owner backend has no test annotated \"@trace FR-44\""
+    }
+  ]
+}

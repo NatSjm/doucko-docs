@@ -15,8 +15,9 @@ The requirements below implement FR-1..FR-13 and FR-55..FR-57. Where this
 spec adds a rule that no FR, NFR or OQ decision states, the rule cites one of
 the derived decisions listed here. Entries marked **narrows** or **deviates**
 restrict or depart from an FR's literal wording. The product owner accepted
-all of them on 2026-10-03 (`docs/requirements.md` §6.6); changing one needs a
-recorded decision.
+CA-D1..CA-D21 on 2026-10-03 (`docs/requirements.md` §6.6). CA-D22 is pending
+approval at checkpoint 2 (§6.7). Changing any of them needs a recorded
+decision.
 
 | Id | Decision | Derived from / justification |
 |---|---|---|
@@ -1027,7 +1028,8 @@ Further delete rules derived from other requirements:
   decision CA-D4, which narrows FR-56).
 - A problem report or an opened-hint record SHALL block deletion of its
   task, and of any mission containing that task, as an attempt does
-  (derived decision CA-D22, which narrows FR-56).
+  (derived decision CA-D22, which narrows FR-56; pending approval at
+  checkpoint 2, `docs/requirements.md` §6.7).
 - A task in a published mission SHALL NOT be deletable (derived decision
   CA-D6).
 - Deleting a source SHALL remove its file from the storage volume (derived

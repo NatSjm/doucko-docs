@@ -387,7 +387,7 @@ graded by value, never cause a server error.
 
 #### Scenario: Request body too large
 
-- **GIVEN** any child endpoint that accepts a body (attempt, report, profile settings)
+- **GIVEN** any child endpoint that accepts a body (attempt, report, profile settings, rank-up acknowledgement)
 - **WHEN** a request with a body larger than 16 KB is sent
 - **THEN** the API answers 413 with a problem+json body and nothing is stored
 

@@ -138,12 +138,20 @@ SameSite=Strict. Every data-changing admin request (POST, PUT, PATCH, DELETE
 under `/api/admin/**`, including sign-out `DELETE /api/admin/session`, and
 excluding only sign-in `POST /api/admin/session`) SHALL require a valid CSRF
 token: the value of the `XSRF-TOKEN` cookie sent back in the `X-XSRF-TOKEN`
-header (NFR-15, decision OQ-23).
+header (NFR-15, decision OQ-23). The session is checked first: a request
+with no valid session SHALL get HTTP 401 whatever its CSRF token, and HTTP
+403 is only for a valid session with a missing or wrong CSRF token.
 
 #### Scenario: Session cookie attributes
 
 - **WHEN** a successful sign-in response is inspected
 - **THEN** the session cookie carries the `HttpOnly` attribute and `SameSite=Strict`
+
+#### Scenario: No session wins over a missing CSRF token
+
+- **GIVEN** a client with no session cookie and no CSRF token
+- **WHEN** it sends `POST /api/admin/tasks/{id}/check` or `POST /api/admin/reports/{id}/reevaluate`
+- **THEN** the API answers 401, not 403, and nothing is recorded
 
 #### Scenario: Sign-in needs no CSRF token
 

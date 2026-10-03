@@ -1,0 +1,468 @@
+{
+  "workflow": "contract-review",
+  "file": "./.claude/workflows/contract-review.js",
+  "description": "Independent review of api/openapi.yaml against the baseline OpenSpec specs: one read-only reviewer per capability, each reporting concrete mismatches between what its spec requires at the API boundary and what the contract defines.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T15:15:24.059Z",
+  "finishedAt": "2026-10-03T15:17:36.772Z",
+  "args": {
+    "contractPath": "api/openapi.yaml",
+    "capabilities": [
+      {
+        "name": "content-authoring"
+      },
+      {
+        "name": "answer-checking"
+      },
+      {
+        "name": "practice-flow"
+      },
+      {
+        "name": "gamification"
+      },
+      {
+        "name": "progress-stats"
+      },
+      {
+        "name": "child-profile"
+      },
+      {
+        "name": "admin-access"
+      }
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 2,
+    "maxTotalUsd": 6,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 3.3134,
+  "steps": [
+    {
+      "label": "review:content-authoring",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1237,
+      "durationMs": 132704,
+      "sessionId": "a61ce479-0935-4dd3-b30d-269796918e3b",
+      "costUsd": 0.7367546,
+      "numTurns": 5,
+      "result": {
+        "capability": "content-authoring",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:1028",
+            "contractRef": "api/openapi.yaml:559",
+            "issue": "deleteTask's summary lists only 'attempts or in a published mission' as reasons for a 409. The spec (CA-D22, lines 1028-1030 and the scenario at 1051-1055) also blocks the delete when the task has a problem report or an opened-hint record. The status code is already declared, so only the documentation is out of date.",
+            "suggestedFix": "Change the summary to: 'Delete — refused (409) with attempts, problem reports or opened hints, or while in a published mission (FR-56, CA-D6, CA-D22)'."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:1028",
+            "contractRef": "api/openapi.yaml:832",
+            "issue": "deleteMission's summary says it is refused only 'when any attempt references it'. Under CA-D22 a problem report or opened hint on any of the mission's tasks also blocks deleting the mission.",
+            "suggestedFix": "Change the summary to: 'Delete — refused (409) when any attempt, problem report or opened hint references one of its tasks (FR-56, CA-D22)'."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:1020",
+            "contractRef": "api/openapi.yaml:1731",
+            "issue": "AdminTask.attemptCount (line 1731) and AdminMission.hasAttempts (line 1757) are the only signals the admin UI has for whether a delete can succeed. Neither one covers the CA-D22 blockers (reports, opened hints), so the UI can show Delete as available and then get a 409. The server's 409 still decides, so the spec can still be implemented.",
+            "suggestedFix": "Add a readOnly `deletable: boolean` (or `deleteBlockers` counts) to AdminTask and AdminMission that covers attempts, reports, opened hints and published-mission membership. Or state in the descriptions that these fields do not predict deletability."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:807",
+            "contractRef": "api/openapi.yaml:1900",
+            "issue": "The spec requires the bulk-publish result to report an unknown id 'with the reason \"not found\"'. PublishResult.reason is a free nullable string, and \"not found\" appears only as an example. Generated clients cannot rely on the value, and tests have to guess the exact string.",
+            "suggestedFix": "Make `reason` an enum (e.g. `NOT_FOUND`), nullable when published, and let the UI map it to English copy. Or document the exact literal `not found` as normative."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:351",
+            "contractRef": "api/openapi.yaml:1634",
+            "issue": "PartInput requires a `key` that the spec never defines. The spec identifies parts only by label, which must be unique (CA-D11). The contract does not say who assigns the key, whether it must stay stable across edits (LoggedAttempt.rawInput and Translation.partLabels are keyed by it), or which characters it may use. A key containing '.' would make the `<part key>.<option key>` keys of Translation.options (line 1659) ambiguous. It is also limited with schema `maxLength`, which goes against the contract's own code-point convention.",
+            "suggestedFix": "Constrain the key with a pattern such as `^[a-z0-9]{1,20}$` and document how it is assigned (e.g. client-generated, stable across edits, not shown to the admin). Or add a sentence to the spec's 'Answer parts' requirement defining a stable part key separate from the label."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/content-authoring/spec.md:108",
+            "contractRef": "api/openapi.yaml:628",
+            "issue": "The 'Field limits' scenario puts images, hints and parts under the same 'maximum of 10' rule, with an inline message. An 11th hint or part is a 400 with `errors[].field` (maxItems on TaskInput.hints and parts). An 11th image is a 409 whose errors[] path is undocumented. The client needs two different paths to show the same inline limit message.",
+            "suggestedFix": "Answer the 11th image with 400 and `errors[].field = file` (and document it), or note that the 409 body for this case carries `errors[].field = file` with the limit message."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:answer-checking",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1235,
+      "durationMs": 69248,
+      "sessionId": "757335cc-c004-47bf-b222-58f848291285",
+      "costUsd": 0.5076906,
+      "numTurns": 16,
+      "result": {
+        "capability": "answer-checking",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:778-788",
+            "contractRef": "api/openapi.yaml:725-727, 935-937, 1069-1078, 1093-1102 (testAnswers, reevaluateReport, securitySchemes, Unauthorized/Forbidden)",
+            "issue": "The spec says a tester or re-evaluation request with no admin session cookie gets HTTP 401. Both operations require adminSession and csrfToken, so a request with no cookie usually has no CSRF token either. That request fits both the 401 description ('No valid admin session') and the 403 description ('Missing or invalid CSRF token'), and the contract never says which check runs first. Spring Security's default filter order runs the CSRF check first and would answer 403, which breaks both scenarios. admin-access owns the precedence rule, but it is not written in admin-access/spec.md either (only :183 says 403 needs a valid session to reset the idle clock).",
+            "suggestedFix": "In the adminSession securityScheme description (and the Forbidden response), say: 'With no valid session the answer is 401, whatever the CSRF token; 403 is only for a valid session with a missing or wrong CSRF token.' Add the same precedence rule to admin-access/spec.md."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:444-450, 876-879",
+            "contractRef": "api/openapi.yaml:1348-1356 (AttemptRequest.answers, array items x-maxCodePoints: 100)",
+            "issue": "The spec says a choice key the part does not offer is graded UNPARSEABLE. Its list of request-shape 400s names only unknown part keys, wrong JSON types and more than 20 keys. The contract adds a fourth 400: a choice element longer than 100 code points. Under the spec such a key would be UNPARSEABLE, so the two documents give different outcomes for the same input. The contract rule is reasonable, but the spec does not list it.",
+            "suggestedFix": "Add 'a choice key longer than 100 code points' to the request-shape 400 list in the spec's Explicit exclusions (spec:876-878). Keep the contract as it is."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/answer-checking/spec.md:876-879",
+            "contractRef": "api/openapi.yaml:718-744 (testAnswers responses), 1113-1117 (TooLarge)",
+            "issue": "The spec says request bodies over 16 KB are HTTP 413 at the API, without limiting this to the child endpoint. testAnswers takes the same AttemptRequest body as submitAttempt but declares no 413, and the TooLarge description limits the 16 KB rule to child request bodies. Implementers have to guess whether an oversized tester body is 413, 400 or accepted.",
+            "suggestedFix": "Pick one: add \"413\": $ref TooLarge to testAnswers and widen the TooLarge description to 'a child attempt or answer-tester body over 16 KB', or limit the spec sentence to 'child request bodies over 16 KB'."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:practice-flow",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1233,
+      "durationMs": 75939,
+      "sessionId": "dddb30a2-a1e6-4ec0-8129-aa6f2c261aad",
+      "costUsd": 0.5101026,
+      "numTurns": 9,
+      "result": {
+        "capability": "practice-flow",
+        "consistent": false,
+        "mismatches": [
+          {
+            "severity": "major",
+            "specRef": "openspec/specs/practice-flow/spec.md:346",
+            "contractRef": "api/openapi.yaml:996-1020 (ackRankUp)",
+            "issue": "The spec says any child request body over 16 KB SHALL be refused with HTTP 413 (spec.md:346-347, scenario spec.md:388-392). ackRankUp (POST /api/child/hq/rank-up-ack) is a child endpoint that takes a JSON body, but it declares only 204 and 400, with no 413 TooLarge. The scenario's list '(attempt, report, profile settings)' at spec.md:390 also leaves it out, so the implementer has to guess whether the 16 KB limit and the 413 apply to this endpoint.",
+            "suggestedFix": "Add `\"413\": { $ref: \"#/components/responses/TooLarge\" }` to ackRankUp's responses, and add 'rank-up acknowledgement' to the parenthetical list at spec.md:390."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/practice-flow/spec.md:53-54",
+            "contractRef": "api/openapi.yaml:1218-1228 (HqView.topics[].missions)",
+            "issue": "The spec requires HQ missions to be ordered by mission position within each topic. HqView.topics[].missions does not say what order the array is in. The client can sort by MissionCard.position, so the requirement can still be met, but it is unclear whether the server or the client does the sorting.",
+            "suggestedFix": "Add a description to HqView.topics[].missions: 'Published missions of the topic, ordered by position ascending'."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:gamification",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1232,
+      "durationMs": 77992,
+      "sessionId": "8a4914d0-ec71-414c-b0ea-56f10517bfef",
+      "costUsd": 0.48134179999999993,
+      "numTurns": 8,
+      "result": {
+        "capability": "gamification",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/gamification/spec.md:262",
+            "contractRef": "api/openapi.yaml:1463",
+            "issue": "The spec says a mission-complete rank-up whose screen was never shown plays the next time the child opens HQ, \"and only then\". The summary then shows the rank as a static line only (spec.md:292-296). In the contract, MissionSummary.rankUp stays set until the client calls ackRankUp (openapi.yaml:1466). HqView.pendingRankUp carries the same crossing at the same time (openapi.yaml:1229-1233). Nothing in the contract says which screen wins if the summary is opened before HQ, for example through a deep link or a reload after the app restarts. A client following the contract literally would animate it on the summary, which the spec forbids. The shapes can still express the spec as long as HQ is always opened first, so this is drift in the documentation, not a missing field.",
+            "suggestedFix": "Add to the MissionSummary.rankUp description (and the ackRankUp description) that it is set only in the response that first shows the completed run. Once the summary has been left without an acknowledgement, the crossing moves to HqView.pendingRankUp only, and a later summary GET returns rankUp null with the rank in rankReachedDuringRun. Alternatively, reword spec.md:262-265 to say the celebration plays on whichever of HQ or the summary is shown first."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:progress-stats",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1234,
+      "durationMs": 52054,
+      "sessionId": "b10da7ea-1e09-4251-81ba-ce64fa7bd0cc",
+      "costUsd": 0.4116554,
+      "numTurns": 12,
+      "result": {
+        "capability": "progress-stats",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:282-285",
+            "contractRef": "api/openapi.yaml:1798-1808 (Report.required omits note and attempt)",
+            "issue": "The spec says an entry without an attempt shows no attempt and that every entry has a note slot. `note` and `attempt` are declared `nullable: true` but are not in `required`, so generated types become `attempt?: LoggedAttempt | null` / `note?: string | null`. That gives two ways to say 'no attempt' (absent or null), and the implementer has to guess which one the server sends.",
+            "suggestedFix": "Add `note` and `attempt` to Report.required, so they are always present and null when there is none, like `reevaluation` in LoggedAttempt (1824)."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:99",
+            "contractRef": "api/openapi.yaml:1788-1790 (WeekStats.tasksPerSession)",
+            "issue": "The spec expects 'session sizes of 6 and 5 answered tasks' in session order, and each session's size has to match its session. The contract does not say what order tasksPerSession uses, or that its length equals `sessions`.",
+            "suggestedFix": "Add a description: 'Answered-task count of each session counted in this week, in chronological order of the session's first attempt; length equals sessions.'"
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/progress-stats/spec.md:20-22, 408-412",
+            "contractRef": "api/openapi.yaml:1839-1841, 1855-1858 (LoggedAttempt.verdicts, reevaluation.verdicts → Verdict)",
+            "issue": "Unparseable submissions are never logged, and a re-evaluation that would be unparseable records nothing. Logged and re-evaluated verdicts can therefore only be CORRECT or WRONG. The contract reuses Verdict, which also allows UNPARSEABLE, so the client has to handle a state the spec rules out.",
+            "suggestedFix": "Document on both `verdicts` maps that values are only CORRECT or WRONG (UNPARSEABLE is never logged), or reference a separate `GradedVerdict` enum [CORRECT, WRONG]."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:child-profile",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1233,
+      "durationMs": 44836,
+      "sessionId": "3035385b-8e3b-49ae-b988-796d472b00de",
+      "costUsd": 0.319657,
+      "numTurns": 8,
+      "result": {
+        "capability": "child-profile",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/child-profile/spec.md:65",
+            "contractRef": "api/openapi.yaml:1199-1202 (HqView.displayName, x-maxCodePoints: 50) and api/openapi.yaml:49-54 (Text limits convention)",
+            "issue": "The spec says the trimmed display name is '1 to 50 Unicode characters'. The contract counts the limit in Unicode code points (x-maxCodePoints: 50). 'Characters' could also mean grapheme clusters or UTF-16 units, so the backend's startup validator and the contract could count differently, for example for emoji or combining marks.",
+            "suggestedFix": "Spec: change line 65 to '1 to 50 Unicode code points' so it matches the contract's x-maxCodePoints and the Text limits convention."
+          },
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/child-profile/spec.md:252-258, 273-277",
+            "contractRef": "api/openapi.yaml:275-280 (updateProfileSettings 400 / 422)",
+            "issue": "Both 400 and 422 are declared, but neither the spec nor the contract says which one wins when a single PATCH has a 400-class error and also asks for GUIDED, e.g. {\"secondaryTaskLocale\": \"ru\", \"answerMode\": \"GUIDED\"}. The only mixed scenario (line 273) pairs GUIDED with a valid locale. The implementer and the e2e tests would have to guess the status code.",
+            "suggestedFix": "Spec: add a precedence rule and a scenario, for example 'validation errors (400) are checked before availability (422): {\"secondaryTaskLocale\":\"ru\",\"answerMode\":\"GUIDED\"} → 400 naming secondaryTaskLocale'. Optionally, mention the same order in the 422 description at openapi.yaml:277."
+          }
+        ]
+      }
+    },
+    {
+      "label": "review:admin-access",
+      "phase": "Review",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 1232,
+      "durationMs": 46358,
+      "sessionId": "21b77607-1cab-4fd0-a9a9-d07c946969c0",
+      "costUsd": 0.34622400000000003,
+      "numTurns": 13,
+      "result": {
+        "capability": "admin-access",
+        "consistent": true,
+        "mismatches": [
+          {
+            "severity": "minor",
+            "specRef": "openspec/specs/admin-access/spec.md:53",
+            "contractRef": "api/openapi.yaml:1515 (SignInRequest.required)",
+            "issue": "SignInRequest declares `required: []`. In OpenAPI 3.0.3 the Schema Object `required` keyword must hold at least one item. Strict validators such as swagger-parser and openapi-generator's validateSpec can flag it. The intended meaning (no required fields, so `{}` and an empty body reach the handler and get 401) is right, but the keyword as written is invalid.",
+            "suggestedFix": "Delete the `required: []` line from SignInRequest. Leaving `required` out already means no field is required, so the 401-for-`{}` scenario still works."
+          }
+        ]
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Review",
+      "message": "Contract review: 0 blocker, 1 major, 17 minor across 7 capabilities"
+    }
+  ],
+  "returned": {
+    "consistent": false,
+    "counts": {
+      "blocker": 0,
+      "major": 1,
+      "minor": 17
+    },
+    "mismatches": [
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:1028",
+        "contractRef": "api/openapi.yaml:559",
+        "issue": "deleteTask's summary lists only 'attempts or in a published mission' as reasons for a 409. The spec (CA-D22, lines 1028-1030 and the scenario at 1051-1055) also blocks the delete when the task has a problem report or an opened-hint record. The status code is already declared, so only the documentation is out of date.",
+        "suggestedFix": "Change the summary to: 'Delete — refused (409) with attempts, problem reports or opened hints, or while in a published mission (FR-56, CA-D6, CA-D22)'."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:1028",
+        "contractRef": "api/openapi.yaml:832",
+        "issue": "deleteMission's summary says it is refused only 'when any attempt references it'. Under CA-D22 a problem report or opened hint on any of the mission's tasks also blocks deleting the mission.",
+        "suggestedFix": "Change the summary to: 'Delete — refused (409) when any attempt, problem report or opened hint references one of its tasks (FR-56, CA-D22)'."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:1020",
+        "contractRef": "api/openapi.yaml:1731",
+        "issue": "AdminTask.attemptCount (line 1731) and AdminMission.hasAttempts (line 1757) are the only signals the admin UI has for whether a delete can succeed. Neither one covers the CA-D22 blockers (reports, opened hints), so the UI can show Delete as available and then get a 409. The server's 409 still decides, so the spec can still be implemented.",
+        "suggestedFix": "Add a readOnly `deletable: boolean` (or `deleteBlockers` counts) to AdminTask and AdminMission that covers attempts, reports, opened hints and published-mission membership. Or state in the descriptions that these fields do not predict deletability."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:807",
+        "contractRef": "api/openapi.yaml:1900",
+        "issue": "The spec requires the bulk-publish result to report an unknown id 'with the reason \"not found\"'. PublishResult.reason is a free nullable string, and \"not found\" appears only as an example. Generated clients cannot rely on the value, and tests have to guess the exact string.",
+        "suggestedFix": "Make `reason` an enum (e.g. `NOT_FOUND`), nullable when published, and let the UI map it to English copy. Or document the exact literal `not found` as normative."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:351",
+        "contractRef": "api/openapi.yaml:1634",
+        "issue": "PartInput requires a `key` that the spec never defines. The spec identifies parts only by label, which must be unique (CA-D11). The contract does not say who assigns the key, whether it must stay stable across edits (LoggedAttempt.rawInput and Translation.partLabels are keyed by it), or which characters it may use. A key containing '.' would make the `<part key>.<option key>` keys of Translation.options (line 1659) ambiguous. It is also limited with schema `maxLength`, which goes against the contract's own code-point convention.",
+        "suggestedFix": "Constrain the key with a pattern such as `^[a-z0-9]{1,20}$` and document how it is assigned (e.g. client-generated, stable across edits, not shown to the admin). Or add a sentence to the spec's 'Answer parts' requirement defining a stable part key separate from the label."
+      },
+      {
+        "capability": "content-authoring",
+        "severity": "minor",
+        "specRef": "openspec/specs/content-authoring/spec.md:108",
+        "contractRef": "api/openapi.yaml:628",
+        "issue": "The 'Field limits' scenario puts images, hints and parts under the same 'maximum of 10' rule, with an inline message. An 11th hint or part is a 400 with `errors[].field` (maxItems on TaskInput.hints and parts). An 11th image is a 409 whose errors[] path is undocumented. The client needs two different paths to show the same inline limit message.",
+        "suggestedFix": "Answer the 11th image with 400 and `errors[].field = file` (and document it), or note that the 409 body for this case carries `errors[].field = file` with the limit message."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:778-788",
+        "contractRef": "api/openapi.yaml:725-727, 935-937, 1069-1078, 1093-1102 (testAnswers, reevaluateReport, securitySchemes, Unauthorized/Forbidden)",
+        "issue": "The spec says a tester or re-evaluation request with no admin session cookie gets HTTP 401. Both operations require adminSession and csrfToken, so a request with no cookie usually has no CSRF token either. That request fits both the 401 description ('No valid admin session') and the 403 description ('Missing or invalid CSRF token'), and the contract never says which check runs first. Spring Security's default filter order runs the CSRF check first and would answer 403, which breaks both scenarios. admin-access owns the precedence rule, but it is not written in admin-access/spec.md either (only :183 says 403 needs a valid session to reset the idle clock).",
+        "suggestedFix": "In the adminSession securityScheme description (and the Forbidden response), say: 'With no valid session the answer is 401, whatever the CSRF token; 403 is only for a valid session with a missing or wrong CSRF token.' Add the same precedence rule to admin-access/spec.md."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:444-450, 876-879",
+        "contractRef": "api/openapi.yaml:1348-1356 (AttemptRequest.answers, array items x-maxCodePoints: 100)",
+        "issue": "The spec says a choice key the part does not offer is graded UNPARSEABLE. Its list of request-shape 400s names only unknown part keys, wrong JSON types and more than 20 keys. The contract adds a fourth 400: a choice element longer than 100 code points. Under the spec such a key would be UNPARSEABLE, so the two documents give different outcomes for the same input. The contract rule is reasonable, but the spec does not list it.",
+        "suggestedFix": "Add 'a choice key longer than 100 code points' to the request-shape 400 list in the spec's Explicit exclusions (spec:876-878). Keep the contract as it is."
+      },
+      {
+        "capability": "answer-checking",
+        "severity": "minor",
+        "specRef": "openspec/specs/answer-checking/spec.md:876-879",
+        "contractRef": "api/openapi.yaml:718-744 (testAnswers responses), 1113-1117 (TooLarge)",
+        "issue": "The spec says request bodies over 16 KB are HTTP 413 at the API, without limiting this to the child endpoint. testAnswers takes the same AttemptRequest body as submitAttempt but declares no 413, and the TooLarge description limits the 16 KB rule to child request bodies. Implementers have to guess whether an oversized tester body is 413, 400 or accepted.",
+        "suggestedFix": "Pick one: add \"413\": $ref TooLarge to testAnswers and widen the TooLarge description to 'a child attempt or answer-tester body over 16 KB', or limit the spec sentence to 'child request bodies over 16 KB'."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "major",
+        "specRef": "openspec/specs/practice-flow/spec.md:346",
+        "contractRef": "api/openapi.yaml:996-1020 (ackRankUp)",
+        "issue": "The spec says any child request body over 16 KB SHALL be refused with HTTP 413 (spec.md:346-347, scenario spec.md:388-392). ackRankUp (POST /api/child/hq/rank-up-ack) is a child endpoint that takes a JSON body, but it declares only 204 and 400, with no 413 TooLarge. The scenario's list '(attempt, report, profile settings)' at spec.md:390 also leaves it out, so the implementer has to guess whether the 16 KB limit and the 413 apply to this endpoint.",
+        "suggestedFix": "Add `\"413\": { $ref: \"#/components/responses/TooLarge\" }` to ackRankUp's responses, and add 'rank-up acknowledgement' to the parenthetical list at spec.md:390."
+      },
+      {
+        "capability": "practice-flow",
+        "severity": "minor",
+        "specRef": "openspec/specs/practice-flow/spec.md:53-54",
+        "contractRef": "api/openapi.yaml:1218-1228 (HqView.topics[].missions)",
+        "issue": "The spec requires HQ missions to be ordered by mission position within each topic. HqView.topics[].missions does not say what order the array is in. The client can sort by MissionCard.position, so the requirement can still be met, but it is unclear whether the server or the client does the sorting.",
+        "suggestedFix": "Add a description to HqView.topics[].missions: 'Published missions of the topic, ordered by position ascending'."
+      },
+      {
+        "capability": "gamification",
+        "severity": "minor",
+        "specRef": "openspec/specs/gamification/spec.md:262",
+        "contractRef": "api/openapi.yaml:1463",
+        "issue": "The spec says a mission-complete rank-up whose screen was never shown plays the next time the child opens HQ, \"and only then\". The summary then shows the rank as a static line only (spec.md:292-296). In the contract, MissionSummary.rankUp stays set until the client calls ackRankUp (openapi.yaml:1466). HqView.pendingRankUp carries the same crossing at the same time (openapi.yaml:1229-1233). Nothing in the contract says which screen wins if the summary is opened before HQ, for example through a deep link or a reload after the app restarts. A client following the contract literally would animate it on the summary, which the spec forbids. The shapes can still express the spec as long as HQ is always opened first, so this is drift in the documentation, not a missing field.",
+        "suggestedFix": "Add to the MissionSummary.rankUp description (and the ackRankUp description) that it is set only in the response that first shows the completed run. Once the summary has been left without an acknowledgement, the crossing moves to HqView.pendingRankUp only, and a later summary GET returns rankUp null with the rank in rankReachedDuringRun. Alternatively, reword spec.md:262-265 to say the celebration plays on whichever of HQ or the summary is shown first."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:282-285",
+        "contractRef": "api/openapi.yaml:1798-1808 (Report.required omits note and attempt)",
+        "issue": "The spec says an entry without an attempt shows no attempt and that every entry has a note slot. `note` and `attempt` are declared `nullable: true` but are not in `required`, so generated types become `attempt?: LoggedAttempt | null` / `note?: string | null`. That gives two ways to say 'no attempt' (absent or null), and the implementer has to guess which one the server sends.",
+        "suggestedFix": "Add `note` and `attempt` to Report.required, so they are always present and null when there is none, like `reevaluation` in LoggedAttempt (1824)."
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:99",
+        "contractRef": "api/openapi.yaml:1788-1790 (WeekStats.tasksPerSession)",
+        "issue": "The spec expects 'session sizes of 6 and 5 answered tasks' in session order, and each session's size has to match its session. The contract does not say what order tasksPerSession uses, or that its length equals `sessions`.",
+        "suggestedFix": "Add a description: 'Answered-task count of each session counted in this week, in chronological order of the session's first attempt; length equals sessions.'"
+      },
+      {
+        "capability": "progress-stats",
+        "severity": "minor",
+        "specRef": "openspec/specs/progress-stats/spec.md:20-22, 408-412",
+        "contractRef": "api/openapi.yaml:1839-1841, 1855-1858 (LoggedAttempt.verdicts, reevaluation.verdicts → Verdict)",
+        "issue": "Unparseable submissions are never logged, and a re-evaluation that would be unparseable records nothing. Logged and re-evaluated verdicts can therefore only be CORRECT or WRONG. The contract reuses Verdict, which also allows UNPARSEABLE, so the client has to handle a state the spec rules out.",
+        "suggestedFix": "Document on both `verdicts` maps that values are only CORRECT or WRONG (UNPARSEABLE is never logged), or reference a separate `GradedVerdict` enum [CORRECT, WRONG]."
+      },
+      {
+        "capability": "child-profile",
+        "severity": "minor",
+        "specRef": "openspec/specs/child-profile/spec.md:65",
+        "contractRef": "api/openapi.yaml:1199-1202 (HqView.displayName, x-maxCodePoints: 50) and api/openapi.yaml:49-54 (Text limits convention)",
+        "issue": "The spec says the trimmed display name is '1 to 50 Unicode characters'. The contract counts the limit in Unicode code points (x-maxCodePoints: 50). 'Characters' could also mean grapheme clusters or UTF-16 units, so the backend's startup validator and the contract could count differently, for example for emoji or combining marks.",
+        "suggestedFix": "Spec: change line 65 to '1 to 50 Unicode code points' so it matches the contract's x-maxCodePoints and the Text limits convention."
+      },
+      {
+        "capability": "child-profile",
+        "severity": "minor",
+        "specRef": "openspec/specs/child-profile/spec.md:252-258, 273-277",
+        "contractRef": "api/openapi.yaml:275-280 (updateProfileSettings 400 / 422)",
+        "issue": "Both 400 and 422 are declared, but neither the spec nor the contract says which one wins when a single PATCH has a 400-class error and also asks for GUIDED, e.g. {\"secondaryTaskLocale\": \"ru\", \"answerMode\": \"GUIDED\"}. The only mixed scenario (line 273) pairs GUIDED with a valid locale. The implementer and the e2e tests would have to guess the status code.",
+        "suggestedFix": "Spec: add a precedence rule and a scenario, for example 'validation errors (400) are checked before availability (422): {\"secondaryTaskLocale\":\"ru\",\"answerMode\":\"GUIDED\"} → 400 naming secondaryTaskLocale'. Optionally, mention the same order in the 422 description at openapi.yaml:277."
+      },
+      {
+        "capability": "admin-access",
+        "severity": "minor",
+        "specRef": "openspec/specs/admin-access/spec.md:53",
+        "contractRef": "api/openapi.yaml:1515 (SignInRequest.required)",
+        "issue": "SignInRequest declares `required: []`. In OpenAPI 3.0.3 the Schema Object `required` keyword must hold at least one item. Strict validators such as swagger-parser and openapi-generator's validateSpec can flag it. The intended meaning (no required fields, so `{}` and an empty body reach the handler and get 401) is right, but the keyword as written is invalid.",
+        "suggestedFix": "Delete the `required: []` line from SignInRequest. Leaving `required` out already means no field is required, so the 401-for-`{}` scenario still works."
+      }
+    ]
+  }
+}

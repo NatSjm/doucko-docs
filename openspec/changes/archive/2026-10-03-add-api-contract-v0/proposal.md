@@ -3,7 +3,7 @@
 - **Kind:** cross-repo contract change (docs store)
 - **Affects:** `api/openapi.yaml` (new), backend (generated `kotlin-spring`
   interfaces), frontend (generated TS client). No product spec changes.
-- **Status:** draft — review before archive; code repos pin it only after
+- **Status:** archived 2026-10-03 (v0.5.0) after four independent reviews; code repos pin it only after
   archive (AGENTS.md: contract changes flow outward).
 
 ## Why
@@ -14,7 +14,7 @@ specs so Phase 3 can plan slices against real operations.
 
 ## What changes
 
-`api/openapi.yaml` v0.4.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
+`api/openapi.yaml` v0.5.0 (OpenAPI 3.0.3): 32 paths, 46 operations.
 
 | Area | Operations | Spec |
 |---|---|---|
@@ -124,14 +124,37 @@ rest is handed to the capability plan. The undefined "correct-answer
 celebration" is dropped. Deletion is also blocked by reports and opened hints
 (CA-D22, a pending ruling in `docs/requirements.md` §6.7).
 
+## Revision v0.5 (2026-10-03)
+
+The independent review of v0.4 (record
+`trace/workflow-runs/20261003-151524-contract-review.json`) found 0 blocker,
+1 major and 17 minor mismatches. All of them were applied: 413 on
+`ackRankUp` and `testAnswers`; session-before-CSRF precedence (401 before
+403); `deletable` on `AdminTask` and `AdminMission`; an 11th image is 400;
+part keys `^[a-z0-9]{1,20}$`, client-assigned and stable; `not found` is
+normative in `PublishResult.reason`; `Report.note` and `attempt` are
+required and nullable; ordering documented for HQ missions and
+`tasksPerSession`; logged verdicts are CORRECT or WRONG only; 400 before
+422 on settings; no empty `required`. Spec follow-ups: admin-access
+precedence scenario, child-profile 400-before-422 scenario, and code points
+in child-profile; the answer-checking and practice-flow 400/413 lists; a
+gamification rank-up that is never shown plays on whichever screen opens
+first. The round-5 spec cross-check
+(`trace/workflow-runs/20261003-151524-spec-crosscheck.json`) confirmed all 4
+round-4 items. Its one new item, the CA-D table claiming CA-D22 was already
+accepted, was fixed.
+
+Review trend: 57 → 31 → 20 → 18 findings, and blockers 4 → 0 → 1 → 0.
+
 ## Validation
 
 - Structural check (YAML parses, every `$ref` resolves, unique operationIds,
   admin ops secured with CSRF on mutations, child ops open, no
-  `uniqueItems`): pass (v0.4).
-- Independent review against the specs: v0.1, v0.2 and v0.3 reviewed;
-  their findings were applied in v0.2, v0.3 and v0.4 respectively. v0.4 has
-  had no separate review of its own (see current-state).
+  `uniqueItems`, no empty `required`): pass (v0.5).
+- Independent review against the specs: v0.1–v0.4 reviewed; their findings
+  were applied in v0.2–v0.5. The v0.5 edits (documentation and small shape
+  additions) have not been reviewed separately. The Phase 4 generator runs
+  and slice reviews are the next check.
 - Not yet run: an OpenAPI linter and the two generators. Phase 4a runs the
   backend `openapi-generator-maven-plugin` and the frontend client generator
   against the pinned file.

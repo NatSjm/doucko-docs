@@ -7,6 +7,21 @@
       "trailerCommits": 0,
       "libDomains": [],
       "processComplete": false
+    },
+    {
+      "slice": "2026-10-03-add-api-contract-v0",
+      "reviewEvidence": "unclean",
+      "trailerCommits": 8,
+      "libDomains": [
+        "answer-checking",
+        "content-authoring",
+        "gamification",
+        "practice-flow",
+        "admin-access",
+        "child-profile",
+        "progress-stats"
+      ],
+      "processComplete": false
     }
   ],
   "overlaps": [],
@@ -23,6 +38,14 @@
     {
       "check": "trailer",
       "msg": "2026-09-28-improve-PD-1: no commit carries a \"Slice: improve-PD-1\" trailer"
+    },
+    {
+      "check": "review-evidence",
+      "msg": "2026-10-03-add-api-contract-v0: review-findings.json is unclean (review must have run clean before archive)"
+    },
+    {
+      "check": "process",
+      "msg": "2026-10-03-add-api-contract-v0: archived change is missing design.md and/or tasks.md"
     }
   ]
 }

@@ -874,8 +874,9 @@ workbook (NFR-4).
   per-part results to content-authoring. The tester reports each part's
   verdict independently and does not apply the whole-submission refusal.
 - Malformed request shapes (unknown part keys, wrong JSON types, a choice
-  selection of more than 20 keys) are HTTP 400 and request bodies over 16 KB
-  are HTTP 413 at the API; they belong to practice-flow and the API
-  contract. They are not checker verdicts.
+  selection of more than 20 keys, a choice key longer than 100 code points)
+  are HTTP 400, and attempt or answer-tester bodies over 16 KB are HTTP 413
+  at the API; they belong to practice-flow and the API contract. They are
+  not checker verdicts.
 - Editing an answer spec does not re-check past attempts. Re-evaluation
   belongs to the flag queue in the progress-stats capability.

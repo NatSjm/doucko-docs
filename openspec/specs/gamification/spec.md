@@ -260,8 +260,8 @@ celebrated the next time the child opens HQ. This covers a bonus credited
 when a mission is published already complete (OQ-28) and an admin
 re-evaluation. A celebration counts as played once the client acknowledges
 it. A mission-complete rank-up whose screen was never shown (for example,
-the browser was closed first) SHALL play the next time the child opens HQ,
-and only then. When one award crosses several thresholds, the celebration
+the browser was closed first) SHALL play once, on whichever the child opens
+first: HQ or that mission's summary. When one award crosses several thresholds, the celebration
 names the highest rank reached.
 
 #### Scenario: Rank-up on a task award

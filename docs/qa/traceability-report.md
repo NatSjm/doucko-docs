@@ -5,58 +5,58 @@ requirements/spec/test/recording change; CI runs `--check-fresh`.
 
 Repo: docs (contract: self).
 Scope: 48 MVP functional requirements (product chain; per-repo tests are joined in workspace-traceability-report.md).
-Result: PASS, 6 warning(s)
+Result: PASS, 4 warning(s)
 
 | FR | Spec | Plan | Owner repo(s) | Test trace here | Recording here |
 |---|---|---|---|---|---|
-| FR-1 | yes | n/a | - | - | - |
-| FR-2 | yes | n/a | - | - | - |
-| FR-3 | yes | n/a | - | - | - |
-| FR-4 | yes | n/a | - | - | - |
-| FR-5 | yes | n/a | - | - | - |
-| FR-6 | yes | n/a | - | - | - |
-| FR-7 | yes | n/a | - | - | - |
-| FR-8 | yes | n/a | - | - | - |
-| FR-9 | yes | n/a | - | - | - |
-| FR-10 | yes | n/a | - | - | - |
-| FR-11 | yes | n/a | - | - | - |
-| FR-12 | yes | n/a | - | - | - |
-| FR-13 | yes | n/a | - | - | - |
-| FR-55 | yes | n/a | - | - | - |
-| FR-56 | yes | n/a | - | - | - |
-| FR-57 | yes | n/a | - | - | - |
-| FR-14 | yes | n/a | - | - | - |
-| FR-15 | yes | n/a | - | - | - |
-| FR-16 | yes | n/a | - | - | - |
-| FR-17 | yes | n/a | - | - | - |
-| FR-18 | yes | n/a | - | - | - |
-| FR-19 | yes | n/a | - | - | - |
-| FR-20 | yes | n/a | - | - | - |
-| FR-21 | yes | n/a | - | - | - |
-| FR-22 | yes | n/a | - | - | - |
-| FR-23 | yes | n/a | - | - | - |
-| FR-24 | yes | n/a | - | - | - |
-| FR-25 | yes | n/a | - | - | - |
-| FR-26 | yes | n/a | - | - | - |
-| FR-27 | yes | n/a | - | - | - |
-| FR-28 | yes | n/a | - | - | - |
-| FR-29 | yes | n/a | - | - | - |
-| FR-30 | yes | n/a | - | - | - |
-| FR-31 | yes | n/a | - | - | - |
-| FR-32 | yes | n/a | - | - | - |
-| FR-33 | yes | n/a | - | - | - |
-| FR-34 | yes | n/a | - | - | - |
-| FR-35 | yes | n/a | - | - | - |
-| FR-36 | yes | n/a | - | - | - |
-| FR-37 | yes | n/a | - | - | - |
-| FR-38 | yes | n/a | - | - | - |
-| FR-39 | yes | n/a | - | - | - |
-| FR-58 | yes | n/a | - | - | - |
-| FR-40 | yes | n/a | - | - | - |
-| FR-41 | yes | n/a | - | - | - |
-| FR-42 | yes | n/a | - | - | - |
-| FR-43 | yes | n/a | - | - | - |
-| FR-44 | yes | n/a | - | - | - |
+| FR-1 | yes | yes | backend, frontend | - | - |
+| FR-2 | yes | yes | backend, frontend | - | - |
+| FR-3 | yes | yes | backend, frontend | - | - |
+| FR-4 | yes | yes | backend, frontend | - | - |
+| FR-5 | yes | yes | backend | - | - |
+| FR-6 | yes | yes | backend, frontend | - | - |
+| FR-7 | yes | yes | backend, frontend | - | - |
+| FR-8 | yes | yes | backend, frontend | - | - |
+| FR-9 | yes | yes | backend, frontend | - | - |
+| FR-10 | yes | yes | backend, frontend | - | - |
+| FR-11 | yes | yes | backend, frontend | - | - |
+| FR-12 | yes | yes | backend | - | - |
+| FR-13 | yes | yes | backend, frontend | - | - |
+| FR-55 | yes | yes | backend, frontend | - | - |
+| FR-56 | yes | yes | backend | - | - |
+| FR-57 | yes | yes | backend | - | - |
+| FR-14 | yes | yes | backend | - | - |
+| FR-15 | yes | yes | backend | - | - |
+| FR-16 | yes | yes | backend | - | - |
+| FR-17 | yes | yes | backend | - | - |
+| FR-18 | yes | yes | backend | - | - |
+| FR-19 | yes | yes | backend | - | - |
+| FR-20 | yes | yes | backend | - | - |
+| FR-21 | yes | yes | backend | - | - |
+| FR-22 | yes | yes | backend, frontend | - | - |
+| FR-23 | yes | yes | backend | - | - |
+| FR-24 | yes | yes | backend, frontend | - | - |
+| FR-25 | yes | yes | backend, frontend | - | - |
+| FR-26 | yes | yes | backend, frontend | - | - |
+| FR-27 | yes | yes | backend, frontend | - | - |
+| FR-28 | yes | yes | backend, frontend | - | - |
+| FR-29 | yes | yes | backend, frontend | - | - |
+| FR-30 | yes | yes | backend, frontend | - | - |
+| FR-31 | yes | yes | backend, frontend | - | - |
+| FR-32 | yes | yes | backend, frontend | - | - |
+| FR-33 | yes | yes | backend, frontend | - | - |
+| FR-34 | yes | yes | backend | - | - |
+| FR-35 | yes | yes | backend | - | - |
+| FR-36 | yes | yes | backend, frontend | - | - |
+| FR-37 | yes | yes | backend, frontend | - | - |
+| FR-38 | yes | yes | backend, frontend | - | - |
+| FR-39 | yes | yes | backend, frontend | - | - |
+| FR-58 | yes | yes | frontend | - | - |
+| FR-40 | yes | yes | backend, frontend | - | - |
+| FR-41 | yes | yes | backend, frontend | - | - |
+| FR-42 | yes | yes | backend | - | - |
+| FR-43 | yes | yes | backend | - | - |
+| FR-44 | yes | yes | backend | - | - |
 
 ## Failures
 
@@ -64,8 +64,6 @@ None.
 
 ## Warnings
 
-- **plan-ownership**: docs/mvp-capability-plan.md not found - ownership check skipped (expected before Phase 3; mandatory at --release)
-- **active-changes**: active change "add-api-contract-v0" is not archived
 - **active-changes**: active change "improve-PD-2" is not archived
 - **active-changes**: active change "improve-PD-3" is not archived
 - **active-changes**: active change "improve-PD-4" is not archived

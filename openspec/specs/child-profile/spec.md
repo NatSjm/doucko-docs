@@ -63,7 +63,7 @@ display name in MVP.
 
 Design decision: the display name read on first start SHALL be trimmed of
 leading and trailing whitespace. The trimmed value SHALL be 1 to 50 Unicode
-characters long. It SHALL NOT contain control characters (Unicode category
+code points long. It SHALL NOT contain control characters (Unicode category
 Cc, e.g. tab, newline, NUL) or the replacement character U+FFFD, which marks
 bytes that were not valid UTF-8. If the value breaks any of these rules, the
 backend SHALL refuse to start: it exits with a non-zero status, prints a
@@ -258,6 +258,15 @@ own (FR-43).
   - a body that is not valid JSON or is not a JSON object.
 - The locale error SHALL list the supported task locales. Error responses
   SHALL NOT echo the submitted value back.
+- Validation (HTTP 400) is checked before availability (HTTP 422): a
+  request that has a 400-class error and also asks for `GUIDED` is answered
+  400 *(design decision)*.
+
+#### Scenario: Validation error wins over GUIDED
+
+- **GIVEN** the stored settings `secondaryTaskLocale: null`, `answerMode: DIRECT`
+- **WHEN** a `PATCH` with `{"secondaryTaskLocale": "ru", "answerMode": "GUIDED"}` is sent
+- **THEN** it is answered 400 naming `secondaryTaskLocale`, and both settings are unchanged
 - An unknown top-level field (e.g. `displayName`, `secondaryLocale`) SHALL
   be ignored: it never changes anything and never makes the request fail.
   This is the one policy for every child request body (admin-access, "Child

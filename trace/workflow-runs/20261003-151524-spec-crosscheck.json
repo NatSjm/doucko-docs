@@ -1,0 +1,212 @@
+{
+  "workflow": "spec-crosscheck",
+  "file": "./.claude/workflows/spec-crosscheck.js",
+  "description": "Independent cross-capability check of the baseline OpenSpec specs (the Cross-check phase of spec-pipeline on its own), plus verification that previously reported findings are resolved.",
+  "dryRun": false,
+  "startedAt": "2026-10-03T15:15:24.059Z",
+  "finishedAt": "2026-10-03T15:16:29.922Z",
+  "args": {
+    "requirementsPath": "docs/requirements.md",
+    "capabilities": [
+      {
+        "name": "content-authoring",
+        "frIds": [
+          "FR-1",
+          "FR-2",
+          "FR-3",
+          "FR-4",
+          "FR-5",
+          "FR-6",
+          "FR-7",
+          "FR-8",
+          "FR-9",
+          "FR-10",
+          "FR-11",
+          "FR-12",
+          "FR-13",
+          "FR-55",
+          "FR-56",
+          "FR-57"
+        ]
+      },
+      {
+        "name": "answer-checking",
+        "frIds": [
+          "FR-14",
+          "FR-15",
+          "FR-16",
+          "FR-17",
+          "FR-18",
+          "FR-19",
+          "FR-20",
+          "FR-21",
+          "FR-22",
+          "FR-23"
+        ]
+      },
+      {
+        "name": "practice-flow",
+        "frIds": [
+          "FR-24",
+          "FR-25",
+          "FR-26",
+          "FR-27",
+          "FR-28",
+          "FR-29",
+          "FR-30",
+          "FR-31",
+          "FR-32",
+          "FR-33",
+          "FR-44"
+        ]
+      },
+      {
+        "name": "gamification",
+        "frIds": [
+          "FR-34",
+          "FR-35",
+          "FR-36",
+          "FR-37",
+          "FR-38",
+          "FR-39",
+          "FR-58"
+        ]
+      },
+      {
+        "name": "progress-stats",
+        "frIds": [
+          "FR-40",
+          "FR-41",
+          "FR-42"
+        ]
+      },
+      {
+        "name": "child-profile",
+        "frIds": [
+          "FR-43"
+        ]
+      },
+      {
+        "name": "admin-access",
+        "frIds": []
+      }
+    ],
+    "previous": {
+      "gaps": [],
+      "duplicates": [],
+      "contradictions": [
+        "Deleting content vs. stored reports and hint-open records. content-authoring:1016-1018 allows deleting a task, mission or source when no attempt references it. It only checks attempts (scenario content-authoring:1032-1036). But practice-flow also stores data that points at a task with no attempt: a report filed before any attempt (practice-flow:491-495) and every opened hint (practice-flow:523-524). progress-stats depends on both. A flag-queue entry must show its task (progress-stats:282-284, 299-303). Weekly hint figures are built from hint-open records, and a hint opened on a task with no later attempt still counts (progress-stats:121-127). The path is reachable: unpublish the mission (CA-D6, content-authoring:1024-1025), then delete the task. That leaves a report with no task and hint records with no task, or silently drops them. Fix: extend the delete guard in content-authoring to cover reports and hint-open records (FR-56 says 'no attempt references it', so record this as a CA-D narrowing), or state in progress-stats what happens to those records.",
+        "NFR-9 overreach in content-authoring. The requirement 'Externalized admin strings' (content-authoring:611-614) says 'All admin UI strings SHALL be externalized'. Its only scenario checks just the authoring screens: source list, task editor, mission editor and preview (content-authoring:616-620). Admin strings outside authoring (sign-in in admin-access, stats and flag queue in progress-stats) are set aside for the Phase 3 plan. So the requirement text quietly claims scope it does not verify. Fix: scope line 613 to the authoring screens.",
+        "NFR-13 overreach in gamification. 'Light and dark theme' (gamification:418-420) says 'Both themes SHALL meet WCAG AA contrast (NFR-13)'. The scenario at gamification:436-438 applies the themes to 'any child or admin screen'. Read together, gamification owns WCAG AA contrast for the whole app, including the admin UI. But NFR-13 contrast outside gamification, admin UI included, is set aside for the Phase 3 plan. Fix: limit gamification:420 to the skin's colours on child-facing gamification screens, or say plainly that contrast on the other screens is owned elsewhere.",
+        "Undefined 'correct-answer celebration'. The reduced-motion scenario (gamification:296-298) covers 'a rank-up or a correct-answer celebration'. No spec defines a correct-answer celebration. practice-flow:273 only shows the text 'Výborně!' with '+10 XP', and no requirement owns an animation for it. So the reduced-motion rule points at an element no spec defines. Fix: define it in gamification or practice-flow, or drop it from gamification:297."
+      ]
+    },
+    "deferred": [
+      "NFR-6 browser/viewport compatibility (cross-browser e2e run)",
+      "NFR-9 externalization of child UI strings, and of admin UI strings outside the authoring screens (sign-in, stats, flag queue)",
+      "NFR-10 Docker volume and cross-platform backup command",
+      "NFR-11 module boundaries verified by tests",
+      "NFR-12 contract drift check in the build",
+      "NFR-13 WCAG AA contrast and reduced motion outside the gamification child screens, including the admin UI",
+      "NFR-3 PII scope beyond the display name (report notes, answers in logs, recordings)",
+      "NFR-4 copyright scope beyond authoring fixtures (golden table, seeded e2e content, skin assets)"
+    ]
+  },
+  "settings": {
+    "allowedTools": null,
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 2,
+    "maxTotalUsd": 4,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 0.8348,
+  "steps": [
+    {
+      "label": "coverage-check",
+      "phase": "Cross-check",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 2 --tools Read,Grep,Glob --json-schema <…>",
+      "promptChars": 4759,
+      "durationMs": 65852,
+      "sessionId": "640528d8-880f-4886-b853-93e872c0e003",
+      "costUsd": 0.8348177999999999,
+      "numTurns": 20,
+      "result": {
+        "allCovered": true,
+        "gaps": [],
+        "duplicates": [],
+        "contradictions": [
+          "content-authoring:18-19 says 'The product owner accepted all of them on 2026-10-03 (docs/requirements.md §6.6)', but the same table's CA-D22 row (content-authoring:44) is marked 'Pending product-owner approval at checkpoint 2, §6.7'. docs/requirements.md:335-344 lists CA-D22 under §6.7 'Pending product-owner rulings', not under the accepted §6.6. The normative rule at content-authoring:1028-1030 still uses SHALL with no pending marker. So the spec claims a sign-off that has not happened for a rule that narrows FR-56. Fix: scope line 18 to CA-D1..CA-D21, or mark the requirement at 1028-1030 as pending until checkpoint 2."
+        ],
+        "previousFindings": [
+          {
+            "id": "C1",
+            "resolved": true,
+            "evidence": "content-authoring:1028-1030 now adds: 'A problem report or an opened-hint record SHALL block deletion of its task, and of any mission containing that task, as an attempt does (derived decision CA-D22, which narrows FR-56)'. The new scenario at content-authoring:1051-1055 covers a task in an unpublished mission with no attempt but with a report or an opened hint: the delete is refused, and the report and hint record stay unchanged. CA-D22 is recorded at content-authoring:44 and docs/requirements.md:75,344. This matches practice-flow:491-495 (report without an attempt), practice-flow:399-400 and 523 (hint records), and progress-stats:126-127 and 299-303. Caveat: CA-D22 is still pending product-owner approval at checkpoint 2, and the spec's 'all accepted' line at content-authoring:18 contradicts that (reported as a new contradiction). The orphaning conflict itself is gone."
+          },
+          {
+            "id": "C2",
+            "resolved": true,
+            "evidence": "content-authoring:614-618 now reads 'All admin UI strings of the authoring screens (source list, task editor, mission editor, preview and answer tester) SHALL be externalized … Externalization of the other admin screens (sign-in, stats, flag queue) and of the child UI is owned by the capability plan'. The scenario at 620-624 checks those same authoring screens. Minor: it does not name the answer tester separately, which sits inside the preview."
+          },
+          {
+            "id": "C3",
+            "resolved": true,
+            "evidence": "gamification:430-433: 'On the child screens named in \"Contrast in both themes\", both themes SHALL meet WCAG AA contrast (NFR-13). Contrast on every other screen, the admin UI included, is owned by the capability plan'. The contrast scenario at gamification:453-457 is limited to HQ, the task screen and the mission-complete screen. The scenario covering 'any child or admin screen' (gamification:447-451) now only asserts that there is no theme toggle, which is FR-58, not contrast."
+          },
+          {
+            "id": "C4",
+            "resolved": true,
+            "evidence": "The reduced-motion scenario at gamification:304-308 now covers only 'a rank-up celebration'. Searching all specs for 'correct-answer', 'celebrat' and 'animat' finds no other celebration besides the rank-up one: gamification:248-308, practice-flow:587-599, progress-stats:350 and 382. Line 253 ties reduced motion to the defined rank-up animation only."
+          }
+        ]
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Cross-check",
+      "message": "Cross-check clean: all MVP FRs owned exactly once, no open findings."
+    }
+  ],
+  "returned": {
+    "coverage": {
+      "allCovered": true,
+      "gaps": [],
+      "duplicates": [],
+      "contradictions": [
+        "content-authoring:18-19 says 'The product owner accepted all of them on 2026-10-03 (docs/requirements.md §6.6)', but the same table's CA-D22 row (content-authoring:44) is marked 'Pending product-owner approval at checkpoint 2, §6.7'. docs/requirements.md:335-344 lists CA-D22 under §6.7 'Pending product-owner rulings', not under the accepted §6.6. The normative rule at content-authoring:1028-1030 still uses SHALL with no pending marker. So the spec claims a sign-off that has not happened for a rule that narrows FR-56. Fix: scope line 18 to CA-D1..CA-D21, or mark the requirement at 1028-1030 as pending until checkpoint 2."
+      ],
+      "previousFindings": [
+        {
+          "id": "C1",
+          "resolved": true,
+          "evidence": "content-authoring:1028-1030 now adds: 'A problem report or an opened-hint record SHALL block deletion of its task, and of any mission containing that task, as an attempt does (derived decision CA-D22, which narrows FR-56)'. The new scenario at content-authoring:1051-1055 covers a task in an unpublished mission with no attempt but with a report or an opened hint: the delete is refused, and the report and hint record stay unchanged. CA-D22 is recorded at content-authoring:44 and docs/requirements.md:75,344. This matches practice-flow:491-495 (report without an attempt), practice-flow:399-400 and 523 (hint records), and progress-stats:126-127 and 299-303. Caveat: CA-D22 is still pending product-owner approval at checkpoint 2, and the spec's 'all accepted' line at content-authoring:18 contradicts that (reported as a new contradiction). The orphaning conflict itself is gone."
+        },
+        {
+          "id": "C2",
+          "resolved": true,
+          "evidence": "content-authoring:614-618 now reads 'All admin UI strings of the authoring screens (source list, task editor, mission editor, preview and answer tester) SHALL be externalized … Externalization of the other admin screens (sign-in, stats, flag queue) and of the child UI is owned by the capability plan'. The scenario at 620-624 checks those same authoring screens. Minor: it does not name the answer tester separately, which sits inside the preview."
+        },
+        {
+          "id": "C3",
+          "resolved": true,
+          "evidence": "gamification:430-433: 'On the child screens named in \"Contrast in both themes\", both themes SHALL meet WCAG AA contrast (NFR-13). Contrast on every other screen, the admin UI included, is owned by the capability plan'. The contrast scenario at gamification:453-457 is limited to HQ, the task screen and the mission-complete screen. The scenario covering 'any child or admin screen' (gamification:447-451) now only asserts that there is no theme toggle, which is FR-58, not contrast."
+        },
+        {
+          "id": "C4",
+          "resolved": true,
+          "evidence": "The reduced-motion scenario at gamification:304-308 now covers only 'a rank-up celebration'. Searching all specs for 'correct-answer', 'celebrat' and 'animat' finds no other celebration besides the rank-up one: gamification:248-308, practice-flow:587-599, progress-stats:350 and 382. Line 253 ties reduced motion to the defined rank-up animation only."
+        }
+      ]
+    },
+    "unresolvedPrevious": []
+  }
+}

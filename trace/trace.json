@@ -94,545 +94,662 @@
   "links": [
     {
       "id": "FR-1",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-2",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-3",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-4",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-5",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-6",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-7",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-8",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-9",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-10",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-11",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-12",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-13",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-55",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-56",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-57",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-14",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-15",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-16",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-17",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md",
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-18",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-19",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-20",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md",
         "openspec/specs/content-authoring/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-21",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-22",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-23",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/answer-checking/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-24",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-25",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-26",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-27",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-28",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-29",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-30",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-31",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-32",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-33",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-34",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-35",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-36",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-37",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-38",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-39",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-58",
-      "owners": [],
+      "owners": [
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/gamification/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-40",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/progress-stats/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-41",
-      "owners": [],
+      "owners": [
+        "backend",
+        "frontend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/progress-stats/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-42",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/progress-stats/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-43",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/child-profile/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     },
     {
       "id": "FR-44",
-      "owners": [],
+      "owners": [
+        "backend"
+      ],
       "ownedHere": null,
       "specs": [
         "openspec/specs/practice-flow/spec.md"
       ],
-      "planned": null,
+      "planned": true,
       "tests": [],
       "recordings": []
     }
   ],
   "failures": [],
   "warnings": [
-    {
-      "check": "plan-ownership",
-      "msg": "docs/mvp-capability-plan.md not found - ownership check skipped (expected before Phase 3; mandatory at --release)"
-    },
-    {
-      "check": "active-changes",
-      "msg": "active change \"add-api-contract-v0\" is not archived"
-    },
     {
       "check": "active-changes",
       "msg": "active change \"improve-PD-2\" is not archived"
