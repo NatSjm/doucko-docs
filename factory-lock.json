@@ -1,6 +1,6 @@
 {
-  "createdAt": "2026-10-03T23:13:15.672Z",
-  "gitHead": "849c6a62c9ca280c9850a137ebc22a43c6b0cbb8",
+  "createdAt": "2026-10-03T23:30:39.285Z",
+  "gitHead": "9e40e2a9700497c57dac0013399ebc34f9579454",
   "files": {
     ".claude/workflows/contract-review.js": "1f1ab4a5ed5182c489e9bf3686fa197ea77410cb74f877b7487e109095489f1c",
     ".claude/workflows/spec-crosscheck.js": "48ed6ed505a0643904cef9081cd22be9f6ea390e20441fefcd0d2c39b2328fa0",

@@ -462,6 +462,41 @@
       "status": "proposed",
       "correctionIds": [],
       "note": "Found while verifying slice 1 (platform-foundation) in the backend; fix approved by the product owner in chat on 2026-10-04 (option: fix in factory). Entry written by the orchestrator (maker); status left for the next auditor run, as with PD-8 to PD-11."
+    },
+    {
+      "id": "PD-13",
+      "class": "runner-flag-silently-ignored",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/run-workflow.mjs (pre-fix) agent()",
+          "quote": "if (opts.agentType) cmd.push(\"--agent\", opts.agentType);",
+          "note": "Typed steps passed --agent together with --json-schema."
+        },
+        {
+          "pointer": "repro: claude -p --agent code-reviewer --json-schema <findings schema> (2026-10-04)",
+          "quote": "structured_output: undefined",
+          "note": "subtype success, 7 turns, markdown findings in result: the CLI ignores the schema when --agent is set."
+        },
+        {
+          "pointer": "backend trace/workflow-runs/20261003-232403-review-gate.json; frontend 20261003-221334 and the 2026-10-04 re-run",
+          "quote": "result did not contain JSON for the requested schema",
+          "note": "code-reviewer, security-reviewer and spec-compliance-auditor failed in every review-gate run; only the untyped visual step succeeded. No slice review has ever produced findings."
+        }
+      ],
+      "metric": {
+        "name": "typed review-gate find steps returning structured output",
+        "current": "0 of 3",
+        "expectedMovement": "0 -> 3"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/run-workflow.mjs",
+        "sketch": "For a typed step with a schema, do not pass --agent: inline the definition body via --append-system-prompt and its frontmatter tools via --tools. Typed steps without a schema keep --agent.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Found while running the slice 1 review gates; fix approved by the product owner in chat on 2026-10-04 (option: inline agent definition). Entry written by the orchestrator (maker); status left for the next auditor run."
     }
   ]
 }
