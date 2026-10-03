@@ -301,3 +301,13 @@ Signed off 2026-10-02: the product owner accepted every recommended default
 | OQ-25 | Dark and light themes (PRD §9.1) are not an FR | Follow the OS `prefers-color-scheme` with no in-app toggle. Both themes pass the a11y gate (NFR-13). If accepted → **FR-58**. |
 | OQ-26 | NFR-10 says `make backup`, but `make` is not standard on Windows. Which OS does the home laptop run? | Provide a cross-platform `npm run backup` (pg_dump through `docker compose exec`) and amend NFR-10's wording. Keep `make backup` only if the laptop is Linux/macOS. |
 | OQ-27 | NFR-8 (≤ 60 s task entry) is tagged `eval`, but a graded rubric eval can't time a human | Retag NFR-8 as `recording`: a timed clip of entering a typical single-part task. |
+
+### 6.5 New: raised during gamification spec authoring (2026-10-03)
+
+These are proposed defaults that the product owner still has to confirm. The
+gamification spec uses them until a decision replaces them.
+
+| # | Question | Proposed default (pending confirmation) |
+|---|---|---|
+| OQ-28 | Missions that share tasks (OQ-15): does each mission pay its own completion bonus, and when does a mission complete if its last unresolved tasks were resolved in another mission? | Each mission pays its own bonus once, on its first completion (OQ-4). A mission is complete when all its tasks are resolved, wherever they were resolved (OQ-13, OQ-15). Completion is checked on every first resolution of a task. That resolution completes every mission that contains the task and has no other unresolved task, and pays each of those bonuses in the same award. A mission that is published when all its tasks are already resolved is complete at publish time, and its bonus is credited then. No task XP is awarded in that case. Any rank-up this causes is celebrated the next time the child opens HQ. |
+| OQ-29 | Valid range and format of XP values (FR-34/35) and rank thresholds (FR-36) | Every task award, the hint cost and the mission bonus must be a plain integer from 0 to 1000. The minimum award must be from 1 to 1000. Every rank threshold must be a plain integer from 0 to 1 000 000. Values are machine numbers: strings, decimals and locale formats (`"1 500"`, `"10,5"`, `2.5`) are invalid. A missing key is invalid; there are no silent defaults. Invalid XP config stops the backend from starting, and an invalid skin is refused. In both cases the error names the offending key or entry. |

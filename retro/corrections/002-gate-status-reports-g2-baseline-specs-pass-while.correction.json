@@ -9,5 +9,10 @@
   "failureModeSource": "explicit",
   "source": "human",
   "autoKey": null,
-  "disposition": null
+  "disposition": {
+    "status": "resolved",
+    "by": "product owner, confirmed in chat with the orchestrator (\"resolved by PD-8\")",
+    "ts": "2026-10-03T04:37:31.758Z",
+    "note": "Fixed by PD-8: check-traceability declares SKIP-pending before the first spec (docs edc3f19, backend c58094f, frontend b0a848b); proof in docs/qa/evidence/pd-8-g2-vacuous-pass-proof.md."
+  }
 }

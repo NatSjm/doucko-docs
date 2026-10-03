@@ -1,0 +1,672 @@
+{
+  "workflow": "spec-pipeline",
+  "file": "./.claude/workflows/spec-pipeline.js",
+  "description": "Fan out baseline OpenSpec capability specs: one spec-writer per capability, each draft critiqued and revised, then a cross-capability coverage check (every MVP FR owned exactly once, no contradictions).",
+  "dryRun": false,
+  "startedAt": "2026-10-03T04:36:57.215Z",
+  "finishedAt": "2026-10-03T04:50:50.687Z",
+  "args": {
+    "requirementsPath": "docs/requirements.md",
+    "capabilities": [
+      {
+        "name": "content-authoring",
+        "frIds": [
+          "FR-1",
+          "FR-2",
+          "FR-3",
+          "FR-4",
+          "FR-5",
+          "FR-6",
+          "FR-7",
+          "FR-8",
+          "FR-9",
+          "FR-10",
+          "FR-11",
+          "FR-12",
+          "FR-13",
+          "FR-55",
+          "FR-56",
+          "FR-57"
+        ],
+        "nfrIds": [
+          "NFR-4",
+          "NFR-8",
+          "NFR-9",
+          "NFR-17"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-2, OQ-7, OQ-15, OQ-18, OQ-19, OQ-20, OQ-21, OQ-24. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+      },
+      {
+        "name": "answer-checking",
+        "frIds": [
+          "FR-14",
+          "FR-15",
+          "FR-16",
+          "FR-17",
+          "FR-18",
+          "FR-19",
+          "FR-20",
+          "FR-21",
+          "FR-22",
+          "FR-23"
+        ],
+        "nfrIds": [
+          "NFR-5"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-8, OQ-12. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+      },
+      {
+        "name": "practice-flow",
+        "frIds": [
+          "FR-24",
+          "FR-25",
+          "FR-26",
+          "FR-27",
+          "FR-28",
+          "FR-29",
+          "FR-30",
+          "FR-31",
+          "FR-32",
+          "FR-33",
+          "FR-44"
+        ],
+        "nfrIds": [
+          "NFR-5",
+          "NFR-7"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-5, OQ-7, OQ-11, OQ-12, OQ-13, OQ-16, OQ-17. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+      },
+      {
+        "name": "gamification",
+        "frIds": [
+          "FR-34",
+          "FR-35",
+          "FR-36",
+          "FR-37",
+          "FR-38",
+          "FR-39",
+          "FR-58"
+        ],
+        "nfrIds": [
+          "NFR-13"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-1, OQ-4, OQ-15, OQ-25. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+      },
+      {
+        "name": "progress-stats",
+        "frIds": [
+          "FR-40",
+          "FR-41",
+          "FR-42"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-14, OQ-20. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+      },
+      {
+        "name": "child-profile",
+        "frIds": [
+          "FR-43"
+        ],
+        "nfrIds": [
+          "NFR-3"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-22. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+      },
+      {
+        "name": "admin-access",
+        "frIds": [],
+        "nfrIds": [
+          "NFR-1",
+          "NFR-2",
+          "NFR-15",
+          "NFR-16"
+        ],
+        "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-23. Cite each owned FR id only in this spec (other capabilities are referenced by name). This capability owns no FR; it carries the listed NFRs (cite them)."
+      }
+    ]
+  },
+  "settings": {
+    "allowedTools": "Bash(npx openspec validate:*)",
+    "concurrency": 4,
+    "model": null,
+    "budgetPerAgentUsd": 4,
+    "maxTotalUsd": 40,
+    "untypedTools": "Read,Grep,Glob",
+    "permissionMode": "acceptEdits"
+  },
+  "outcome": "ok",
+  "stoppedBecause": null,
+  "error": null,
+  "totalCostUsd": 13.061,
+  "steps": [
+    {
+      "label": "draft:content-authoring",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 823,
+      "durationMs": 137482,
+      "sessionId": "bb13aa99-a9b6-4dd6-9640-26d9a6786bcf",
+      "costUsd": 0.7125922,
+      "numTurns": 14,
+      "result": "I rewrote `openspec/specs/content-authoring/spec.md`. It replaces the version from commit 896fc0a, which already existed but didn't fully meet the brief: some scenarios had no GIVEN, there was no scenario for NFR-8 or for unauthorized access, and it described a \"bulk publish\" action that no FR asks for.\n\n`npx openspec validate --all --strict` passes (12 of 12 items). The traceability check (`node scripts/check-traceability.mjs`) did **not** run because the command needed approval, so that result is still open; please run it. The edit is not committed.\n\n**Requirements authored (23):**\n1. Authoring requires an admin session (unauthenticated requests get 401; see admin-access)\n2. Upload a PDF source (FR-1)\n3. Upload limits and storage (NFR-17, NFR-4: wrong type, PDF over 50 MB, a PNG renamed to `.pdf`, image over 5 MB or a GIF)\n4. PDF viewer beside the editor (FR-2, including an out-of-range page)\n5. Create a task with a source reference (FR-3)\n6. Fast keyboard-first task entry (NFR-8: source and page carry over, timed recording of 60 s or less)\n7. Task images (FR-4)\n8. Answer modality (FR-5)\n9. Graphic tasks are never served in MVP (FR-5)\n10. Answer parts (FR-6: expected values in Czech notation like `1 250,75`, an unreadable `5,,2`, duplicate labels)\n11. Hints (FR-7)\n12. Translations (FR-8, NFR-9: partial translations fall back to Czech, an unconfigured locale is refused, a new locale needs only configuration)\n13. Externalized admin strings (NFR-9, OQ-6)\n14. Missions (FR-9, OQ-15: a task can be in several missions)\n15. Preview and answer tester (FR-10: CORRECT / WRONG / UNPARSEABLE with the Czech format tip; no attempt or XP recorded; no source reference shown)\n16. Task list filters and search (FR-11)\n17. Draft and published status (FR-12)\n18. Mission publishing rules (FR-57)\n19. Task provenance (FR-13, OQ-7)\n20. Edit existing content (FR-55)\n21. Editing an answer spec after attempts (OQ-20)\n22. Delete only unused content (FR-56)\n23. Topics come from configuration (OQ-2, OQ-21)\n24. No workbook content in repositories (NFR-4)\n\nThat is 24 headings; I miscounted above. All 24 are in the file. The spec also ends with an explicit MVP exclusions list.\n\nAll 16 owned FR ids are cited, and none of them appears in any other spec. Other capabilities are referred to by name only.\n\n**Rules I added that the requirements don't state, for you to confirm:**\n- **Sources:** a source can't be deleted while any task references it. This is stricter than FR-56, which only blocks deletes when attempts exist.\n- **Graphic switch:** a task in a published mission can't be changed to `GRAPHIC`. This protects the FR-57 rule.\n- **Empty missions:** a mission with no tasks can't be published.\n- **Duplicates:** the same task can't appear twice in one mission.\n- **Required fields:** title, grade and subject are required for a source.\n- **Determining file type:** the file's content decides its type, not its name.\n- **NFR-9 test:** the scenario assumes a pseudo-localization test (every catalog value prefixed with `⟦`). Under the declared-method-needs-mechanism rule, that test has to exist in the frontend before the build phase."
+    },
+    {
+      "label": "draft:answer-checking",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 714,
+      "durationMs": 119524,
+      "sessionId": "57312e41-a689-4741-bde7-19f371f85465",
+      "costUsd": 0.5996202,
+      "numTurns": 13,
+      "result": "I rewrote `openspec/specs/answer-checking/spec.md`; a version from an earlier inline pass was already there. `npx openspec validate --all --strict` passes (12 passed, 0 failed). I couldn't run `node scripts/check-traceability.mjs` because it needs your approval, so the traceability check has not passed yet. A grep shows all of FR-14 to FR-23 are cited, and only in this spec.\n\n**Requirements authored (12):**\n1. Verdicts and normalized interpretation (FR-14 to FR-19)\n2. Integer input (FR-14)\n3. Decimal input (FR-15)\n4. Fraction input (FR-16)\n5. Numbers with units (FR-17)\n6. Multiple choice (FR-18)\n7. Short text (FR-19, OQ-8)\n8. Accepted alternatives (FR-20)\n9. Numeric tolerance (FR-21)\n10. Unparseable input never costs an attempt (FR-22, OQ-12; matches `status: UNPARSEABLE`, `attemptsLeft` and `formatTip` in `api/openapi.yaml`)\n11. Check performance (NFR-5)\n12. Golden table (FR-23, NFR-4)\n\nThe spec also has an **Explicit exclusions (MVP)** section: no unit conversion, no AI or fuzzy matching, GRAPHIC tasks are never served or checked, a dot or comma is never a thousands separator, and attempts, XP and re-evaluation belong to other capabilities.\n\n**What changed from the earlier version:**\n- **NFR-5 and OQ-8 are now cited.** NFR-5 is also cited in practice-flow (twice already), so the same 300 ms p95 budget now appears in two specs.\n- **More error-path scenarios:**\n  - empty input\n  - `++5`\n  - `1//2`, `1/`, `/2`, `1/2/3`\n  - `1.250,75`\n  - a unit with no number\n  - an empty or unknown choice\n  - an unparseable answer on the second attempt\n  - a golden-table regression that must fail the build\n- **Exact characters for spaces.** Inputs with special spaces are now written with their code points (`<U+00A0>`, `<U+2009>`), so a tester can tell which space is meant.\n- **One WHEN/THEN per scenario.** Scenarios that had two WHEN/THEN pairs are now split.\n\n**Rules I added that the requirements don't state — please confirm or overrule:**\n- A readable non-integer typed into an INTEGER part (e.g. `12,5`) is `WRONG`, not `UNPARSEABLE`. It uses up an attempt.\n- If a FRACTION part doesn't allow equivalent forms, `2/4` and `0,5` are `WRONG` when `1/2` is expected.\n- A diacritics-strict TEXT part still ignores case, and spaces inside a text answer are collapsed to one.\n- Tolerance never waives the unit rule or the \"exact number of decimal places\" rule.\n- An empty multiple-choice selection is `UNPARSEABLE`.\n- Format tips must not use \"chyba\" or \"špatně\". The example copy follows the design-system voice: \"Napiš celé číslo, třeba 12.\"\n\nThe independent spec critique, which a separate reviewer has to do, still hasn't run. I didn't update `docs/current-state.md`."
+    },
+    {
+      "label": "draft:practice-flow",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 760,
+      "durationMs": 114388,
+      "sessionId": "cce243bf-e4a2-45fe-9c8a-ef843c8451ce",
+      "costUsd": 0.5365368,
+      "numTurns": 10,
+      "result": "I rewrote `openspec/specs/practice-flow/spec.md`. The file already existed from the Phase 2 baseline commit (896fc0a), so this replaces that version. `npx openspec validate --all --strict` passes (12 passed, 0 failed). `node scripts/check-traceability.mjs` did not run because it needed approval, so traceability is **not confirmed**. It needs to run before `current-state.md` can claim it again.\n\n**Changes from the earlier version:**\n- Every scenario now uses GIVEN/WHEN/THEN.\n- I added error-path scenarios:\n  - an unknown or draft mission returns 404 with a problem+json body\n  - a `GRAPHIC` task is never served (404)\n  - a submission after the task is resolved or revealed is refused (409)\n  - asking for a hint when none are left is refused (409)\n  - a report request with no reason is rejected (400)\n  - when the server is unreachable on submit, the typed answers are kept and a retry message is shown\n  - replaying a mission that isn't finished is refused (409)\n- A new scenario on the task screen checks that `0,5` and `1 000` (with a non-breaking space) are both graded correct.\n- Decision OQ-12 is now cited (an unreadable answer doesn't use up an attempt and keeps the parts already locked). The detailed rule itself stays in answer-checking.\n- The exclusions list grew: source reference hidden from the child, no locked missions, no Ukrainian UI.\n\n**Coverage:** each owned id is cited only here: FR-24 to FR-33 and FR-44, plus NFR-5 and NFR-7. Decisions OQ-5, 7, 11, 12, 13, 16 and 17 are each cited. Other capabilities are referred to by name only (answer-checking, gamification, child-profile, progress-stats, admin-access).\n\n**Decide before archiving:** I made up some details the requirements don't specify:\n- the status codes (404 / 409 / 400)\n- the Czech text for these messages: the empty HQ, mission not found, translation not available, report thanks, \"Jiné\" note prompt and save failure\n- the test sizes (20 page loads, 200 answer checks)\n- the hint button label \"Nápověda\"\n\nThe product owner should confirm or change these, and the codes need to match `api/openapi.yaml`.\n\n**Requirements authored:**\n1. HQ without login\n2. Mission list on HQ\n3. Start or continue within two clicks\n4. Task screen\n5. Two attempts, then reveal\n6. Hints on demand\n7. Ukrainian translation toggle\n8. Report a problem\n9. Save and resume\n10. Mission complete screen\n11. Replay completed missions\n12. Deterministic feedback through the tutor seam"
+    },
+    {
+      "label": "draft:gamification",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 698,
+      "durationMs": 96680,
+      "sessionId": "47b3d58c-59bc-4f27-b349-71b3b6b7a37e",
+      "costUsd": 0.4481552,
+      "numTurns": 9,
+      "result": "A gamification spec from the Phase 2 baseline (commit `896fc0a`) was already at `openspec/specs/gamification/spec.md`. I rewrote it in place instead of starting a new file. It passes `npx openspec validate --all --strict` (12 passed, 0 failed). The only output for this spec was two notes that requirements 0 and 6 have long text. Nothing is committed yet.\n\n**Requirements authored (8):**\n1. **XP per task**: FR-34, OQ-4, OQ-15\n2. **Mission completion bonus**: FR-35, OQ-4, OQ-15\n3. **Rank ladder**: FR-36, OQ-1, OQ-4\n4. **Rank-up celebration**: FR-36, NFR-13\n5. **Progress on HQ**: FR-37\n6. **No negative mechanics**: FR-38\n7. **Swappable skin**: FR-39, OQ-1\n8. **Light and dark theme**: FR-58, OQ-25, NFR-13\n\n**Changes from the earlier version:**\n- **Format:** every scenario now has GIVEN, WHEN and THEN.\n- **Added cases:** the full XP award table (including attempt 2 with no hints), a mission finished by revealing the last task, one award that skips past two ranks, the celebration not repeating after a reload, a new profile at 0 XP, solved tasks counted once, a long break not being punished, and a check that light and dark follow the OS with no in-app switch.\n- **Error paths:**\n  - `UNPARSEABLE` input neither gives nor takes XP.\n  - Opening hints after a task is resolved doesn't lower its award.\n  - Invalid XP settings, an invalid rank list and an incomplete skin are each rejected with an error naming the faulty entry.\n  - A search of the skin for borrowed manga names finds nothing.\n- **Exclusions:** no achievements, cosmetic unlocks, streaks, timers, leaderboards, XP spending or XP loss, and no light/dark switch. Replays earn nothing. Graphic tasks never earn XP. Admin re-evaluation is specified in progress and stats.\n- **Citations:** this spec cites only FR-34–39, FR-58 and NFR-13. Other capabilities are mentioned by name only.\n\n**Decision for you:** four behaviours are my own additions, not taken from `docs/requirements.md`:\n- the app refuses to start or load the skin when the configuration is invalid;\n- the celebration plays once and names only the highest new rank when one award crosses several ranks;\n- the celebration doesn't play again on later visits;\n- each mission pays its own bonus once, even when it shares tasks with another mission.\n\nPlease confirm or adjust them before the backend and frontend changes cite this spec."
+    },
+    {
+      "label": "draft:progress-stats",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 629,
+      "durationMs": 117275,
+      "sessionId": "bd4685ed-0f3a-4fbc-a1c9-05a6adeb4719",
+      "costUsd": 0.667528,
+      "numTurns": 15,
+      "result": "I rewrote `openspec/specs/progress-stats/spec.md`. A version of it already existed. The new one is in strict GIVEN/WHEN/THEN form, covers both OQ-14 and OQ-20 (the old one never stated OQ-20 as a behavior), and adds error-path scenarios and a fuller exclusions list.\n\n**Requirements authored:**\n1. Attempt log contents (FR-42)\n2. Attempt log is append-only (FR-42, OQ-20)\n3. Session definition (FR-40, OQ-14)\n4. Practice statistics page (FR-40)\n5. Flag queue (FR-41)\n6. Re-evaluation of a reported attempt (FR-41, OQ-20)\n7. Dismissing a report (FR-41)\n8. Stats and flag queue are admin-only (FR-40, FR-41, FR-42; the login rules themselves are in admin-access)\n\n**Error paths covered:** unparseable submissions are never logged; input with a no-break space as thousands separator is stored exactly as typed; requests with no admin session get 401 and requests with no CSRF token get 403; unknown report → 404; re-evaluating a report that is already `FIXED`, or one with no attempt, → 409; dismissing a closed report → 409; re-evaluation that would lower the outcome, or where the answer no longer parses under the new spec, changes nothing; a week count out of range → 400; no data yet and topics with nothing resolved show a clear value instead of an error. The exclusions also say `GRAPHIC` tasks never appear anywhere in stats.\n\n**Verification:** `npx openspec validate --all --strict` passed (12 of 12). I couldn't run `node scripts/check-traceability.mjs` because it needs your approval, so traceability is **NOT-EARNED** for now. A search showed FR-40, FR-41 and FR-42 are cited in no other spec, but please run the script to confirm.\n\n**Choices I made where the source didn't decide — please confirm:**\n- **Which week a session counts in:** the week of its first attempt.\n- **Exactly 30 minutes:** a gap of exactly 30 minutes keeps the session going. OQ-14 only says \"no gap over 30 minutes.\"\n- **Answered tasks:** counted as distinct tasks per session, so two attempts on one task count once.\n- **First-try rate:** based on each task's first resolution only, so replays don't change it. Replay attempts still count towards sessions.\n- **Success metric:** checked over the 4 most recent *completed* weeks; the current week is listed but not counted.\n- **What gets re-evaluated:** only the attempt attached to the report. The XP difference uses the hints used at that attempt.\n- **Failed re-evaluation:** when it changes nothing, the report stays `OPEN`.\n\n**Contract gap:** the API contract (`api/openapi.yaml`) declares no 400 response for `getStats`, but the out-of-range week count scenario expects one. It needs a contract change in this repo, or I can drop the scenario."
+    },
+    {
+      "label": "draft:child-profile",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 632,
+      "durationMs": 73646,
+      "sessionId": "036e0d89-1772-4698-aa6c-c42ca1239404",
+      "costUsd": 0.431019,
+      "numTurns": 13,
+      "result": "I rewrote the child-profile spec at `openspec/specs/child-profile/spec.md`. A thinner version was already there, so this replaces it. `npx openspec validate --all --strict` passes (12 passed, 0 failed). It printed two INFO notes saying requirements 3 and 4 are long; those don't fail the check.\n\n**Requirements authored:**\n1. **Single profile created once at first start**: covers OQ-22. Scenarios: profile created from the environment variable, a restart keeps the name and progress, a restart without the variable is fine, a first start without the variable is refused, and no second profile can ever be created.\n2. **Display name stays private** (NFR-3): the name never appears in logs, a startup error names the variable but never prints its value, committed files and fixtures use placeholder names only, and demo recordings use a placeholder profile.\n3. **Profile settings** (FR-43): new profiles start with `secondaryTaskLocale` empty and `answerMode` `DIRECT`. Scenarios: the Ukrainian toggle turns on and off, the setting survives a restart, a change to one setting leaves the other alone, and setting `DIRECT` explicitly is accepted.\n4. **Invalid settings are refused without side effects** (FR-43): `GUIDED` gets HTTP 422 \"not available yet\". If one request sets both `GUIDED` and a locale, the locale change is thrown away too. `ru`, `UK`/`uk-UA`, unknown modes and malformed JSON get HTTP 400. If saving the toggle fails, the child sees a calm Czech message (\"Nastavení se nepodařilo uložit. Zkus to prosím znovu.\").\n5. **Supported locales come from configuration** (FR-43): a locale added in configuration is accepted without a code change.\n\nThere's also an **Explicit exclusions (MVP)** section: no login, second child or profile picker; no way to rename the profile; no settings screen apart from the toggle; `GUIDED` is always refused; `answerMode` changes nothing in MVP; no personal data on the profile; the UI language is not a setting.\n\nFR-43 is cited only in this spec. Practice-flow, answer-checking and admin-access are referred to by name. The status codes match `api/openapi.yaml` (`GET`/`PATCH /api/child/profile/settings`, 400 and 422 problem+json).\n\n**Three things I decided myself; please confirm:**\n- **Missing name on first start:** the requirements don't say what happens if the display-name variable isn't set on the first start. I wrote that the backend refuses to start, the same way it does for a short admin password (NFR-16).\n- **Variable name:** I couldn't read `../backend` (permission wasn't granted), so the spec just says \"the display-name environment variable\". Once the backend picks a name, it can go in the backend's own implementation change.\n- **Privacy check:** the NFR-3 scenario about committed files depends on a \"repository privacy check\". I haven't confirmed that check exists, and under the \"declared method needs a mechanism\" rule it must exist before the build phase starts.\n\nI didn't commit anything or update `docs/current-state.md`."
+    },
+    {
+      "label": "draft:admin-access",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 716,
+      "durationMs": 58318,
+      "sessionId": "294cd524-f30b-424c-a0df-97a8c032344e",
+      "costUsd": 0.267601,
+      "numTurns": 10,
+      "result": "I rewrote `openspec/specs/admin-access/spec.md` in place; there was already a short baseline version of this file. `npx openspec validate --all --strict` passed with 12 of 12 items and no failures, admin-access included. Nothing is committed yet.\n\n**Requirements authored (7):**\n1. **Admin authentication** (NFR-1): sign-in succeeds, unauthenticated calls get a 401, a wrong password gets a 401 with no session, empty or malformed sign-in input is refused, the admin UI shows the sign-in page first, the password never appears in plain text (bcrypt hash only), and sign-out ends the session.\n2. **Child endpoints cannot change content** (NFR-1): the child side calling an admin action gets a 401, no `/api/child/**` operation in `api/openapi.yaml` changes content, and extra fields sent with a child's answer are ignored.\n3. **Admin session cookie and CSRF protection** (NFR-15, OQ-23): the session cookie is HttpOnly and SameSite=Strict; a missing or wrong CSRF token gets a 403, a valid one is accepted, and read requests need no token.\n4. **Admin session idle timeout** (NFR-15, OQ-23): the session expires after 8 hours idle, and any admin request restarts the clock.\n5. **No sign-in lockout** (NFR-15, NFR-2, OQ-23): after 20 failed attempts the correct password still works.\n6. **Admin password policy** (NFR-16, OQ-23): an 11-character, missing or empty password stops the backend from starting, with a message that names the variable and the 12-character minimum but never the value. Exactly 12 characters is accepted.\n7. **Local network only** (NFR-2): by default ports are bound to `127.0.0.1` or a configured LAN address, and the database port is not published.\n\n**Explicit exclusions:** no user management, password reset or roles; no lockout, rate limiting or two-factor sign-in; no child login; no public hosting or TLS; no \"remember me\" beyond the 8-hour window. It also says this capability owns no FR and names the capabilities that do (content-authoring, progress-stats).\n\n**Choices to review:**\n- **Status codes and sign-in flow:** these follow what `api/openapi.yaml` already defines for `/api/admin/session` (sign-in, session check, sign-out, and the `XSRF-TOKEN` cookie).\n- **Malformed sign-in input:** the scenario accepts either 400 or 401, because the contract doesn't pin this case. If you want one exact answer, the contract needs a change first.\n- **Additions beyond the requirement text:** the \"database port not published\" check and the sign-out scenario aren't spelled out in the NFRs. I added them because they follow from NFR-2 and from the contract's sign-out endpoint. Remove them if you'd rather the spec stay strictly to the stated wording."
+    },
+    {
+      "label": "critique:gamification",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 443,
+      "durationMs": 34521,
+      "sessionId": "81a380a4-d574-482c-93e9-68c13167289e",
+      "costUsd": 0.23572540000000003,
+      "numTurns": 5,
+      "result": {
+        "acceptable": false,
+        "issues": [
+          "Invented scope / misattributed decision: the 'Mission completion bonus' requirement says the bonus is 'paid per mission, so two missions sharing tasks each pay their own bonus once (decision OQ-15)'. OQ-15 (requirements.md:281) only decides that task XP is awarded once per task. It says nothing about bonuses for missions that share tasks. Either cite a real decision or raise a new OQ. No scenario covers this rule either.",
+          "Completion trigger is ambiguous for shared tasks: the bonus is paid 'at the moment its last unresolved task is first resolved'. If every remaining task of mission B was already resolved in mission A, no 'first resolution' ever happens in B. So it is undecidable whether B ever completes or pays its bonus. Define completion for that case and add a scenario.",
+          "Missing error path for oversized and locale-formatted values: invalid XP config is rejected only when a value is negative or the minimum is below 1. Nothing covers non-integer values (2.5), locale-formatted values ('1 500', '10,5'), non-numeric values, or absurdly large values, for either the XP/bonus config or the rank thresholds. Nothing covers a missing XP key either.",
+          "Missing unauthorized path: no scenario states that XP can only be granted server-side from a checked resolution. A client request that tries to set or post XP, a rank, or a solved count directly should be refused without changing the total. FR-38's 'XP never decreases' and award integrity depend on this.",
+          "Not objectively decidable: 'No borrowed IP' searches for 'character names from the inspiring manga' with no defined list, so pass/fail depends on who runs the search. The terms list needs to be explicit and checked in, or the scenario needs to point to a deny-list file.",
+          "Not objectively decidable: the 'Wrong answers cost nothing' scenario has 'never mocking' and 'Revealed answer is calm' has 'with no failure wording'. Both are subjective unless they are tied to the exact expected copy or a banned-word list. The literal Czech strings ('Skoro! Zkus to znovu.', 'Nevadí, příště!') also don't come from any owned FR. They are wrong-answer and reveal UI copy that belongs to practice-flow/skin, so they are scope this capability's FRs don't cover.",
+          "Vague fixture: the 'Bonus crosses two thresholds' scenario says 'a configuration in which one award takes the child from the 1st rank past the 3rd rank's threshold' with no concrete numbers. The title says 'Bonus', but the GIVEN says any award. Give an exact ladder, starting XP and award (for example, 140 XP plus a 10 XP task and a 20 XP bonus under thresholds 0/150/160).",
+          "Weak boundary coverage of the ladder: the 'Rank from total XP' scenario tests 0/149/150/399/400/1499/1500 but never 799/800, so the 3rd→4th threshold is not boundary-tested.",
+          "The UNPARSEABLE scenario asserts 'the attempt is not consumed'. That is FR-22, owned by answer-checking, not one of this spec's FRs. Keep only the XP-neutral assertion here and reference answer-checking for attempt consumption.",
+          "Minor privacy concern (NFR-3): scenarios consistently refer to the child as 'she', which writes a personal attribute of the real child into the repo. Use 'the child' or neutral wording."
+        ]
+      }
+    },
+    {
+      "label": "critique:practice-flow",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 476,
+      "durationMs": 47644,
+      "sessionId": "7b7ae214-7a6d-40f2-a194-3a85ff590f99",
+      "costUsd": 0.26529119999999995,
+      "numTurns": 5,
+      "result": {
+        "acceptable": false,
+        "issues": [
+          "COVERAGE: All 11 owned FRs (FR-24..FR-33, FR-44) have a requirement and scenarios, and OQ-5/7/11/12/13/16/17 are stated. No FR is missing outright. The gaps are below.",
+          "MISSING ERROR PATH (oversized values): There is no scenario for oversized input anywhere in the spec. Nothing covers an answer part with an extremely long string, an INTEGER that overflows (e.g. `99999999999999999999`), a report note longer than any limit, or a body larger than any limit. The review asked for oversized and locale-formatted values; only locale formatting is covered (`0,5`, `1 000` with NBSP, `5,,2`). Add expected outcomes such as 400 problem+json or a format tip with no attempt consumed, and give concrete limits.",
+          "MISSING ERROR PATH (unauthorized / child cannot mutate): NFR-1 says child endpoints cannot mutate content. The spec only says admin endpoints 'stay protected, see admin-access' and gives no scenario showing that an uncredentialed child-side call to an admin or content-mutating endpoint is refused (401/403). Add at least one scenario here, or state explicitly that the case is owned by admin-access.",
+          "MISSING ERROR PATH (malformed submissions): There are no scenarios for (a) a submission naming an unknown or extra part id, (b) a second-attempt submission that resends a part already locked as correct, given that the spec says 'submission sends only b' but says nothing about what the API does if a is sent, (c) attempt, hint or report requests for a non-existent, draft or GRAPHIC task id (only GET of a GRAPHIC task is covered), or (d) a submission for a task id that does not belong to the mission in the URL.",
+          "AMBIGUITY (OQ-15 × FR-25/FR-33): OQ-15 says a task can belong to several missions and earns XP once 'anywhere'. The spec doesn't say whether a task resolved in mission A counts as resolved in mission B's x/N progress and completion, or whether B's mission-complete screen shows XP for it. Two implementations could both pass the current scenarios and still behave differently.",
+          "AMBIGUITY (replay + resume, FR-31/FR-33): The spec doesn't say what happens when the child leaves a replay midway and comes back. 'Pokračovat' only targets in-progress missions, and HQ keeps showing the mission as complete, so it's undefined whether re-entering the mission resumes the replay or starts a fresh one. FR-31 resume behaviour is unspecified for replays.",
+          "NOT DECIDABLE: Several outcomes have no objective test. 'a short celebration is shown' (Correct on first attempt) names no element or text. 'revealed calmly' and 'no mocking or red-alarm styling is used' (Reveal) give no concrete check, such as a forbidden CSS token or colour or the exact copy. 'Feedback never comes from AI in MVP' gives no mechanism for proving 'no external AI service is called', such as no outbound HTTP client or OpenAI dependency or a network-deny test. 'leave room for a later AI tutor without changing how attempts are submitted' (FR-44) has no scenario at all; the TutorPort seam needs a checkable form, e.g. an architecture test that feedback is produced only via TutorPort.",
+          "NOT DECIDABLE (Same input, same feedback): 'the two feedback payloads are identical' will fail or be argued over if the payloads carry attempt ids or timestamps. State which fields are compared, or that the tutor-feedback object excludes ids and timestamps.",
+          "NOT DECIDABLE (Mission summary): 'the XP total earned in this mission, including the completion bonus' gives no expected number. Pin a value using the FR-34/35 and OQ-4 numbers (7 first-try, 2 second-try, 1 revealed, 0 hints, plus bonus = N), so the scenario is pass/fail without a separate calculation.",
+          "UNDER-SPECIFIED MEASUREMENTS (NFR-5): For 'Load time', the start and end events aren't defined (navigation start to first paint of prompt, image and inputs?), and neither is cold vs warm cache. 'Check round-trip time' doesn't say where it is measured (browser vs API) or what the 200 submissions contain. 'Home laptop' isn't reproducible in CI, so name the environment the e2e and local check actually run on.",
+          "GIVEN INCOMPLETE: 'Replay earns no XP' asserts '10 attempts are in the attempt log' but the Given doesn't say the mission has 10 tasks or that none of them are multi-attempt. 'All published missions are open' and 'Report after a wrong verdict' are similar. State the task count in each Given.",
+          "POSSIBLE INVENTED SCOPE (minor; confirm or trace): Several details don't trace to an FR or OQ: hints openable after a reveal, the hint button disabled and 409 when none remain, the note required only for 'Jiné', 'Pokračovat' hidden when nothing is in progress, the exact empty-HQ copy, and the idempotent-resend promise in 'Server unreachable' ('counts as one attempt'). These are reasonable derivations, but the idempotency promise implies a request-id mechanism that no FR requires. Either trace each to its source or move it to design. Also, the 'Server unreachable' scenario doesn't cover the harder case where the request reached the server but the response was lost, which is where double-counting would actually happen.",
+          "WORDING / PRIVACY (minor): Scenarios refer to the child as 'she/her' throughout. That bakes an assumption about the real child into a committed spec (NFR-3 spirit). Use 'the child' consistently."
+        ]
+      }
+    },
+    {
+      "label": "critique:answer-checking",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 470,
+      "durationMs": 38932,
+      "sessionId": "157c54a8-e369-4420-9772-a02763f09d17",
+      "costUsd": 0.19603520000000002,
+      "numTurns": 4,
+      "result": {
+        "acceptable": false,
+        "issues": [
+          "Coverage: all owned FRs (FR-14 to FR-23) are referenced, and OQ-8 and OQ-12 are reflected correctly. No owned FR is missing.",
+          "Missing error path, unauthorized: the spec defines API-boundary behavior (FR-22: `status: UNPARSEABLE`, `attemptsLeft`, `formatTip`) and names the admin answer tester as a consumer. But it has no scenario and no exclusion for an unauthenticated or wrong-profile submission, or for a non-admin calling the answer tester. Add a scenario, or an explicit exclusion that points to practice-flow, child-profile or admin-access as the owner.",
+          "Missing error path, oversized values: nothing covers very long input (for example a 10,000-character TEXT answer or a 500-digit INTEGER), numbers beyond 64-bit or double range, or the precision used for comparison and tolerance (BigDecimal or double). Without this, the verdicts for `99999999999999999999` and for the tolerance boundary `3,15` versus `3.14 ± 0.01` (exact under floating point?) are not decidable. Add a maximum input length and its verdict, and state that comparison is exact decimal.",
+          "Locale-format ambiguity, digit grouping: it is not specified whether a space separator must split the number into groups of 3. Is `1 2 3`, `12 50` or `1 0000` CORRECT for 123, 1250 or 10000, or UNPARSEABLE? FR-23 asks for golden cases that cover locale formatting, so this has to be decidable.",
+          "Locale-format ambiguity, mixed numbers versus thousands separators: in FRACTION parts a space is both the mixed-number separator (`1 1/2`) and a thousands separator. The spec does not say how `12 500/3` or `1 000 1/2` is parsed. It also does not say whether a mixed number counts as CORRECT when equivalent forms are NOT allowed (`1 1/2` against `3/2`).",
+          "Negative and sign edge cases are missing for DECIMAL, FRACTION and units: `-0,5`, `-1/2`, `1/-2`, `+,5`, `-0`. There is also no rule for a Unicode minus (U+2212) or an en dash, which a child can easily type or paste.",
+          "NUMBER_WITH_UNIT: no verdict is given for an unrecognized or garbage unit (`24 xyz`, `24 cm³` when cm² is expected, `24 CM2`). Is unit matching case-sensitive (`m` vs `M`, `ml` vs `mL`)? The normalization rule names only cm² variants, not the general rule (superscripts ², ³, `^n`, the trailing digit).",
+          "Multiple choice: CHOICE_SINGLE with more than one selected option has no verdict (the spec says 'SHALL accept exactly one' without saying WRONG or UNPARSEABLE). CHOICE_MULTI with an empty selection or an unknown option is stated in the requirement text, but the scenario only exercises CHOICE_SINGLE. Duplicate options in a multi selection (`{A, A, C}`) are unspecified.",
+          "Tolerance interactions are undefined: tolerance on a FRACTION part that does not allow equivalent forms (is `0,49` or `49/100` judged numerically?), and whether tolerance applies to the stored expected value or to each accepted alternative.",
+          "Not objectively decidable: the 'Format tip voice' scenario says the tip 'contains no words like \"chyba\" or \"špatně\"'. 'Like' makes the list open-ended. 'Names what to type' is subjective. Replace these with a closed forbidden-word list, and with a check that the tip contains an example value valid for the part's type.",
+          "Not objectively decidable: the golden-table scenario requires 'at least one per requirement in this specification', but 'Check performance' and 'Golden table' cannot be expressed as input → verdict cases, and the 'Unparseable input never costs an attempt' rules are about attempts, not verdicts. Limit it to the verdict-producing requirements, or list the rule IDs it must cover.",
+          "Scope beyond the owned FRs: 'Check performance' brings in NFR-5, which is not among the owned FRs. Confirm that NFR-5 is assigned to answer-checking in the plan's Req/Slice/Repo(s) table, or move it. The 'readable non-integer in INTEGER part → WRONG (normalized 12.5)' rule and 'unknown choice option → UNPARSEABLE' are reasonable interpretations, but they go beyond FR-14 and FR-18 and should be marked as spec decisions.",
+          "Internal tension: the Purpose says the checker 'never changes stored data' and 'does not know about attempts'. Yet the FR-22 requirement in this spec asserts `attemptsLeft` and 'no attempt is recorded', which belong to practice-flow according to the spec's own exclusions. Either move those assertions to practice-flow with a cross-reference, or state that this requirement covers the submission endpoint rather than the pure checker."
+        ]
+      }
+    },
+    {
+      "label": "critique:content-authoring",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 511,
+      "durationMs": 55773,
+      "sessionId": "7994e4a8-61e3-4bcc-ac7c-a4442966e379",
+      "costUsd": 0.2799626,
+      "numTurns": 5,
+      "result": {
+        "acceptable": false,
+        "issues": [
+          "FR-57 invariant can be bypassed by editing a published mission, and no scenario covers it. 'Edit existing content' lets the admin change a mission's task list and topic, but nothing says what happens when a DRAFT or GRAPHIC task (or a task from another topic) is added to an already PUBLISHED mission, when the mission's topic changes while its tasks keep the old topic, or when the last task is removed from a published mission. Each path breaks 'every task in a published mission is PUBLISHED+TEXT' or the empty-mission rule. Add rules and refusal scenarios.",
+          "FR-6 says every task has 1..n answer parts, but the spec only requires parts for TEXT-modality tasks ('A TEXT-modality task SHALL NOT be publishable without at least one complete part'). That implicitly lets GRAPHIC tasks have zero parts and lets DRAFT tasks of any modality have zero parts. Either enforce 1..n on every task or record an explicit, justified deviation. 'Complete part' is also never defined, so the publish-refusal scenario can't be decided for a part that exists but is half-filled.",
+          "FR-6 answer-spec authoring is under-specified for most types. CHOICE_SINGLE and CHOICE_MULTI never say how options and the correct option(s) are entered, or what is refused (no options, no correct option, several correct options on CHOICE_SINGLE, duplicate options). FRACTION, NUMBER_WITH_UNIT and TEXT have no expected-value validation or error scenario. Only DECIMAL has a parse-error scenario (`5,,2`). Checking rules can be deferred to answer-checking, but authoring validation belongs here.",
+          "Oversized and locale-formatted input error paths are missing. No maximum lengths are set for prompt, hint, translation, topic or task-number text. No limits are set on the number of images, hints or parts per task, or on the number of tasks per mission. Nothing covers non-numeric or overflowing page, grade or difficulty input (`abc`, `2,0`, `99999999999`). It is also not stated whether the English admin UI accepts a dot decimal (`0.5`) or a dot thousands separator (`1.250,75`) for expected values. Only `1 250,75` and `5,,2` are pinned.",
+          "Validation of source and task metadata is undefined. The allowed values for grade and subject are never stated (`math` appears only as an example). There is no scenario for an invalid grade or subject on upload or task save, or for a task whose grade differs from its source's grade or from its topic's grade (the topic list is per grade). 'Unknown topic is refused' covers only an unseeded id.",
+          "Corrupt PDF upload isn't covered: a file that passes the content-type sniff but is encrypted, truncated or unparseable, so no page count can be read. FR-1 promises page count and FR-3 range-checks pages against it, so this needs a refusal scenario.",
+          "Scope invented beyond FR-56/FR-57 without being flagged as a derived decision. Most of the added rules are sensible, but each should cite the decision it comes from or be listed as a derived constraint. 'A source SHALL NOT be deletable while any task references it' narrows FR-56, which allows deleting anything that no attempt references. Also added: 'a task in a published mission SHALL NOT be deletable', 'an empty mission SHALL NOT be publishable', a ban on switching a task to GRAPHIC while it is in a published mission (FR-57 names only the return to DRAFT), file-content sniffing, unique part labels, no duplicate task in one mission, and the file being removed from storage when a source is deleted. Two of these have no scenario: 'task in a published mission not deletable' and 'empty mission not publishable'.",
+          "FR-55 is quietly narrowed: source editing is limited to metadata, with no way to replace the PDF. This should be an explicit exclusion, or justified. 'Mission name' appears in the edit requirement although the Missions requirement (FR-9) never defines a mission name on create.",
+          "Several scenarios can't be decided objectively. (a) 'Fixtures are self-authored … when they are reviewed' is a human judgment with no mechanism; name a check (e.g. a provenance manifest per fixture) or record a waiver. (b) 'Mission size other than 10 … the editor notes that the default size is 10' doesn't say what the note is or where it appears, and 'default size' is never given a behaviour (pre-set target? warning threshold?). (c) 'Upload a source' gives no publisher value to assert. (d) 'Files stay out of repositories' uses `git status`, which passes even if the file sits gitignored inside a repo directory; assert that the storage path is outside all three repo roots.",
+          "The 'Graphic task never reaches the child' scenario is vacuous. The publishing rules already keep GRAPHIC tasks out of published missions, so walking the published missions can never return one. Request the GRAPHIC task by id through the child API, and also test it while it sits in a DRAFT mission.",
+          "FR-10's 'exactly as the child sees it' has no scenario that proves it. Nothing compares the preview with the child task screen; the only checks are for the source reference and the tester. Add a scenario tied to a shared component or a visual comparison.",
+          "FR-11 search on Czech text is underspecified. Case and diacritic sensitivity aren't stated (does `obdelnik` or `OBDÉLNÍK` match?), and an empty or whitespace-only query has no defined result.",
+          "The unauthorized-access scenarios cover only create and upload. Edit, delete, publish/unpublish and the answer tester are not shown being refused with 401 when there is no session, and there is no scenario showing that child endpoints can't change content (NFR-1). These are admin mutations this spec owns, even though session mechanics belong to admin-access."
+        ]
+      }
+    },
+    {
+      "label": "revise:gamification",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 3360,
+      "durationMs": 176640,
+      "sessionId": "db4d0f44-4392-48ed-96c8-6d2c352d5e2b",
+      "costUsd": 0.7726692,
+      "numTurns": 16,
+      "result": "I've revised `openspec/specs/gamification/spec.md` for all 10 issues. `npx openspec validate --all --strict` passes (12 of 12, no errors). Nothing is committed yet.\n\n**Before you commit, you need to decide one thing.** Issues 1–3 needed product decisions that nothing in the requirements covered. Instead of inventing them, I added two new open questions as a new §6.5 in `docs/requirements.md`. They are marked **\"proposed default (pending confirmation)\"**, and the spec cites them that way:\n- **OQ-28 (shared tasks):** each mission pays its own bonus once. A mission counts as complete when all its tasks are resolved, wherever that happened.\n  - The resolution that finishes a mission's last task completes every mission that contains it and pays each bonus in the same award.\n  - A mission published with all its tasks already resolved is complete at publish time. It pays the bonus only, and the rank-up celebration plays on the next HQ visit.\n- **OQ-29 (config limits):** XP values and the bonus must be plain integers from 0 to 1000, and the minimum award from 1 to 1000. Rank thresholds must be integers from 0 to 1 000 000.\n  - Strings, decimals and locale formats are rejected, and a missing key never falls back to a built-in value.\n\nPlease confirm or change these two defaults.\n\n**Per issue:**\n1. **Misattributed OQ-15:** \"Each mission pays its own bonus\" now cites OQ-4 and OQ-13 (real decisions) plus OQ-28. Four new scenarios cover it: shared tasks completing another mission, one task completing two missions, each mission paying once, and a mission published already complete.\n2. **Shared-task trigger:** OQ-28 defines when completion happens in that case, with concrete scenarios (for example 100 XP → 130 XP).\n3. **Bad config values:** new requirement \"XP configuration is validated\". Its scenarios cover `2.5`, `\"10,5\"`, `\"1 500\"` (with a normal or a no-break space), `\"deset\"`, null, very large values, a missing key, and the accepted boundary values. A new rank-threshold scenario covers the same kinds of bad values.\n4. **Unauthorized XP:** new requirement \"XP is granted only by the server\", with three scenarios:\n   - writing to `/api/child/hq` gets a 4xx response and changes nothing;\n   - XP, rank or solved-count fields added to an attempt are ignored (the award stays 10);\n   - re-evaluation without an admin session gets 401.\n5. **Borrowed IP:** I added a new file, `docs/skin/ip-denylist.txt`. It holds the terms from the PRD plus franchise and character names, with a whole-word, case-insensitive matching rule in its header. There is also a scenario where a skin containing \"Plus Ultra\" must fail the check. Judging whether art looks borrowed is listed as an exclusion that needs a person to review it.\n6. **Subjective copy:** I removed the Czech strings and the \"never mocking\" / \"no failure wording\" checks. Those scenarios now check `xpAwarded`, the total, and that no XP amount with a minus sign is shown. Feedback wording is now listed as owned by practice-flow (FR-27) and the skin.\n7. **Two-threshold fixture:** the scenario now uses thresholds 0/150/160 and starts at 140 XP. A 10 XP task plus the 20 XP bonus gives 170 XP, and exactly one celebration plays, naming the 3rd rank.\n8. **Ladder boundaries:** I added 799 and 800 XP to the rank-from-total scenario.\n9. **UNPARSEABLE:** the scenario keeps only the XP-neutral check and points to answer-checking (FR-22) for whether an attempt is used up.\n10. **\"She\":** every scenario now uses \"the child\" or neutral wording. `docs/prd.md` and `docs/product-brief.md` still describe the child with personal details, which is the same NFR-3 issue. I left those files alone because they were outside this task.\n\n**Things to know before committing:**\n- The working tree already had uncommitted changes to the other six specs, `trace/ledger.jsonl` and a correction file before I started. I didn't touch them, so check what you stage.\n- Because the API contract has no `additionalProperties: false`, extra fields in an attempt are specified as **ignored**, not refused. If you want them refused with a 400, that needs a contract change in `api/openapi.yaml`.\n- I haven't updated `docs/current-state.md`."
+    },
+    {
+      "label": "critique:admin-access",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 388,
+      "durationMs": 32672,
+      "sessionId": "bdb1a476-cc4d-45db-88d2-57f4b1f44eb8",
+      "costUsd": 0.18429600000000002,
+      "numTurns": 7,
+      "result": {
+        "acceptable": false,
+        "issues": [
+          "Undecidable outcome: 'Empty or malformed sign-in body' allows 'HTTP 400 or HTTP 401', so a test can't fail on the status code. Pick one. api/openapi.yaml signIn (lines 264-276) declares only 204 and 401, so either use 401 or add 400 to the contract through an OpenSpec change.",
+          "Sign-in mechanism contradicts itself. The 'Admin session cookie and CSRF protection' requirement says 'form login', but the scenarios and the contract use a JSON body on POST /api/admin/session (application/json SignInRequest). The 'Wrong password' scenario says the response must not reveal 'whether the user name or the password was wrong', but sign-in elsewhere takes only a password and there is exactly one user. State whether a username field exists. If it doesn't, replace that clause with something checkable, e.g. the same body and status for any wrong password.",
+          "Oversized and encoding edge cases are missing from the password rules. bcrypt only uses the first 72 bytes, so a 100-character env password would also accept any input that shares its first 72 bytes. Add a scenario: either reject passwords over 72 bytes at startup, or require that a different input sharing the first 72 bytes is refused. The 12-character minimum also doesn't say characters or bytes for non-ASCII passwords (e.g. 6 Czech/Cyrillic letters = 12 UTF-8 bytes). Add a boundary scenario for that. Also add one for an oversized sign-in body (e.g. a 1 MB password field), which should be refused without a session.",
+          "Scenarios name no environment variable. 'Short password' and 'Missing or empty password' require the message to name 'the variable', and 'Successful sign-in' needs 'a valid admin password', but the variable (e.g. ADMIN_PASSWORD) is never named anywhere in the spec. Without the name, 'the message names the variable' can't be checked.",
+          "'Default binding' contradicts itself. Its GIVEN is 'no overrides', but its THEN allows 'an explicitly configured LAN address', which can't exist without an override. Split it into two scenarios: the default binds to 127.0.0.1, and a configured LAN address binds only to that address. 'Public interface' also needs a definition (non-RFC1918?) to be checkable.",
+          "Sign-out and CSRF are unclear. The requirement says every DELETE under /api/admin/** except sign-in needs a CSRF token, so DELETE /api/admin/session needs one too. The 'Sign-out ends the session' scenario doesn't say whether the token is sent or what happens without it. Add the token to the GIVEN/WHEN, or exempt sign-out explicitly.",
+          "Possible invented scope. 'After a successful sign-in the originally requested admin page is shown' (return-to-original-page) isn't in NFR-1, NFR-15 or OQ-23. Either cite its source or move it to a UX note. The same goes for the blanket rule that refusals use application/problem+json: if an ADR or the contract requires it, cite it; otherwise it's new scope.",
+          "Idle-timeout boundary is loose. 'More than 8 hours' and '7 hours' leave the exact 8h boundary unspecified, and the scenario doesn't say which clock or tolerance a test should use. Something like 'at 8h + 1 min refused, at 7h 59 min accepted' would make it decidable. Also say whether a refused request (401/403) resets the idle clock.",
+          "'Child write is limited to its own practice' is vague. 'Extra fields naming a different answer spec or task text' isn't a concrete payload, and it doesn't say whether unknown fields are ignored (2xx) or rejected (400). Pick one so the test has a single expected status."
+        ]
+      }
+    },
+    {
+      "label": "critique:child-profile",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 396,
+      "durationMs": 36473,
+      "sessionId": "c9e4c45c-40e0-4712-8154-d8963e665840",
+      "costUsd": 0.1796782,
+      "numTurns": 6,
+      "result": {
+        "issues": [
+          "Partial-update semantics are ambiguous for clearing the locale (spec.md:96-113): 'a field left out stays as it was', but the spec never says what request turns `secondaryTaskLocale` off. It could be an explicit JSON `null`, an empty string, or something else. The 'turn off' scenario only checks the stored result, not the request, so two implementations could both pass and still be incompatible. Say that explicit `null` clears the locale and that an omitted field means no change, and add scenarios for `\"\"` and for `answerMode: null`. As written, `answerMode: null` is undefined: it is outside the enum, but nothing says whether it is a 400 or a no-op.",
+          "Some invalid-input cases are missing. There is no scenario for an empty body `{}` (successful no-op or 400?), for wrong JSON types (e.g. `secondaryTaskLocale: 5`, `answerMode: true`), for unknown extra fields (ignored or 400?), or for an oversized string value (e.g. a 10 kB `secondaryTaskLocale`). The checklist requires oversized and type-mismatch error paths.",
+          "The display name has no input validation beyond 'unset or blank' (spec.md:43-48). There is no maximum length and no rule for leading/trailing whitespace, control characters or invalid UTF-8 in the environment variable on first start. Missing oversized and malformed error paths.",
+          "The unauthorized path is not stated. The child-facing settings read/write is unauthenticated by design (no child login), but the spec never says so explicitly. It also has no scenario showing that the admin API cannot change settings, even though an exclusion says the admin does not edit the profile in MVP. Add an explicit statement that the settings endpoints need no authentication, plus a decidable scenario that admin endpoints cannot change the profile.",
+          "'No second profile can be created' (spec.md:50-53) cannot be decided pass/fail: 'WHEN any API call is made' cannot be checked exhaustively. Rephrase it against the API contract, e.g. 'api/openapi.yaml exposes no create/delete/switch profile operation, and the profile count is 1 after the e2e suite'.",
+          "Several privacy scenarios cannot be decided objectively. 'Repositories and fixtures carry only placeholders' (spec.md:76-79) needs the real name to check against, but the real name must not be committed, so the spec should name the mechanism (e.g. a check that reads the name from the uncommitted env file). 'every fixture … that needs a display name uses an invented placeholder' has no test oracle. 'real name does not appear in any frame' has no stated procedure. 'The child is never blamed' (spec.md:144) is subjective. Rewrite each as a concrete check or drop it.",
+          "Scope goes beyond the owned FR-43. The 'Failed toggle save shown kindly' scenario (spec.md:180-184) specifies UI toggle rollback and exact Czech copy, which is FR-29 / practice-flow (e2e) behavior, while FR-43 is tagged local-verifiable. The specific status codes (422 vs 400), the startup-refusal behavior and the problem+json shape are spec-authored decisions that no FR states. They are reasonable, but they should be marked as design decisions or moved to the owning capability / api/openapi.yaml.",
+          "'Supported locales come from configuration' (spec.md:186-197) goes further than FR-43, which states `uk` or none. The idea comes only from the general 'seams' prose in requirements.md:31, and 'the same list used for task translations' couples this capability to content-authoring/practice-flow configuration that this spec does not own. Either cite the source or narrow the requirement to 'not hardcoded', and drop the cross-capability claim.",
+          "The display-name requirements cite NFR-3 by id (spec.md:60), but the pipeline instructions (docs/qa/workflow-args/spec-pipeline-phase2.json:105) say to cite only owned FR ids and OQ-22. Reference NFR-3's content without the id, or confirm that this capability owns NFR-3 in the plan's ownership table.",
+          "The spec assigns a gender to the child ('her practice settings' at spec.md:6, 'she turns it off' at spec.md:112). Neither the requirements nor the spec need this, and it is a small extra personal attribute in a committed file, against the spirit of NFR-3. Use neutral wording ('the child')."
+        ],
+        "acceptable": false
+      }
+    },
+    {
+      "label": "critique:progress-stats",
+      "phase": "Author",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 413,
+      "durationMs": 44562,
+      "sessionId": "a7f1932f-c7ea-4a34-aea6-6cc637c7cb7d",
+      "costUsd": 0.21792920000000002,
+      "numTurns": 6,
+      "result": {
+        "acceptable": false,
+        "issues": [
+          "Undecidable scenarios: 'A 20-minute gap keeps one session' and 'A 35-minute gap splits the session' assert 'that day shows N sessions', but the page is defined per week only, and the exclusions say 'no per-day calendar'. Assert per-week session and answered-task counts instead.",
+          "Week-count input range is undefined. The default is 4 and 0/53 → 400, but the valid min/max is never stated, so 2, 12 or 52 cannot be judged pass/fail. State the inclusive range (e.g. 1–52) and add boundary scenarios.",
+          "Missing invalid-input error paths on the stats/queue API: non-numeric or locale-formatted week count (`abc`, `4.5`, `1 000`, `٤`), unknown or wrong-case status filter (`FOO`, `fixed`), and a malformed (non-id-shaped) report id (400 vs 404 not decided). Oversized values are also untested: a week count far above range (e.g. 2147483648) and a very long raw input shown in the queue.",
+          "Success metric with less than 4 completed weeks of history is undefined (e.g. the app has been used for 2 weeks). Met, not met or pending? Also unspecified: whether the metric still uses the 4 most recent completed weeks when the page is asked for fewer or more weeks.",
+          "Hint usage per week is ambiguous. The log stores a cumulative 'hints used at attempt time' and has no hint-open timestamp. It is not stated whether hints count in the week they were opened or the week of the attempt, nor whether hints opened on a task with no later attempt count. FR-42's log alone cannot support the FR-40 figure as written.",
+          "Replay vs weekly figures: the spec says replay attempts count toward sessions and answered tasks, but not whether hints opened and reveals during a replay count toward that week's 'hints used' and 'revealed tasks'.",
+          "Re-evaluation vs first-try rate: when a re-evaluation changes a task's outcome to 'correct on 1st attempt' (scenario 'Re-evaluation resolves a task still in progress'), it is not stated whether the topic's first-try rate uses the original or the re-evaluated outcome.",
+          "Re-evaluation of a report attached to a replay attempt is unspecified. Replay attempts earn no XP (FR-33/OQ-17), but the re-evaluation rule ('if the new verdict improves the task's outcome… award the XP difference') does not say whether a replay attempt can change the first-resolution outcome or award XP.",
+          "Re-evaluation that resolves the last unresolved task of a mission: it is not stated whether the +20 mission-completion bonus (FR-35) is then awarded, or whether mission-complete or rank-up effects happen.",
+          "Missing state/authorization error paths: re-evaluating a `DISMISSED` report (only `FIXED` → 409 is covered); dismiss without a session (401) and without a CSRF token (403) — only re-evaluate is covered; dismissing a `FIXED` report (the rule says it is refused, but only `DISMISSED` has a scenario).",
+          "Scenario 'Re-evaluation keeps the original verdict' assumes an admin attempt-viewing UI ('When the admin views that attempt') that no owned FR requires. FR-42 is storage-only and FR-41 shows the attempt only inside the flag queue. Either tie the scenario to the flag-queue entry or mark it as invented scope.",
+          "Minor invented UI details beyond FR-40/41: 'highlights the week with 2', the exact copy 'No practice yet', and the exact copy 'No change: the new verdict does not improve the outcome'. They are acceptable only if deliberate. Otherwise loosen them so they do not become untraceable acceptance criteria."
+        ]
+      }
+    },
+    {
+      "label": "revise:answer-checking",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 4601,
+      "durationMs": 347534,
+      "sessionId": "8f513b2b-66af-4750-9389-c94bef7117a1",
+      "costUsd": 1.4223928,
+      "numTurns": 21,
+      "result": "I revised `openspec/specs/answer-checking/spec.md` to address all 13 critique items. `npx openspec validate --all --strict` passes (12 passed, 0 failed); the only output is informational \"requirement text is very long\" notices. I haven't committed.\n\n**How each item was resolved:**\n\n1. **Coverage:** FR-14 to FR-23 are all still cited, and OQ-8 and OQ-12 are still referenced. I didn't cite any FR owned by another capability.\n2. **Unauthorized calls:** New requirement \"Who can trigger a check\":\n   - Calling the admin answer tester without an admin session returns 401 problem+json, with no verdicts in the body.\n   - Child submissions need no credentials and carry no profile id, so a \"wrong profile\" case can't happen.\n   - Exclusions point to admin-access (session, CSRF, 403), content-authoring (the tester screen), and practice-flow and child-profile (no child login).\n3. **Oversized values and precision:** New requirement \"Input length and exact arithmetic\":\n   - Free-text input longer than 100 code points after trimming is `UNPARSEABLE`. A 10,000-character text and a 500-digit number both hit this.\n   - Comparison uses exact decimal and fraction arithmetic, with no 64-bit or double limits.\n   - Scenarios cover `99999999999999999999` and the exact tolerance boundary `3,15` against `3.14 ± 0.01`, which counts as `CORRECT`.\n4. **Digit grouping:** New requirement \"Numeric notation\": the first group has 1–3 digits, every later group exactly 3, with exactly one separator character between groups. So `1 2 3`, `12 50`, `1 0000` and double spaces are `UNPARSEABLE`.\n5. **Mixed numbers vs thousands separators:** Numerators and denominators can't contain separators, and the fraction part of a mixed number must be proper. So `12 500/3` is `UNPARSEABLE` and `1 000 1/2` reads as 2001/2. When equivalent forms aren't allowed, `1 1/2` against `3/2` is `WRONG`.\n6. **Signs:** `-`, U+2212 (minus) and U+2013 (en dash) all mean minus. `+,5` is 0.5 and `-0` is 0. `1/-2`, `--5`, `- 5` and an em dash are `UNPARSEABLE`.\n7. **Units:** Matching ignores letter case. The exponent rule now covers superscripts, `^n` and a trailing digit in general. An unknown unit or a different exponent (`24 xyz`, `24 cm³`) is `WRONG`. A space inside the unit (`24 cm 2`) makes the input `UNPARSEABLE`.\n8. **Multiple choice:** Selecting more than one option in single choice is `UNPARSEABLE`. Repeated keys count once. Multi-select scenarios now cover an empty selection and an unknown option.\n9. **Tolerance:** It applies to each accepted alternative. It's ignored on a FRACTION part that doesn't allow equivalent forms, and it never relaxes the exact-decimals, unit or lowest-terms rules.\n10. **Format tip:** The tip now has a closed list of forbidden words and a 120-character limit. For numeric parts it must end with `třeba <example>.`, and that example, checked against the same part, must be `WRONG`. That proves the example is readable and doesn't give away the answer.\n11. **Golden table:** It now lists the 12 requirements that produce verdicts, needs at least 5 cases for each, and every scenario input must appear as a case.\n12. **NFR-5 and spec decisions:**\n   - The capability plan table doesn't exist yet, so I couldn't confirm NFR-5 against it. The Phase 2 split in `docs/qa/workflow-args/spec-pipeline-phase2.json` gives NFR-5 to both answer-checking and practice-flow, and practice-flow already owns the 300 ms round-trip scenario.\n   - I narrowed this spec to the checker's own share: no network or database calls, and under 5 ms per part. **The 5 ms figure is my own derived budget, not from the requirements — please confirm it.**\n   - Interpretations that go beyond the FR text are marked *(spec decision)*.\n13. **Pure checker vs attempts:** The Purpose now separates the pure checker from the endpoint rule. A new requirement, \"Unreadable submissions are refused at the submission endpoint\", is explicitly scoped to the child submission endpoint. Attempts and locked parts stay with practice-flow, XP with gamification, and the attempt log with progress-stats.\n\n**Decisions for you to confirm:**\n- **Response contents:** To match the OpenAPI schema (every part result must carry a verdict), an `UNPARSEABLE` response lists only the unreadable parts.\n- **Defaults I chose:** The 100-character input limit, case-insensitive units, punctuation counting in text answers, and a trailing separator (`5,`) being `UNPARSEABLE` are all my choices, so please check them.\n- **Tip wording mismatch:** content-authoring quotes the tip as \"Zkus třeba 5,2.\", which I matched. The old wording in this spec was different. If a test expects one exact wording, align the two specs."
+    },
+    {
+      "label": "revise:practice-flow",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 5451,
+      "durationMs": 211559,
+      "sessionId": "8379ba5a-419d-4ec4-bd77-d8085fa22d19",
+      "costUsd": 0.9652522,
+      "numTurns": 17,
+      "result": "I revised `openspec/specs/practice-flow/spec.md` to address all 13 critique points. `npx openspec validate --all --strict` passes (12 passed, 0 failed; only informational \"requirement text is long\" notes). I could not run the traceability check (`node scripts/check-traceability.mjs`) because it needed approval and wasn't granted. So whether FR and NFR ids still trace correctly is **unverified**. This matters more now because the spec cites NFR-1 and TC-8 for the first time, and NFR-1 is also cited in admin-access.\n\n**What changed, by critique item**\n1. **Coverage:** all 11 FRs and the OQs listed in the critique are still cited.\n2. **Oversized values:** a new requirement sets concrete limits:\n   - 100 characters per answer part, and at most 20 items in a choice list. Exceeding either returns 400 problem+json, with no attempt used.\n   - Report notes are capped at 1000 characters (400 if longer), matching the existing `maxLength` in the API file.\n   - Any child request body over 16 KB returns 413.\n   - Input fields stop accepting text at the limit.\n   - `99999999999999999999` is graded `WRONG` by value, not treated as unreadable and not a server error. A huge number that is the expected answer is graded `CORRECT`.\n3. **Child cannot change content:** new scenarios show that an admin call without an admin session (`PUT /api/admin/tasks/{id}`) gets 401 and the task is unchanged, and that extra fields in an attempt body are ignored. The full rule set is stated as owned by admin-access.\n4. **Malformed submissions:**\n   - An unknown part key returns 400.\n   - A part already locked as correct that is sent again on attempt 2 is ignored and stays `CORRECT`.\n   - Attempt, hint and report requests for a task that is missing, draft or `GRAPHIC` return 404 and store nothing. So does a task that isn't in the mission named in the URL.\n5. **Task in several missions:** one resolution counts for every mission containing the task. Three scenarios cover progress, skipping and completion, including the case where finishing in mission A completes mission B: 10 XP plus B's 20 XP bonus, and no completion screen.\n6. **Leaving a replay:** re-entering the mission from HQ resumes the unfinished replay. A second replay request returns the same unfinished run. \"Pokračovat\" never targets a replay.\n7. **Untestable outcomes:**\n   - The first-try celebration now shows \"Výborně!\" and \"+10 XP\".\n   - The reveal must not use the wrong-answer colour, must not show \"Špatně\" or \"Chyba\", and plays no shake, flash or sound.\n   - \"No AI\" is checked two ways: no dependency from `com.openai`, `dev.langchain4j` or `org.springframework.ai`, and the attempt-checking tests pass with outbound network blocked.\n   - The tutor seam gets an architecture test, plus a test that swaps in a fake tutor and shows attempts are submitted the same way.\n8. **Same feedback:** the feedback object is defined to contain no ids or timestamps, and the scenario names exactly which fields are compared.\n9. **Mission summary:** pinned to 101 XP (7×10 + 2×5 + 1 + 20 bonus). I added a second case with a task already solved in another mission: 110 XP.\n10. **Speed measurements:** load time runs from the click to the prompt, decoded images and inputs being shown, with 1 cold-cache and 19 warm-cache loads. Answer-check time is measured at the HTTP client, after 20 warm-up requests, with the 200 submissions described. Both run against the Docker Compose stack, on the CI runner and on the home laptop.\n11. **Incomplete setups:** every setup now states the task count, and the replay scenario uses single-part tasks.\n12. **Possibly invented scope:**\n    - Hints after a reveal, the note required for \"Jiné\", and hiding \"Pokračovat\" are now traced to FR-28, FR-30 and OQ-16.\n    - The 409 when no hints remain is traced to the existing API endpoint.\n    - The empty-HQ copy is moved to frontend design. The scenario now checks for a 200 response with an empty list and no error.\n    - I removed the \"counts as one attempt\" promise. Instead, the app re-reads the task's saved state before allowing a resend. A new scenario covers the response being lost after the server saved the attempt, and an exclusion states there is no request id.\n13. **\"she/her\":** the spec now says \"the child\" throughout. The gamification spec still uses \"she/her\" in several places; I didn't touch it.\n\n**API file now behind the spec:** the API contract (in the draft change `add-api-contract-v0`) doesn't yet include several of these rules:\n- the 100-character and 20-item limits;\n- the 16 KB limit and 413 responses;\n- a 413 response on the report endpoint;\n- `startReplay` returning the existing unfinished run instead of a new one.\n\nIt should be updated before that change is archived.\n\nNew Czech text to review: \"Výborně!\" is new child-facing copy, and the forbidden words \"Špatně\" and \"Chyba\" are my choices. I couldn't read the frontend design-system folder, so the reveal check names the \"wrong-answer (error) colour\" rather than a specific token.\n\nNothing is committed."
+    },
+    {
+      "label": "revise:content-authoring",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 5833,
+      "durationMs": 287008,
+      "sessionId": "04167816-ace3-41b4-aefa-9ece79fef2f4",
+      "costUsd": 1.3119424000000002,
+      "numTurns": 17,
+      "result": "I've revised `openspec/specs/content-authoring/spec.md` to cover all 13 issues. `npx openspec validate --all --strict` passes: 12 passed, 0 failed. The only notes are INFO-level \"requirement text is very long\" hints, which the other specs also get. Nothing is committed yet.\n\n**Main change:** a new **Derived decisions** table, CA-D1 to CA-D21. Every rule that isn't stated in an FR, NFR or OQ decision now cites one of these entries. The ones that narrow or depart from an FR say so. The ids don't match the traceability check's FR/NFR pattern, so they won't be counted as requirement ids.\n\n**By issue:**\n1. **Editing a published mission** — you can no longer:\n   - add a draft task, a graphic task, or a task from another topic;\n   - remove its last task;\n   - change a mission's topic unless it is empty;\n   - change a task's topic or grade while it is in any mission.\n\n   Each of these has a refusal scenario.\n2. **Answer parts** — every TEXT task needs 1 to 10 parts on every save, draft or not. GRAPHIC tasks may have zero parts; this is recorded as a deviation from FR-6 (CA-D13). \"Complete part\" is now defined, and saving a half-filled part is refused.\n3. **Answer spec authoring** — a new requirement with a table per answer type, plus scenarios: choice options lettered A, B, C…, the single-choice errors, fraction denominator and lowest-terms checks, a unit is required in expected values, TEXT empty or too long, negative tolerance.\n4. **Limits and number formats** — a new \"Field limits\" requirement with its table. `abc`, `2,0` and `99999999999` are refused for page, grade, difficulty and position. Expected values accept `0.5`. `1.250,75` is refused, which matches the checker's rules.\n5. **Grade and subject** — allowed values come from configuration; MVP has grade 6 and math only. A task's grade must match its source's grade, and its topic must belong to that grade. Scenarios cover each refusal.\n6. **Damaged PDF** — encrypted, truncated or unreadable PDFs are refused, and no file is left behind.\n7. **Invented scope** — every added rule now cites a CA-D entry. The two missing scenarios (\"task in a published mission can't be deleted\", \"empty mission can't be published\") are added.\n8. **Replacing a source's PDF** — this is now an explicit exclusion (CA-D3), with a scenario. \"Mission name\" is removed. A mission now has a topic and a position within that topic, which the HQ ordering in practice-flow needs.\n9. **Scenarios a tester couldn't decide:**\n   - Fixtures are checked against a provenance manifest.\n   - The default size of 10 is shown as a counter (`8/10 tasks`) and never blocks saving or publishing.\n   - The upload scenario now has a concrete publisher value.\n   - The storage check compares paths: stored files must not lie inside any of the three repository roots.\n10. **Graphic tasks** — requesting one by id through the child API returns 404, including when it sits in a draft mission.\n11. **Preview** — a new e2e scenario opens the admin preview and the child task screen side by side. It requires identical text content and at most 1% different pixels in a Playwright screenshot comparison.\n12. **Search** — case- and diacritics-insensitive (`obdelnik` and `OBDÉLNÍK` both match). An empty or whitespace-only query doesn't filter.\n13. **Unauthorized access** — 401 scenarios for edit, delete, publish, unpublish, preview and the tester. New scenarios check that every content change sits under `/api/admin/**` and that child endpoints can't change a task.\n\n**Decisions for you:**\n- **Choices that need your confirmation:**\n  - CA-D3: a source's PDF can't be replaced.\n  - CA-D4: a source can't be deleted while tasks reference it, which is stricter than FR-56.\n  - CA-D13: GRAPHIC tasks may have zero parts.\n  - CA-D15/CA-D20: the specific limits and number bounds.\n\n  If any of these is wrong, record it with `npm run correct`.\n- **Checks that don't exist yet:** the fixture provenance check (CA-D21) and the Playwright screenshot comparison for the preview. The project's rule is that a declared check needs a working mechanism, so the backend and frontend repos must build both before the build phase."
+    },
+    {
+      "label": "revise:admin-access",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 3649,
+      "durationMs": 124622,
+      "sessionId": "9f02ebe1-9912-4ff3-87f5-d8172e1646b6",
+      "costUsd": 0.7489774,
+      "numTurns": 12,
+      "result": "I've revised `openspec/specs/admin-access/spec.md` to fix all 9 issues. `npx openspec validate --all --strict` passes (12 of 12; the only notes are informational ones about long requirement text). I didn't change `api/openapi.yaml` or commit anything.\n\n**Decisions I made where you offered a choice:**\n\n1. **Bad sign-in bodies:** I used 401, since that's all the contract allows for sign-in. An empty body, `{}`, an empty or `null` password, and invalid JSON each get HTTP 401 with title `Invalid credentials` and no session cookie. Note that Spring answers invalid JSON with 400 by default, so the backend will need to map it to 401.\n2. **Sign-in format and user name:** \"Form login\" (NFR-15) now means a password form in the admin UI that sends `{\"password\": ...}` as JSON to `POST /api/admin/session`. There is no user name; a sent `username` field is ignored. The old \"doesn't reveal which was wrong\" clause is replaced by: two different wrong passwords get identical 401 responses (apart from `instance`), with no cookie and no echo of the password.\n3. **Password length:**\n   - The 12-character minimum counts characters, not bytes. `привет` (6 characters, 12 bytes) is refused; `žluťoučkýkůň` (12 characters, 18 bytes) is accepted.\n   - Passwords over 72 UTF-8 bytes now stop the backend from starting, with boundary scenarios at exactly 72 and over 72 bytes. This 72-byte cap is a new rule I derived from bcrypt (NFR-1); no requirement states it, so you may want to confirm it.\n   - A 73-byte input that matches a 72-byte password's first 72 bytes is refused.\n   - A 1 MB password field gets 401 with no session, and the correct password still works afterwards.\n4. **Variable name:** I named it `ADMIN_PASSWORD` and used it in every scenario. Nothing in the docs named it before, so this is a new decision.\n5. **Network binding:** split into two scenarios. By default, ports bind only to `127.0.0.1`; with a configured private address such as `192.168.1.20`, they bind only to that. \"Public\" now means anything outside the private ranges `10/8`, `172.16/12` and `192.168/16`, plus `0.0.0.0` and `::`.\n6. **Sign-out:** it needs the CSRF token like any other change. With the token it returns 204 and the session ends; without it, 403 and the session stays valid. I also added a scenario confirming sign-in itself needs no token.\n7. **Possible new scope:**\n   - \"Return to the originally requested page\" is now a non-normative UX note, since no FR, NFR or OQ asks for it.\n   - The rule that errors use `application/problem+json` now cites the API contract (`api/openapi.yaml`, RFC 9457, NFR-12).\n8. **Idle timeout:** measured on the backend's clock. 7 h 59 min is still valid and 8 h 1 min is expired (401); the exact 8 h instant is deliberately left open within ±1 minute. A 403 CSRF refusal still counts as activity and resets the clock; a 401 does not and cannot revive an expired session.\n9. **Extra fields on a child attempt:** they are ignored and the request succeeds (200), which matches the existing practice-flow spec. I used a concrete payload (a fake prompt, an answer spec accepting `99`, hints, `status: DRAFT`) and the check reads the task back through the admin API to confirm nothing changed.\n\n**One gap in the contract:** in the draft `api/openapi.yaml` (change `add-api-contract-v0`, not yet archived), `signOut` declares only a 204 response. The spec now requires sign-out to answer 403 without a CSRF token, and an admin request without a valid session returns 401. So `signOut` should also declare `401` and `403` before that change is archived. I didn't make that edit because you asked only for the spec revision."
+    },
+    {
+      "label": "revise:child-profile",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 4355,
+      "durationMs": 116496,
+      "sessionId": "548c4deb-16a8-4813-b8ec-00c7b9042c34",
+      "costUsd": 0.533917,
+      "numTurns": 17,
+      "result": "I rewrote `openspec/specs/child-profile/spec.md` to fix all 10 issues. `npx openspec validate --all --strict` passes for all 12 items with 0 failures. It still prints \"requirement text is very long\" notes for this spec, the same kind the other specs already get. I haven't committed anything.\n\n**What changed, by issue**\n1. **Clearing the locale:** an omitted field means no change. An explicit `null` clears `secondaryTaskLocale`. `\"\"` is a 400, and `answerMode: null` is a 400 rather than a no-op. Each has its own scenario, and the set/clear scenario now spells out the actual PATCH bodies.\n2. **Missing invalid inputs:** `{}` is a 200 that changes nothing. Wrong JSON types (number, boolean, array, object) are 400. Unknown fields such as `displayName` are 400, so typos or rename attempts are never silently ignored. A 10 240-character locale is a 400 with a short error body that doesn't echo the value. A body that is a JSON array or string is a 400.\n3. **Display-name validation:** a new requirement trims surrounding whitespace, limits the name to 1–50 characters, and refuses control characters and invalid UTF-8 (detected as U+FFFD, the marker for bytes that weren't valid UTF-8). There are scenarios for blank, oversized, control-character and invalid-UTF-8 names.\n4. **Authentication:** the spec now says the settings endpoints need no authentication, with a scenario that calls them with no cookie and no CSRF token. A new admin scenario checks that, even with a valid admin session, admin profile paths return 404, `api/openapi.yaml` has no admin profile operation, and the settings stay unchanged.\n5. **\"No second profile\":** replaced with two checks. One inspects `api/openapi.yaml`: the only profile operations are GET and PATCH on `/api/child/profile/settings`. The other counts the profiles in the database after the end-to-end suite: there must be exactly 1.\n6. **Privacy checks:**\n   - **Repository scan:** a privacy scan reads the real name from the uncommitted backend env file. If the file or variable is missing, the scan reports NOT-EARNED and exits non-zero. A planted-name test proves it catches a hit.\n   - **Recordings:** the recording harness checks the HQ `displayName` before the first frame.\n   - **Dropped:** \"the child is never blamed\" is gone.\n7. **Scope:** the failed-toggle UI scenario and its Czech copy are removed; the practice-flow spec owns the toggle's behavior. Spec-authored rules are labeled \"Design decision\", and status codes now cite `api/openapi.yaml`, which already defines the 400 and 422 responses.\n8. **Locales:** the requirement is narrowed to \"not hardcoded\" and no longer claims to share a list with other capabilities. Its test empties the configured list so that `uk` is refused, instead of adding `ru`, which the contract's `TaskLocale` enum (only `uk`) would block.\n9. **NFR-3:** I kept the id. `docs/qa/workflow-args/spec-pipeline-phase2.json` (lines 102–104) assigns NFR-3 to child-profile, and the note on line 105 is only about FR ids from other capabilities. The capability plan doesn't exist yet, so it can't confirm this; its ownership table should list NFR-3 under child-profile.\n10. **Gender:** the wording is neutral now, and \"gender\" is added to the excluded personal data.\n\n**Still open**\n- **Contract:** `api/openapi.yaml` doesn't yet match two of the new rules. `ProfileSettingsPatch` needs `additionalProperties: false` (to refuse unknown fields) and `answerMode` needs to be non-nullable. That needs a contract change in this repo.\n- **Missing checks:** the privacy scan (name read from the env file) and the harness's placeholder check before recording don't exist yet; the current pre-commit hook only checks file paths. Under the \"declared-method-needs-mechanism\" rule, both need to be built, or explicitly waived by a person, before the build phase starts.\n- **Env variable name:** the spec still calls it \"the display-name environment variable\" because no name is defined yet. It should be pinned in the backend `.env.example`."
+    },
+    {
+      "label": "revise:progress-stats",
+      "phase": "Author",
+      "agentType": "spec-writer",
+      "structured": false,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --agent spec-writer --allowedTools <…>",
+      "promptChars": 3592,
+      "durationMs": 175412,
+      "sessionId": "2cf4ce8c-0b32-4293-93a8-47e96cedb34c",
+      "costUsd": 0.8385269999999999,
+      "numTurns": 20,
+      "result": "I've revised `openspec/specs/progress-stats/spec.md` to resolve all 12 critique issues. `npx openspec validate --all --strict` passes with 12 passed and 0 failed. The only remaining messages are advisory notes that some requirement texts are over 500 characters. Nothing is committed.\n\n**How each issue was resolved**\n\n1. **Sessions:** The 20/35/30-minute and duplicate-task scenarios now check per-week figures only: sessions, qualifying sessions and the size of each session.\n2. **Week count:** It must be a whole number from 1 to 52, matching `api/openapi.yaml`, and defaults to 4. The response has exactly that many weeks. New scenarios cover the default, 1, 52, and 0 / -1 / 53.\n3. **Invalid input:**\n   - Week counts of `abc`, `4.5`, `4,5`, `1 000` (with a space or a no-break space), `٤`, an empty value, `2147483648` or a 40-digit number all get 400 problem+json. They are never rounded, read as another number, or capped at 52.\n   - Status filters `FOO`, `fixed` or an empty value get 400; the filter is case-sensitive.\n   - A report id that isn't a UUID gets 400; a valid UUID with no matching report gets 404.\n   - A 100-character raw input (the longest the checker grades) is shown in full, with no \"…\" cut-off.\n   - A request with no session gets 401 even if its input is also invalid.\n4. **Success metric:** It always uses the 4 completed weeks before the current week, whatever week count was requested. Weeks before the first attempt count as 0, so with less history the metric is \"not met\" — there is no \"pending\" state.\n5. **Hints per week:** Each hint counts in the week it was opened, taken from practice-flow's hint records rather than the attempt log's running total. A hint with no later attempt still counts.\n6. **Replay:** Hints opened and reveals during a replay count in their week. A later re-evaluation doesn't remove a reveal from its week.\n7. **First-try rate:** It uses the outcome after re-evaluation. A new scenario shows a topic going from 50 % to 75 %.\n8. **Reports on replay attempts:** Re-evaluating one never changes the first outcome, the first-try rate or mission completion, and awards 0 XP. If the new verdict is better, it is recorded next to the old one and the report becomes `FIXED`.\n9. **Mission completion:** If a re-evaluation resolves a mission's last task, the +20 bonus is paid once per mission, for every mission that becomes complete. No mission-complete screen appears. A rank-up is celebrated the next time the child opens HQ.\n10. **State and permission errors:** Added scenarios for re-evaluating a `DISMISSED` report (409), dismissing a `FIXED` report (409, XP kept), and dismissing without a session (401) or without a CSRF token (403).\n11. **Viewing both verdicts:** That scenario now uses the report's entry in the flag queue. An exclusion says MVP has no other view of the attempt log.\n12. **Invented UI details:** The highlighting and exact English wording are removed. Scenarios now check the figures and the API fields (`changed: false`, `xpAwarded: 0`), and an exclusion says the exact wording is a frontend choice.\n\n**The API contract doesn't support everything the spec now requires.** These need a contract change in this repo before the code repos can build against them:\n- `getStats` and `listReports` don't declare a 400 response, and `reevaluateReport` and `dismissReport` don't declare 400 for a malformed id.\n- `LoggedAttempt` has no field for the re-evaluated verdict and its timestamp, and nothing marks an attempt as a replay attempt.\n- The description of `ReevaluationResult.changed` should be updated: a replay attempt can now set the report to `FIXED` while awarding 0 XP.\n- `metricMet` stays a plain true/false, which is why the \"not met\" rule in item 4 was chosen.\n\nThe practice-flow spec also needs a small change: its hint records must store when each hint was opened (item 5 depends on this).\n\nShould I open the contract change for these?"
+    },
+    {
+      "label": "coverage-check",
+      "phase": "Cross-check",
+      "agentType": null,
+      "structured": true,
+      "ok": true,
+      "command": "claude -p --output-format json --no-session-persistence --permission-mode acceptEdits --max-budget-usd 4 --tools Read,Grep,Glob --json-schema <…> --allowedTools <…>",
+      "promptChars": 994,
+      "durationMs": 142792,
+      "sessionId": "be9f837d-ff2b-46b1-9cfa-5fae78cdc9ad",
+      "costUsd": 1.2453956000000002,
+      "numTurns": 12,
+      "result": {
+        "allCovered": false,
+        "gaps": [
+          "FR coverage is complete: all 48 MVP FRs (FR-1..FR-44, FR-55..FR-58) have a normative requirement in the spec the map assigns them to. No FR is missing.",
+          "NFR-6 (Chrome/Edge/Firefox, ≥1280×720): no spec owns it. It only shows up in a practice-flow exclusion ('Laptop only') and as the viewport in a content-authoring preview scenario. Nothing requires a cross-browser e2e run.",
+          "NFR-10 (Docker volume, `npm run backup` working on Windows, progress survives restarts): no spec owns it. child-profile 'Setting survives a backend restart' touches the last clause only; the backup command has no requirement anywhere.",
+          "NFR-11 (modular monolith, module boundaries verified by Modulith/ArchUnit): no spec owns it. practice-flow's architecture test only covers TutorPort.",
+          "NFR-12 (OpenAPI is the single source of truth, build fails on drift): no spec requires the drift check. admin-access and child-profile only cite api/openapi.yaml for the problem+json shape and status codes.",
+          "NFR-13 is owned only by gamification ('Light and dark theme', 'Rank-up celebration'), and its contrast scenario covers only child screens (HQ, task, mission complete). WCAG AA contrast for the admin UI (sign-in, editor, preview, stats, flag queue) is unowned, as is reduced motion for practice-flow's correct-answer feedback outside gamification.",
+          "NFR-3 is owned only by child-profile and narrowed to the display name: the privacy scan reads only that one name from the env file. 'Photos or any PII' in fixtures, logs or recordings across the other capabilities is unowned (for example free-text report notes or TEXT answers that end up in logs).",
+          "NFR-4 is owned only by content-authoring (pre-commit hook and fixture provenance manifest). Its scenario covers 'authoring test fixtures', so seeded e2e content (practice-flow), the golden table (answer-checking only asserts it is self-authored) and skin assets (gamification) are not explicitly in scope of an executable check.",
+          "NFR-9: content-authoring only checks externalization of admin strings. No spec has an executable check that child UI strings are externalized; gamification's 'No theme text outside the skin' only covers the school and mentor names.",
+          "FR-29 / FR-43 mapping is implicit: neither practice-flow nor child-profile says that 'toggle on' means secondaryTaskLocale = 'uk' and 'toggle off' means null.",
+          "progress-stats ('Weekly hint and reveal figures') requires every hint-open record to carry an opened-at timestamp, but the owner of those records (practice-flow 'Hints on demand') only says each hint is 'recorded with the task, once'. One spec places an obligation on another spec's entity without the owner stating it.",
+          "Unrecorded narrowings that should be logged as derived decisions or OQs: content-authoring makes FR-1 publisher and edition optional without citing a CA-D; admin-access adds a 72-byte ADMIN_PASSWORD maximum that NFR-16 does not state.",
+          "Pending human confirmations that the specs still depend on: gamification OQ-28 (bonus credited at publish time) and OQ-29 (no fallback for missing XP keys, threshold typing), and content-authoring CA-D3, CA-D4 and CA-D13, which narrow or deviate from FR-55, FR-56 and FR-6."
+        ],
+        "duplicates": [
+          "FR-5 (GRAPHIC tasks never served) is specified normatively twice. content-authoring has 'Graphic tasks are never served in MVP' (404 by id, even inside a draft mission). practice-flow restates it with its own scenarios in 'Task screen' ('Graphic tasks are never served') and 'Task-scoped requests are checked against the content' (404 for attempt, hint and report, citing TC-8). They agree today, but they would drift independently. Recommendation: practice-flow should reference content-authoring instead of re-specifying.",
+          "FR-12 (only PUBLISHED tasks in PUBLISHED missions are served) is likewise in both: content-authoring 'Draft and published status' and practice-flow 'Unpublished content is invisible', 'Unknown or unpublished mission' and the draft-task 404 scenarios.",
+          "FR-13 / OQ-7 (the source reference is never sent to the child) is in both content-authoring 'Task provenance' ('Source reference never reaches the child') and practice-flow 'Task screen' ('Source reference hidden'). The rules are identical.",
+          "NFR-1 (child endpoints cannot change content) has three normative requirements: content-authoring 'Authoring requires an admin session', practice-flow 'Child side cannot change content' and admin-access 'Child endpoints cannot change content'. practice-flow explicitly defers to admin-access; content-authoring only partly does. This is the overlap that produces contradiction #1 below.",
+          "Re-evaluation XP and bonus is specified in both progress-stats ('Re-evaluation of a reported attempt', with XP amounts) and gamification ('XP is granted only by the server', 'Rank-up celebration'). The cross-references are consistent. Listed only because the bonus-on-re-evaluation rule appears only in progress-stats, while gamification 'Mission completion bonus' says completion is checked 'on every first resolution of a task' and does not mention re-evaluation."
+        ],
+        "contradictions": [
+          "1. Oversized answer input, same endpoint and input, two different responses. answer-checking says free-text input over 100 Unicode code points is UNPARSEABLE, and its endpoint requirement returns HTTP 200 with status UNPARSEABLE and a formatTip ('Oversized input refused without cost': a 10,000-letter TEXT answer gives 200/UNPARSEABLE/attemptsLeft 2). practice-flow 'Oversized input is refused without cost' says a part value over 100 *characters* gives HTTP 400 problem+json naming the part ('Very long answer part': 101 chars gives 400). A 10,000-char body is under the 16 KB 413 limit, so both rules apply to the same request. The unit also differs (code points vs characters).",
+          "2. Unknown fields in child request bodies. admin-access ('Child endpoints cannot change content') says fields a child request body does not define 'SHALL be ignored, not rejected'. child-profile ('Invalid settings are refused without side effects') says an unknown top-level field on the child endpoint PATCH /api/child/profile/settings gives HTTP 400 (for example `displayName`). gamification ('XP is granted only by the server') says client-sent XP, rank or count fields 'SHALL have no effect' and also that 'a request that tries to write them SHALL be refused'. Its own attempt scenario then accepts the request and ignores them (200, xpAwarded 10). That is three different policies, and gamification's text is internally inconsistent.",
+          "3. Who can trigger the checker. answer-checking ('Who can trigger a check') says the checker 'SHALL be reachable only through two endpoints': the child submission and the admin answer tester. progress-stats ('Re-evaluation of a reported attempt') re-checks the attached attempt with the current spec via POST /api/admin/reports/{reportId}/reevaluate, which is a third path.",
+          "4. Mixed-number expected values. content-authoring ('Answer spec authoring', scenario 'Valid mixed-number fraction') stores the admin's expected `1 1/2` normalized as `3/2`, and says 'numeric values SHALL be stored normalized'. answer-checking ('Fraction input', scenario 'Mixed number required in the same form') needs an accepted answer `1 1/2` to be kept as a mixed number, so that on a part without equivalent forms `1 1/2` is CORRECT and `3/2` is WRONG. Plain fractions have the same risk: answer-checking matches 'only the same N and D', so if `2/4` were stored reduced, a non-equivalent `2/4` key would break. As written, that scenario cannot be authored.",
+          "5. TEXT expected-answer length vs checker input cap. content-authoring allows TEXT expected answers of 1–200 characters ('Field limits', 'Answer spec authoring'). answer-checking makes any input over 100 code points UNPARSEABLE, and practice-flow cuts the child input field off at 100 characters. An expected answer of 101–200 characters can be saved but can never be answered correctly.",
+          "6. Rank-up celebration repeat. gamification says the celebration plays once per rank-up, never repeats, and 'where a mission-complete screen is shown, the rank-up is part of it'. Its scenario 'Rank-up on a task award' plays it immediately on the task award. practice-flow 'Mission complete screen' / 'Rank-up on completion' shows the celebration when 'the mission's XP' (whole run) crosses a threshold. A rank-up caused mid-mission (say task 3) would play at task 3 and again on the mission-complete screen. The specs do not say which wins.",
+          "7. Minor tone conflict. practice-flow requires that 'Špatně' and 'Chyba' appear nowhere on the reveal screen, yet the report dialog reached from a revealed task ('Report after a reveal') shows its own validation copy 'Napiš prosím krátce, co je špatně.' That breaks the no-negative-wording intent (FR-38 spirit, answer-checking's forbidden-word list) on the same screen.",
+          "8. Terminology drift (no behavioral conflict, but it will leak into the API): content-authoring calls mission ordering 'position' (1–999, unique per topic), while practice-flow says 'mission order' / 'order 1 and 2'. Statuses (DRAFT/PUBLISHED, REVEALED, OPEN/FIXED/DISMISSED), verdicts (CORRECT/WRONG/UNPARSEABLE), answer modes (DIRECT/GUIDED) and role names (admin, child, single profile) are otherwise consistent across all seven specs."
+        ]
+      }
+    }
+  ],
+  "logs": [
+    {
+      "phase": "Cross-check",
+      "message": "Coverage problems - gaps: 13, duplicates: 5, contradictions: 8"
+    }
+  ],
+  "returned": {
+    "authored": [
+      {
+        "capability": "content-authoring",
+        "revised": true,
+        "issuesFixed": 13
+      },
+      {
+        "capability": "answer-checking",
+        "revised": true,
+        "issuesFixed": 13
+      },
+      {
+        "capability": "practice-flow",
+        "revised": true,
+        "issuesFixed": 13
+      },
+      {
+        "capability": "gamification",
+        "revised": true,
+        "issuesFixed": 10
+      },
+      {
+        "capability": "progress-stats",
+        "revised": true,
+        "issuesFixed": 12
+      },
+      {
+        "capability": "child-profile",
+        "revised": true,
+        "issuesFixed": 10
+      },
+      {
+        "capability": "admin-access",
+        "revised": true,
+        "issuesFixed": 9
+      }
+    ],
+    "coverage": {
+      "allCovered": false,
+      "gaps": [
+        "FR coverage is complete: all 48 MVP FRs (FR-1..FR-44, FR-55..FR-58) have a normative requirement in the spec the map assigns them to. No FR is missing.",
+        "NFR-6 (Chrome/Edge/Firefox, ≥1280×720): no spec owns it. It only shows up in a practice-flow exclusion ('Laptop only') and as the viewport in a content-authoring preview scenario. Nothing requires a cross-browser e2e run.",
+        "NFR-10 (Docker volume, `npm run backup` working on Windows, progress survives restarts): no spec owns it. child-profile 'Setting survives a backend restart' touches the last clause only; the backup command has no requirement anywhere.",
+        "NFR-11 (modular monolith, module boundaries verified by Modulith/ArchUnit): no spec owns it. practice-flow's architecture test only covers TutorPort.",
+        "NFR-12 (OpenAPI is the single source of truth, build fails on drift): no spec requires the drift check. admin-access and child-profile only cite api/openapi.yaml for the problem+json shape and status codes.",
+        "NFR-13 is owned only by gamification ('Light and dark theme', 'Rank-up celebration'), and its contrast scenario covers only child screens (HQ, task, mission complete). WCAG AA contrast for the admin UI (sign-in, editor, preview, stats, flag queue) is unowned, as is reduced motion for practice-flow's correct-answer feedback outside gamification.",
+        "NFR-3 is owned only by child-profile and narrowed to the display name: the privacy scan reads only that one name from the env file. 'Photos or any PII' in fixtures, logs or recordings across the other capabilities is unowned (for example free-text report notes or TEXT answers that end up in logs).",
+        "NFR-4 is owned only by content-authoring (pre-commit hook and fixture provenance manifest). Its scenario covers 'authoring test fixtures', so seeded e2e content (practice-flow), the golden table (answer-checking only asserts it is self-authored) and skin assets (gamification) are not explicitly in scope of an executable check.",
+        "NFR-9: content-authoring only checks externalization of admin strings. No spec has an executable check that child UI strings are externalized; gamification's 'No theme text outside the skin' only covers the school and mentor names.",
+        "FR-29 / FR-43 mapping is implicit: neither practice-flow nor child-profile says that 'toggle on' means secondaryTaskLocale = 'uk' and 'toggle off' means null.",
+        "progress-stats ('Weekly hint and reveal figures') requires every hint-open record to carry an opened-at timestamp, but the owner of those records (practice-flow 'Hints on demand') only says each hint is 'recorded with the task, once'. One spec places an obligation on another spec's entity without the owner stating it.",
+        "Unrecorded narrowings that should be logged as derived decisions or OQs: content-authoring makes FR-1 publisher and edition optional without citing a CA-D; admin-access adds a 72-byte ADMIN_PASSWORD maximum that NFR-16 does not state.",
+        "Pending human confirmations that the specs still depend on: gamification OQ-28 (bonus credited at publish time) and OQ-29 (no fallback for missing XP keys, threshold typing), and content-authoring CA-D3, CA-D4 and CA-D13, which narrow or deviate from FR-55, FR-56 and FR-6."
+      ],
+      "duplicates": [
+        "FR-5 (GRAPHIC tasks never served) is specified normatively twice. content-authoring has 'Graphic tasks are never served in MVP' (404 by id, even inside a draft mission). practice-flow restates it with its own scenarios in 'Task screen' ('Graphic tasks are never served') and 'Task-scoped requests are checked against the content' (404 for attempt, hint and report, citing TC-8). They agree today, but they would drift independently. Recommendation: practice-flow should reference content-authoring instead of re-specifying.",
+        "FR-12 (only PUBLISHED tasks in PUBLISHED missions are served) is likewise in both: content-authoring 'Draft and published status' and practice-flow 'Unpublished content is invisible', 'Unknown or unpublished mission' and the draft-task 404 scenarios.",
+        "FR-13 / OQ-7 (the source reference is never sent to the child) is in both content-authoring 'Task provenance' ('Source reference never reaches the child') and practice-flow 'Task screen' ('Source reference hidden'). The rules are identical.",
+        "NFR-1 (child endpoints cannot change content) has three normative requirements: content-authoring 'Authoring requires an admin session', practice-flow 'Child side cannot change content' and admin-access 'Child endpoints cannot change content'. practice-flow explicitly defers to admin-access; content-authoring only partly does. This is the overlap that produces contradiction #1 below.",
+        "Re-evaluation XP and bonus is specified in both progress-stats ('Re-evaluation of a reported attempt', with XP amounts) and gamification ('XP is granted only by the server', 'Rank-up celebration'). The cross-references are consistent. Listed only because the bonus-on-re-evaluation rule appears only in progress-stats, while gamification 'Mission completion bonus' says completion is checked 'on every first resolution of a task' and does not mention re-evaluation."
+      ],
+      "contradictions": [
+        "1. Oversized answer input, same endpoint and input, two different responses. answer-checking says free-text input over 100 Unicode code points is UNPARSEABLE, and its endpoint requirement returns HTTP 200 with status UNPARSEABLE and a formatTip ('Oversized input refused without cost': a 10,000-letter TEXT answer gives 200/UNPARSEABLE/attemptsLeft 2). practice-flow 'Oversized input is refused without cost' says a part value over 100 *characters* gives HTTP 400 problem+json naming the part ('Very long answer part': 101 chars gives 400). A 10,000-char body is under the 16 KB 413 limit, so both rules apply to the same request. The unit also differs (code points vs characters).",
+        "2. Unknown fields in child request bodies. admin-access ('Child endpoints cannot change content') says fields a child request body does not define 'SHALL be ignored, not rejected'. child-profile ('Invalid settings are refused without side effects') says an unknown top-level field on the child endpoint PATCH /api/child/profile/settings gives HTTP 400 (for example `displayName`). gamification ('XP is granted only by the server') says client-sent XP, rank or count fields 'SHALL have no effect' and also that 'a request that tries to write them SHALL be refused'. Its own attempt scenario then accepts the request and ignores them (200, xpAwarded 10). That is three different policies, and gamification's text is internally inconsistent.",
+        "3. Who can trigger the checker. answer-checking ('Who can trigger a check') says the checker 'SHALL be reachable only through two endpoints': the child submission and the admin answer tester. progress-stats ('Re-evaluation of a reported attempt') re-checks the attached attempt with the current spec via POST /api/admin/reports/{reportId}/reevaluate, which is a third path.",
+        "4. Mixed-number expected values. content-authoring ('Answer spec authoring', scenario 'Valid mixed-number fraction') stores the admin's expected `1 1/2` normalized as `3/2`, and says 'numeric values SHALL be stored normalized'. answer-checking ('Fraction input', scenario 'Mixed number required in the same form') needs an accepted answer `1 1/2` to be kept as a mixed number, so that on a part without equivalent forms `1 1/2` is CORRECT and `3/2` is WRONG. Plain fractions have the same risk: answer-checking matches 'only the same N and D', so if `2/4` were stored reduced, a non-equivalent `2/4` key would break. As written, that scenario cannot be authored.",
+        "5. TEXT expected-answer length vs checker input cap. content-authoring allows TEXT expected answers of 1–200 characters ('Field limits', 'Answer spec authoring'). answer-checking makes any input over 100 code points UNPARSEABLE, and practice-flow cuts the child input field off at 100 characters. An expected answer of 101–200 characters can be saved but can never be answered correctly.",
+        "6. Rank-up celebration repeat. gamification says the celebration plays once per rank-up, never repeats, and 'where a mission-complete screen is shown, the rank-up is part of it'. Its scenario 'Rank-up on a task award' plays it immediately on the task award. practice-flow 'Mission complete screen' / 'Rank-up on completion' shows the celebration when 'the mission's XP' (whole run) crosses a threshold. A rank-up caused mid-mission (say task 3) would play at task 3 and again on the mission-complete screen. The specs do not say which wins.",
+        "7. Minor tone conflict. practice-flow requires that 'Špatně' and 'Chyba' appear nowhere on the reveal screen, yet the report dialog reached from a revealed task ('Report after a reveal') shows its own validation copy 'Napiš prosím krátce, co je špatně.' That breaks the no-negative-wording intent (FR-38 spirit, answer-checking's forbidden-word list) on the same screen.",
+        "8. Terminology drift (no behavioral conflict, but it will leak into the API): content-authoring calls mission ordering 'position' (1–999, unique per topic), while practice-flow says 'mission order' / 'order 1 and 2'. Statuses (DRAFT/PUBLISHED, REVEALED, OPEN/FIXED/DISMISSED), verdicts (CORRECT/WRONG/UNPARSEABLE), answer modes (DIRECT/GUIDED) and role names (admin, child, single profile) are otherwise consistent across all seven specs."
+      ]
+    }
+  }
+}

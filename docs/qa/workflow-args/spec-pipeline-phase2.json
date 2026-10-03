@@ -1,0 +1,119 @@
+{
+  "requirementsPath": "docs/requirements.md",
+  "capabilities": [
+    {
+      "name": "content-authoring",
+      "frIds": [
+        "FR-1",
+        "FR-2",
+        "FR-3",
+        "FR-4",
+        "FR-5",
+        "FR-6",
+        "FR-7",
+        "FR-8",
+        "FR-9",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-55",
+        "FR-56",
+        "FR-57"
+      ],
+      "nfrIds": [
+        "NFR-4",
+        "NFR-8",
+        "NFR-9",
+        "NFR-17"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-2, OQ-7, OQ-15, OQ-18, OQ-19, OQ-20, OQ-21, OQ-24. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+    },
+    {
+      "name": "answer-checking",
+      "frIds": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20",
+        "FR-21",
+        "FR-22",
+        "FR-23"
+      ],
+      "nfrIds": [
+        "NFR-5"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-8, OQ-12. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+    },
+    {
+      "name": "practice-flow",
+      "frIds": [
+        "FR-24",
+        "FR-25",
+        "FR-26",
+        "FR-27",
+        "FR-28",
+        "FR-29",
+        "FR-30",
+        "FR-31",
+        "FR-32",
+        "FR-33",
+        "FR-44"
+      ],
+      "nfrIds": [
+        "NFR-5",
+        "NFR-7"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-5, OQ-7, OQ-11, OQ-12, OQ-13, OQ-16, OQ-17. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+    },
+    {
+      "name": "gamification",
+      "frIds": [
+        "FR-34",
+        "FR-35",
+        "FR-36",
+        "FR-37",
+        "FR-38",
+        "FR-39",
+        "FR-58"
+      ],
+      "nfrIds": [
+        "NFR-13"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-1, OQ-4, OQ-15, OQ-25. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+    },
+    {
+      "name": "progress-stats",
+      "frIds": [
+        "FR-40",
+        "FR-41",
+        "FR-42"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-14, OQ-20. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+    },
+    {
+      "name": "child-profile",
+      "frIds": [
+        "FR-43"
+      ],
+      "nfrIds": [
+        "NFR-3"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-22. Cite each owned FR id only in this spec (other capabilities are referenced by name). "
+    },
+    {
+      "name": "admin-access",
+      "frIds": [],
+      "nfrIds": [
+        "NFR-1",
+        "NFR-2",
+        "NFR-15",
+        "NFR-16"
+      ],
+      "notes": "Binding scope decisions are in docs/requirements.md section 6 (checkpoint 1); for this capability: OQ-23. Cite each owned FR id only in this spec (other capabilities are referenced by name). This capability owns no FR; it carries the listed NFRs (cite them)."
+    }
+  ]
+}

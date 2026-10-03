@@ -1,0 +1,68 @@
+# Skin IP deny-list (FR-39, PRD §9.1 IP rule)
+#
+# Terms that must never appear in any shipped skin (text, keys, file names,
+# alt text). Checked by the "No borrowed IP" scenario of
+# openspec/specs/gamification/spec.md.
+#
+# Matching rule: one term per line; lines starting with '#' and blank lines
+# are ignored. A term matches case-insensitively as a whole word or phrase:
+# the character before and after the match is not a letter or digit (or is
+# the start or end of the text). Diacritics are not folded.
+#
+# Amend by appending; removing a term needs a recorded decision.
+
+# Franchise and franchise-specific terms
+My Hero Academia
+Boku no Hero
+Quirk
+Quirks
+U.A.
+UA High
+Plus Ultra
+One For All
+All For One
+Pro Hero License
+Hero Public Safety Commission
+
+# Character and hero names
+Izuku
+Midoriya
+Deku
+All Might
+Toshinori
+Yagi
+Katsuki
+Bakugo
+Bakugou
+Kacchan
+Shoto
+Todoroki
+Ochaco
+Uraraka
+Tenya
+Iida
+Eijiro
+Kirishima
+Denki
+Kaminari
+Yaoyorozu
+Tsuyu
+Asui
+Froppy
+Kyoka
+Jiro
+Aizawa
+Eraser Head
+Present Mic
+Endeavor
+Hawks
+Shigaraki
+Tomura
+Dabi
+Himiko
+Toga
+Nezu
+Mirio
+Togata
+Lemillion
+Eri
