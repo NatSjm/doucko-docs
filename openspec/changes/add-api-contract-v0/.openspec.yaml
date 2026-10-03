@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-03
+# Contract change: adds api/openapi.yaml v0. It encodes the behavior already
+# in the baseline specs and adds none, so it carries no spec deltas.
+skip_specs: true

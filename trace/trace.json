@@ -629,6 +629,10 @@
     },
     {
       "check": "active-changes",
+      "msg": "active change \"add-api-contract-v0\" is not archived"
+    },
+    {
+      "check": "active-changes",
       "msg": "active change \"improve-PD-2\" is not archived"
     },
     {

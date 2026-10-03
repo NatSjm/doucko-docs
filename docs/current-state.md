@@ -9,23 +9,28 @@
 - **Date and time:** 2026-10-02 (Europe/Prague)
 - **Current phase:** Phase 2
 - **Last completed gate:** G1
-- **Active change:** none
-- **Progress:** Phase 1 signed off at checkpoint 1 on 2026-10-02 (evidence:
-  `docs/qa/checkpoint-1-scope-signoff.md`). `docs/product-brief.md` and
-  `docs/requirements.md` are the source of truth for scope; `docs/prd.md`
-  stays as the vision/UX/architecture record. All 27 defaults (OQ-1..OQ-27)
-  were accepted: appended FR-55..FR-58 and NFR-15..NFR-17, amended NFR-8
-  (now `recording`) and NFR-10 (cross-platform `npm run backup`).
-  48 MVP FRs (evidence: `node scripts/check-traceability.mjs`).
-- **Next task:** Phase 2 — derive 5–8 capabilities, run the `spec-pipeline`
-  workflow with `requirementsPath: "docs/requirements.md"` to write
-  `openspec/specs/<cap>/spec.md`, and draft `api/openapi.yaml` v0 as a
-  contract change (factory/PLAYBOOK.md). Specs must state the §6 decisions
-  as scenarios on the FRs they refine.
+- **Active change:** `add-api-contract-v0` (draft, not archived) — Phase 2 work on branch `phase2-specs`
+- **Progress:** Phase 1 signed off on 2026-10-02 (evidence:
+  `docs/qa/checkpoint-1-scope-signoff.md`). Phase 2 in progress:
+  - Baseline specs for 7 capabilities under `openspec/specs/`
+    (content-authoring, answer-checking, practice-flow, gamification,
+    progress-stats, child-profile, admin-access). All 48 MVP FRs are cited,
+    each by exactly one spec — evidence: `node scripts/check-traceability.mjs`
+    (Result: PASS) and `npx openspec validate --all --strict`.
+  - `api/openapi.yaml` v0.1.0 drafted in change `add-api-contract-v0`
+    (31 paths, 45 operations); structural check only, no linter/generator run yet.
+  - Specs were authored inline, not through the `spec-pipeline` workflow:
+    the independent critique + cross-check (maker ≠ checker) has NOT run.
+  - PD-8 / COR-2 (G2 vacuous PASS) fixed in all three repos (docs edc3f19,
+    backend c58094f, frontend b0a848b); COR-2 awaits the product owner's
+    disposition — until then gate-status is red by design.
+- **Next task:** run the independent spec critique and cross-check; review
+  and archive `add-api-contract-v0`; merge `phase2-specs` → `main`. Then
+  Phase 3 (capability plan, checkpoint 2).
 - **Claims:**
   - Harness installed and not drifted — evidence: `node factory/install.mjs --repo=docs --check`
   - G0 PASS; G1 signed off — evidence: `node scripts/gate-status.mjs` + `docs/qa/checkpoint-1-scope-signoff.md`
-  - Known harness issue: gate-status shows G2 PASS with 0 of 48 MVP FRs cited by a spec (no specs exist yet); this is NOT a G2 pass
+  - G2 not yet claimed: specs exist and trace, but the critique pass and contract archive are pending
 
 > This header is machine-read: keep the exact formats `Phase <N>` and `G<N>`.
 
