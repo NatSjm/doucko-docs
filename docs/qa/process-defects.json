@@ -357,6 +357,76 @@
       "status": "proposed",
       "correctionIds": [],
       "note": "Found by check-acceptance-methods at G3; fix chosen by the product owner at checkpoint 2 (docs/qa/checkpoint-2-plan-signoff.md). Entry written by the orchestrator (maker), not the process-auditor; status left for the next auditor run, as with PD-8."
+    },
+    {
+      "id": "PD-10",
+      "class": "gate-scope-unreachable",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/check-acceptance-methods.mjs (pre-fix partition)",
+          "quote": "} else if (mode === \"artifact\" && !productCode) {",
+          "note": "Once product code exists, every owned requirement of every future slice FAILs in artifact mode, so qa:verify cannot be green before G6: the per-slice battery (PLAYBOOK Phase 4 e) is unreachable."
+        },
+        {
+          "pointer": "factory/scripts/qa-verify.mjs classify()",
+          "quote": "if (declared === \"SKIP-pending\") return empty(\"skip\");",
+          "note": "Any pending member flips to NOT-EARNED post-phase: recordings, eval-ratchet and trajectory are NOT-EARNED in every Phase 4 run although nothing is due yet."
+        },
+        {
+          "pointer": "factory/scripts/ledger-report.mjs computeMetrics()",
+          "quote": "e.exitCode === 0 && e.scope_n === 0 && (e.meta?.productCode === true || ...)",
+          "note": "Counted runs that qa-verify classified NOT-EARNED as vacuous passes, so the process ratchet failed on honest verdicts."
+        },
+        {
+          "pointer": "docs/qa/evidence/pd-10-11-slice-scoped-gates-proof.md",
+          "quote": "Overall result: Pass (3 member(s) PLANNED, not yet due ...)",
+          "note": "Red -> green in frontend for slice 1; --release keeps the strict verdict."
+        }
+      ],
+      "metric": {
+        "name": "frontend qa:verify during Phase 4 slice 1",
+        "current": "Fail (18 artifact failures for slices 2-9)",
+        "expectedMovement": "Fail -> Pass with PLANNED members visible"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/lib/factory-config.mjs",
+        "sketch": "Join the plan Slice column with active/archived implement-<slice>-* changes; artifact mode, recordings, eval-ratchet, trajectory and check-vision render not-yet-started work as Result: SKIP-planned (visible, never PASS, never flipped to NOT-EARNED); qa-verify/gate-status understand it; --release stays strict; vacuous-pass counts only runs rendered as passes.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Found while verifying slice 1 (platform-foundation); fix approved by the product owner in chat on 2026-10-03 (option: scope to built slices). Entry written by the orchestrator (maker); status left for the next auditor run, as with PD-8 and PD-9."
+    },
+    {
+      "id": "PD-11",
+      "class": "declared-method-without-artifact-producer",
+      "severity": "P2",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/check-acceptance-methods.mjs a11y token",
+          "quote": "artifactGlobs: docs/qa/a11y-report.(md|json|html)",
+          "note": "Artifact mode requires an a11y report."
+        },
+        {
+          "pointer": "factory/scripts/check-a11y.mjs (pre-fix)",
+          "quote": "process.exit(failures.length ? 1 : 0);",
+          "note": "The only a11y mechanism printed its verdict and wrote no file, and needed a hand-started server on :3000; @axe-core/playwright was never installed in frontend."
+        }
+      ],
+      "metric": {
+        "name": "a11y artifact for FR-58/NFR-13",
+        "current": "missing (no producer)",
+        "expectedMovement": "missing -> docs/qa/a11y-report.json status passed"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-a11y.mjs",
+        "sketch": "Write docs/qa/a11y-report.json; read routes from src/app/route-paths.ts or A11Y_ROUTES; serve dist/ via vite preview when BASE_URL is unset (and stop it); install @axe-core/playwright in frontend.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Found while verifying slice 1 (platform-foundation); fix approved by the product owner in chat on 2026-10-03 (option: scope to built slices). Entry written by the orchestrator (maker); status left for the next auditor run, as with PD-8 and PD-9."
     }
   ]
 }
