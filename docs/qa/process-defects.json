@@ -427,6 +427,41 @@
       "status": "proposed",
       "correctionIds": [],
       "note": "Found while verifying slice 1 (platform-foundation); fix approved by the product owner in chat on 2026-10-03 (option: scope to built slices). Entry written by the orchestrator (maker); status left for the next auditor run, as with PD-8 and PD-9."
+    },
+    {
+      "id": "PD-12",
+      "class": "guard-reads-incomplete-graph",
+      "severity": "P2",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/check-traceability.mjs (pre-fix) outputs",
+          "quote": "links: rows,",
+          "note": "rows were built from mvpFRs only, so trace.json never carried an NFR/TC/BC row."
+        },
+        {
+          "pointer": "factory/scripts/check-process-ratchet.mjs guard 4",
+          "quote": "const joined = new Set((trace.links ?? [])",
+          "note": "The dead-@trace guard counts every @trace id but can only join ids that have a links row: an NFR-only slice can never pass."
+        },
+        {
+          "pointer": "backend npm run qa:verify (slice 1, 2026-10-04)",
+          "quote": "7 @trace annotation(s) exist in test files but 0 join the traceability chain",
+          "note": "Backend slice 1 traces NFR-2/3/4/9/10/11/12 only; the frontend passed solely because of one FR-58 annotation."
+        }
+      ],
+      "metric": {
+        "name": "@trace ids joined in backend trace.json",
+        "current": "0 of 7",
+        "expectedMovement": "0 -> 7"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-traceability.mjs",
+        "sketch": "Add MVP NFR/TC/BC rows (owners, ownedHere, tests) to trace.json links and a report table; parse categorized @trace ids with the ratchet grammar. FR spec/plan checks unchanged.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Found while verifying slice 1 (platform-foundation) in the backend; fix approved by the product owner in chat on 2026-10-04 (option: fix in factory). Entry written by the orchestrator (maker); status left for the next auditor run, as with PD-8 to PD-11."
     }
   ]
 }
