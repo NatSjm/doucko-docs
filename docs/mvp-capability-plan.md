@@ -207,7 +207,9 @@ frontend run in parallel once the contract is pinned.
 - **Definition of done:** backend tests per scenario; frontend e2e per FR;
   NFR-5 measured (check round trip p95 < 300 ms, task screen < 1.5 s) in an
   e2e timing test; NFR-7 (2 clicks, Enter submits) e2e; the log-capture test
-  covers attempts and reports (NFR-3).
+  covers attempts and reports (NFR-3); the admin-access scenario "Child write
+  is limited to its own practice" (NFR-1), deferred from slice 2, gets a
+  backend test.
 - **Risks:** `AttemptResult` carries XP fields that slice 8 fills. Until
   then the backend returns 0 / [] / null, which the contract allows.
 
