@@ -1,6 +1,6 @@
 {
-  "createdAt": "2026-10-03T23:30:39.285Z",
-  "gitHead": "9e40e2a9700497c57dac0013399ebc34f9579454",
+  "createdAt": "2026-10-04T05:49:41.802Z",
+  "gitHead": "d89b46e9483200b8cced40a8f3c137292591291a",
   "files": {
     ".claude/workflows/contract-review.js": "1f1ab4a5ed5182c489e9bf3686fa197ea77410cb74f877b7487e109095489f1c",
     ".claude/workflows/spec-crosscheck.js": "48ed6ed505a0643904cef9081cd22be9f6ea390e20441fefcd0d2c39b2328fa0",
@@ -14,15 +14,15 @@
     "quality/telemetry.config.json": "98276dbbd18f9d694f3378aed7ecc042439d99c8e292bb3caeed7a833005835b",
     "scripts/check-acceptance-methods.mjs": "1f7ce3e924b64a93a4b0b63ffa36bf6bdc16fa5ffb19caf6621fac7aea54fc39",
     "scripts/check-factory-integrity.mjs": "40aae2f7f12ae0a1f30897977e08ce9ad2617e9a4f7d007361fe75b460fd9883",
-    "scripts/check-process-ratchet.mjs": "417743a1465e7d4735d5da1f50dd50ec4bfa114153e0e76f37c9c0f3061ceb6c",
+    "scripts/check-process-ratchet.mjs": "2aaf87ec0d262659e70906f32a83700e60d48d562d5cf3d036957402835db38d",
     "scripts/check-traceability.mjs": "489a1532aad09eef4f2b8a9dbef9fbf7e20b42d60919bcc51108b842d254090e",
-    "scripts/check-trajectory.mjs": "79fcfe10d671998f48ac14e44ab65ebafa10445a6b8de97aac881fe2d971e916",
+    "scripts/check-trajectory.mjs": "674917612cf4419aa206d5b207d8c3b412a3382cbcd3b464f1e04c73340f4813",
     "scripts/check-workspace.mjs": "9ed2d6ef4201b0d669050c728a6c1b2e6b7be3c9737e8c01c23e9604e07bbc73",
     "scripts/gate-status.mjs": "d9c79391086129ca8a9fb512fcc13be5083db1bc73d79b26525c51ae84777754",
     "scripts/hooks-commit-msg.mjs": "2cd9ebbd0054e1dfc9a9b2b39bca25de6d3dc188fd5d7793808ee48f209aaf20",
     "scripts/hooks-post-edit.mjs": "9b51573b157c1841f5fc275ea9f7b4a2b0167f664860a65d00f8c6a1503a89e0",
     "scripts/hooks-pre-commit.mjs": "8ab9935d45c8ee3e5219c7703e5af953eb8c671752e6981482518adcae886209",
-    "scripts/lib/factory-config.mjs": "b01f6c55d32603cbc5be5bfd29a4a45a42bd6229f077be1c0f9caf32865c5c2c",
+    "scripts/lib/factory-config.mjs": "f69c6eef6b623229e4d11d9c53dacf85db8b26310e741ab6f0f7dc0b4530e8d6",
     "scripts/qa-verify.mjs": "77e5c4a00ff226baeabb5a9adedd4546d11db758ce4c5692301138a07616906e"
   },
   "adaptations": [

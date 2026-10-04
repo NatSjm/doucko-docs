@@ -124,7 +124,11 @@ c. **Tests first (red)** — `test-engineer` writes tests from the spec
 d. **Implement (green)** — `capability-implementer` executes tasks.md.
 e. **Battery** — `npm run qa:verify` (backend → `mvnw verify` inside).
 f. **Review gate** — `review-gate` workflow over the diff (fresh reviewers);
-   fix all confirmed findings; persist `openspec/changes/<change>/review-findings.json`.
+   the runner persists `openspec/changes/<change>/review-findings.json` with every
+   confirmed or contested finding `open` (pass `change` in the workflow args).
+   Disposition each (PD-15): critical/major → fix, `status: "fixed"` + `fixCommit`;
+   minor → fixed the same way, or `status: "waived"` + `reason`. A major is never
+   waived there (human waiver under `docs/qa/waivers/`). `check-trajectory` decides clean.
 g. **Archive + commit** — `npx openspec archive <change> --yes`;
    `node scripts/check-trajectory.mjs`; update `docs/current-state.md`;
    commit with `Slice: <change>` + `Refs: FR-…`.

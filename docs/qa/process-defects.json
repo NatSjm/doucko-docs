@@ -497,6 +497,66 @@
       "status": "proposed",
       "correctionIds": [],
       "note": "Found while running the slice 1 review gates; fix approved by the product owner in chat on 2026-10-04 (option: inline agent definition). Entry written by the orchestrator (maker); status left for the next auditor run."
+    },
+    {
+      "id": "PD-14",
+      "class": "evidence-writer-without-write-tools",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "backend trace/workflow-runs/20261004-051324-review-gate.json step persist:implement-platform-foundation-api",
+          "quote": "I couldn't write the file. This session only has read-only tools",
+          "note": "The step is recorded ok:true while review-findings.json was never written; untyped steps get --untyped-tools (default Read,Grep,Glob)."
+        },
+        {
+          "pointer": "factory/workflows/{eval-suite,trajectory-eval,vision-verify}.js",
+          "quote": "Persist the … Write EXACTLY these … files",
+          "note": "Same writer-agent pattern; not due yet (their slices are PLANNED). Left as is and listed here so they are converted to persist() when first due."
+        }
+      ],
+      "metric": {
+        "name": "review-gate runs that wrote review-findings.json",
+        "current": "0",
+        "expectedMovement": "0 -> every slice review run"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/run-workflow.mjs, factory/workflows/review-gate.js",
+        "sketch": "Runner global persist(relPath, data): deterministic write inside the repo, stamps WORKFLOW_FILL_ISO_UTC, recorded in the run record; review-gate persists through it.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Found while running the slice 1 review gates; fix approved by the product owner in chat on 2026-10-04 (option: fix in factory). Entry written by the orchestrator (maker)."
+    },
+    {
+      "id": "PD-15",
+      "class": "gate-bar-never-converges",
+      "severity": "P2",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/check-trajectory.mjs (pre-fix)",
+          "quote": "JSON.parse(rf).clean === true ? \"clean\" : \"unclean\"",
+          "note": "clean meant zero confirmed findings in one adversarial run."
+        },
+        {
+          "pointer": "slice 1 review-gate runs 2026-10-04",
+          "quote": "backend 8 major/18 minor -> 3 major/19 minor; frontend 11 major/16 minor in round 2",
+          "note": "Each fixed round confirms another 20+ (mostly minor) at ~$9 per slice; zero is not reachable in bounded cost."
+        }
+      ],
+      "metric": {
+        "name": "slice review rounds to an archivable verdict",
+        "current": "unbounded",
+        "expectedMovement": "unbounded -> 1 round after fixing the previous majors"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/lib/factory-config.mjs (reviewDisposition), check-trajectory.mjs, check-process-ratchet.mjs, review-gate.js, PLAYBOOK.md, GATES.md",
+        "sketch": "review-findings.json lists every confirmed/contested finding (status open); clean = no findings, or majors/criticals fixed with an existing fixCommit and minors fixed or waived with a reason. Majors are never waived in review evidence.",
+        "proposalDir": ""
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Bar chosen by the product owner in chat on 2026-10-04 (option: major bar + dispositions). Entry written by the orchestrator (maker)."
     }
   ]
 }

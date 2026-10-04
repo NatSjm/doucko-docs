@@ -71,7 +71,7 @@ node scripts/check-workspace.mjs
 ```
 
 - [ ] Change validated strictly before implementation; tests red → green, none weakened.
-- [ ] `review-gate` clean → `review-findings.json` persisted; archived; `docs/current-state.md` updated; commit carries `Slice:` + `Refs:`.
+- [ ] `review-gate` ran → `review-findings.json` persisted and every finding dispositioned (PD-15: majors fixed, minors fixed or waived with a reason); archived; `docs/current-state.md` updated; commit carries `Slice:` + `Refs:`.
 
 ## G5 — Hardening
 

@@ -24,9 +24,9 @@ None.
 
 ## Warnings
 
-- **review-evidence**: 2026-09-28-improve-PD-1: review-findings.json is missing (review must have run clean before archive)
+- **review-evidence**: 2026-09-28-improve-PD-1: review-findings.json is missing (review must have run, and its findings be dispositioned, before archive)
 - **process**: 2026-09-28-improve-PD-1: archived change is missing design.md and/or tasks.md
 - **trailer**: 2026-09-28-improve-PD-1: no commit carries a "Slice: improve-PD-1" trailer
-- **review-evidence**: 2026-10-03-add-api-contract-v0: review-findings.json is unclean (review must have run clean before archive)
+- **review-evidence**: 2026-10-03-add-api-contract-v0: review-findings.json is unclean — no findings list to disposition (review must have run, and its findings be dispositioned, before archive)
 - **process**: 2026-10-03-add-api-contract-v0: archived change is missing design.md and/or tasks.md
 - **process**: 2026-10-03-fix-contract-flow-descriptions: archived change is missing design.md and/or tasks.md
