@@ -193,7 +193,10 @@ frontend run in parallel once the contract is pinned.
 - **Definition of done:** backend tests per publishing and delete scenario.
   The "referenced by attempts, reports or hints" guard goes through a
   content-module port (`ContentUsage`) that slice 7 implements, and is tested
-  here with a fake. frontend e2e for FR-9 and FR-55.
+  here with a fake. frontend e2e for FR-9 and FR-55. FR-12's child-facing
+  scenarios (HQ lists only served missions; a task in a draft mission or a
+  graphic task answers 404) need the child endpoints, so they travel to
+  slice 7 (§4.7). Slice 6 delivers the `ServedContent` query they use.
 - **Risks:** none open (CA-D22 accepted at checkpoint 2).
 
 ### 4.7 `practice-flow`
@@ -209,7 +212,13 @@ frontend run in parallel once the contract is pinned.
   e2e timing test; NFR-7 (2 clicks, Enter submits) e2e; the log-capture test
   covers attempts and reports (NFR-3); the admin-access scenario "Child write
   is limited to its own practice" (NFR-1), deferred from slice 2, gets a
-  backend test.
+  backend test; FR-12's child-facing scenarios, carried over from slice 6
+  (content-authoring "Draft mission is not served", "Published task outside
+  any published mission", "Published graphic task requested by id",
+  "Graphic task inside a draft mission"), get backend tests over the slice 6
+  `ServedContent` query and a frontend e2e on HQ; the real `ContentUsage`
+  adapter makes the slice 6 delete guard fire, with a backend test.
+  FR-12 stays owned by slice 6 in §5 (one owner slice per requirement).
 - **Risks:** `AttemptResult` carries XP fields that slice 8 fills. Until
   then the backend returns 0 / [] / null, which the contract allows.
 
