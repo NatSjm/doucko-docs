@@ -17,8 +17,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 17,
+        "frontend": 2
       }
     },
     {
@@ -33,8 +33,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 1,
+        "frontend": 7
       }
     },
     {
@@ -49,8 +49,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 23,
+        "frontend": 3
       }
     },
     {
@@ -65,8 +65,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 4,
+        "frontend": 3
       }
     },
     {
@@ -80,7 +80,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 3
       }
     },
     {
@@ -96,8 +96,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 33,
+        "frontend": 2
       }
     },
     {
@@ -113,8 +113,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 3,
+        "frontend": 4
       }
     },
     {
@@ -130,8 +130,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 7,
+        "frontend": 5
       }
     },
     {
@@ -146,8 +146,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 21,
+        "frontend": 5
       }
     },
     {
@@ -162,8 +162,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 5,
+        "frontend": 3
       }
     },
     {
@@ -178,8 +178,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 6,
+        "frontend": 2
       }
     },
     {
@@ -193,7 +193,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 3
       }
     },
     {
@@ -208,8 +208,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 3,
+        "frontend": 3
       }
     },
     {
@@ -224,8 +224,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 3,
+        "frontend": 7
       }
     },
     {
@@ -239,7 +239,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 12
       }
     },
     {
@@ -253,7 +253,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 22
       }
     },
     {
@@ -267,7 +267,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 9
       }
     },
     {
@@ -281,7 +281,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 3
       }
     },
     {
@@ -295,7 +295,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 2
       }
     },
     {
@@ -309,7 +309,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 2
       }
     },
     {
@@ -323,7 +323,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 1
       }
     },
     {
@@ -337,7 +337,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 3
       }
     },
     {
@@ -351,7 +351,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 1
       }
     },
     {
@@ -365,7 +365,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 2
       }
     },
     {
@@ -399,7 +399,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 7
       }
     },
     {
@@ -685,7 +685,7 @@
         ]
       },
       "tests": {
-        "frontend": 0
+        "frontend": 2
       }
     },
     {
@@ -745,7 +745,7 @@
         ]
       },
       "tests": {
-        "backend": 0
+        "backend": 52
       }
     },
     {
@@ -970,150 +970,15 @@
       "tests": {}
     }
   ],
-  "failures": [
+  "failures": [],
+  "warnings": [
     {
-      "check": "test-trace",
-      "msg": "FR-1: owner backend has no test annotated \"@trace FR-1\""
+      "check": "contract-pin",
+      "msg": "backend: contract/ is pinned to 4c87d677, docs HEAD is b6dd69a0 — bump the pin when the contract change is meant to land there"
     },
     {
-      "check": "test-trace",
-      "msg": "FR-1: owner frontend has no test annotated \"@trace FR-1\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-2: owner backend has no test annotated \"@trace FR-2\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-2: owner frontend has no test annotated \"@trace FR-2\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-3: owner backend has no test annotated \"@trace FR-3\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-3: owner frontend has no test annotated \"@trace FR-3\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-4: owner backend has no test annotated \"@trace FR-4\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-4: owner frontend has no test annotated \"@trace FR-4\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-5: owner backend has no test annotated \"@trace FR-5\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-6: owner backend has no test annotated \"@trace FR-6\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-6: owner frontend has no test annotated \"@trace FR-6\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-7: owner backend has no test annotated \"@trace FR-7\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-7: owner frontend has no test annotated \"@trace FR-7\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-8: owner backend has no test annotated \"@trace FR-8\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-8: owner frontend has no test annotated \"@trace FR-8\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-9: owner backend has no test annotated \"@trace FR-9\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-9: owner frontend has no test annotated \"@trace FR-9\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-10: owner backend has no test annotated \"@trace FR-10\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-10: owner frontend has no test annotated \"@trace FR-10\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-11: owner backend has no test annotated \"@trace FR-11\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-11: owner frontend has no test annotated \"@trace FR-11\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-12: owner backend has no test annotated \"@trace FR-12\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-13: owner backend has no test annotated \"@trace FR-13\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-13: owner frontend has no test annotated \"@trace FR-13\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-55: owner backend has no test annotated \"@trace FR-55\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-55: owner frontend has no test annotated \"@trace FR-55\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-56: owner backend has no test annotated \"@trace FR-56\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-57: owner backend has no test annotated \"@trace FR-57\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-14: owner backend has no test annotated \"@trace FR-14\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-15: owner backend has no test annotated \"@trace FR-15\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-16: owner backend has no test annotated \"@trace FR-16\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-17: owner backend has no test annotated \"@trace FR-17\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-18: owner backend has no test annotated \"@trace FR-18\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-19: owner backend has no test annotated \"@trace FR-19\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-20: owner backend has no test annotated \"@trace FR-20\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-21: owner backend has no test annotated \"@trace FR-21\""
+      "check": "contract-pin",
+      "msg": "frontend: contract/ is pinned to 4c87d677, docs HEAD is b6dd69a0 — bump the pin when the contract change is meant to land there"
     },
     {
       "check": "test-trace",
@@ -1122,10 +987,6 @@
     {
       "check": "test-trace",
       "msg": "FR-22: owner frontend has no test annotated \"@trace FR-22\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-23: owner backend has no test annotated \"@trace FR-23\""
     },
     {
       "check": "test-trace",
@@ -1249,10 +1110,6 @@
     },
     {
       "check": "test-trace",
-      "msg": "FR-58: owner frontend has no test annotated \"@trace FR-58\""
-    },
-    {
-      "check": "test-trace",
       "msg": "FR-40: owner backend has no test annotated \"@trace FR-40\""
     },
     {
@@ -1273,12 +1130,7 @@
     },
     {
       "check": "test-trace",
-      "msg": "FR-43: owner backend has no test annotated \"@trace FR-43\""
-    },
-    {
-      "check": "test-trace",
       "msg": "FR-44: owner backend has no test annotated \"@trace FR-44\""
     }
-  ],
-  "warnings": []
+  ]
 }

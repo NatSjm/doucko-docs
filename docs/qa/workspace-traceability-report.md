@@ -5,7 +5,7 @@ contract (requirements + plan ownership) with every member repo's committed
 evidence (trace/trace.json, factory.config.json acceptanceMethods).
 
 Scope: 64 MVP requirement(s).
-Result: FAIL (77 failures)
+Result: PASS, 40 warning(s)
 
 ## Members
 
@@ -18,32 +18,32 @@ Result: FAIL (77 failures)
 
 | Req | Owner repo(s) | Methods -> proving repo(s) | @trace tests per owner |
 |---|---|---|---|
-| FR-1 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-2 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-3 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-4 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-5 | backend | local-verifiable -> backend | backend: **0** |
-| FR-6 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-7 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-8 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-9 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-10 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-11 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-12 | backend | local-verifiable -> backend | backend: **0** |
-| FR-13 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-55 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-56 | backend | local-verifiable -> backend | backend: **0** |
-| FR-57 | backend | local-verifiable -> backend | backend: **0** |
-| FR-14 | backend | local-verifiable -> backend | backend: **0** |
-| FR-15 | backend | local-verifiable -> backend | backend: **0** |
-| FR-16 | backend | local-verifiable -> backend | backend: **0** |
-| FR-17 | backend | local-verifiable -> backend | backend: **0** |
-| FR-18 | backend | local-verifiable -> backend | backend: **0** |
-| FR-19 | backend | local-verifiable -> backend | backend: **0** |
-| FR-20 | backend | local-verifiable -> backend | backend: **0** |
-| FR-21 | backend | local-verifiable -> backend | backend: **0** |
+| FR-1 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 17, frontend: 2 |
+| FR-2 | backend, frontend | e2e -> frontend | backend: 1, frontend: 7 |
+| FR-3 | backend, frontend | e2e -> frontend | backend: 23, frontend: 3 |
+| FR-4 | backend, frontend | e2e -> frontend | backend: 4, frontend: 3 |
+| FR-5 | backend | local-verifiable -> backend | backend: 3 |
+| FR-6 | backend, frontend | local-verifiable -> backend+frontend | backend: 33, frontend: 2 |
+| FR-7 | backend, frontend | local-verifiable -> backend+frontend | backend: 3, frontend: 4 |
+| FR-8 | backend, frontend | local-verifiable -> backend+frontend | backend: 7, frontend: 5 |
+| FR-9 | backend, frontend | e2e -> frontend | backend: 21, frontend: 5 |
+| FR-10 | backend, frontend | e2e -> frontend | backend: 5, frontend: 3 |
+| FR-11 | backend, frontend | e2e -> frontend | backend: 6, frontend: 2 |
+| FR-12 | backend | local-verifiable -> backend | backend: 3 |
+| FR-13 | backend, frontend | e2e -> frontend | backend: 3, frontend: 3 |
+| FR-55 | backend, frontend | e2e -> frontend | backend: 3, frontend: 7 |
+| FR-56 | backend | local-verifiable -> backend | backend: 12 |
+| FR-57 | backend | local-verifiable -> backend | backend: 22 |
+| FR-14 | backend | local-verifiable -> backend | backend: 9 |
+| FR-15 | backend | local-verifiable -> backend | backend: 3 |
+| FR-16 | backend | local-verifiable -> backend | backend: 2 |
+| FR-17 | backend | local-verifiable -> backend | backend: 2 |
+| FR-18 | backend | local-verifiable -> backend | backend: 1 |
+| FR-19 | backend | local-verifiable -> backend | backend: 3 |
+| FR-20 | backend | local-verifiable -> backend | backend: 1 |
+| FR-21 | backend | local-verifiable -> backend | backend: 2 |
 | FR-22 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-23 | backend | local-verifiable -> backend | backend: **0** |
+| FR-23 | backend | local-verifiable -> backend | backend: 7 |
 | FR-24 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
 | FR-25 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
 | FR-26 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
@@ -60,11 +60,11 @@ Result: FAIL (77 failures)
 | FR-37 | backend, frontend | e2e -> frontend; vision-verify -> frontend | backend: **0**, frontend: **0** |
 | FR-38 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
 | FR-39 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-58 | frontend | a11y -> frontend; e2e -> frontend | frontend: **0** |
+| FR-58 | frontend | a11y -> frontend; e2e -> frontend | frontend: 2 |
 | FR-40 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
 | FR-41 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
 | FR-42 | backend | local-verifiable -> backend | backend: **0** |
-| FR-43 | backend | local-verifiable -> backend | backend: **0** |
+| FR-43 | backend | local-verifiable -> backend | backend: 52 |
 | FR-44 | backend | local-verifiable -> backend | backend: **0** |
 | NFR-1 | backend | local-verifiable -> backend | - |
 | NFR-2 | backend | local-verifiable -> backend | - |
@@ -85,45 +85,14 @@ Result: FAIL (77 failures)
 
 ## Failures
 
-- **test-trace**: FR-1: owner backend has no test annotated "@trace FR-1"
-- **test-trace**: FR-1: owner frontend has no test annotated "@trace FR-1"
-- **test-trace**: FR-2: owner backend has no test annotated "@trace FR-2"
-- **test-trace**: FR-2: owner frontend has no test annotated "@trace FR-2"
-- **test-trace**: FR-3: owner backend has no test annotated "@trace FR-3"
-- **test-trace**: FR-3: owner frontend has no test annotated "@trace FR-3"
-- **test-trace**: FR-4: owner backend has no test annotated "@trace FR-4"
-- **test-trace**: FR-4: owner frontend has no test annotated "@trace FR-4"
-- **test-trace**: FR-5: owner backend has no test annotated "@trace FR-5"
-- **test-trace**: FR-6: owner backend has no test annotated "@trace FR-6"
-- **test-trace**: FR-6: owner frontend has no test annotated "@trace FR-6"
-- **test-trace**: FR-7: owner backend has no test annotated "@trace FR-7"
-- **test-trace**: FR-7: owner frontend has no test annotated "@trace FR-7"
-- **test-trace**: FR-8: owner backend has no test annotated "@trace FR-8"
-- **test-trace**: FR-8: owner frontend has no test annotated "@trace FR-8"
-- **test-trace**: FR-9: owner backend has no test annotated "@trace FR-9"
-- **test-trace**: FR-9: owner frontend has no test annotated "@trace FR-9"
-- **test-trace**: FR-10: owner backend has no test annotated "@trace FR-10"
-- **test-trace**: FR-10: owner frontend has no test annotated "@trace FR-10"
-- **test-trace**: FR-11: owner backend has no test annotated "@trace FR-11"
-- **test-trace**: FR-11: owner frontend has no test annotated "@trace FR-11"
-- **test-trace**: FR-12: owner backend has no test annotated "@trace FR-12"
-- **test-trace**: FR-13: owner backend has no test annotated "@trace FR-13"
-- **test-trace**: FR-13: owner frontend has no test annotated "@trace FR-13"
-- **test-trace**: FR-55: owner backend has no test annotated "@trace FR-55"
-- **test-trace**: FR-55: owner frontend has no test annotated "@trace FR-55"
-- **test-trace**: FR-56: owner backend has no test annotated "@trace FR-56"
-- **test-trace**: FR-57: owner backend has no test annotated "@trace FR-57"
-- **test-trace**: FR-14: owner backend has no test annotated "@trace FR-14"
-- **test-trace**: FR-15: owner backend has no test annotated "@trace FR-15"
-- **test-trace**: FR-16: owner backend has no test annotated "@trace FR-16"
-- **test-trace**: FR-17: owner backend has no test annotated "@trace FR-17"
-- **test-trace**: FR-18: owner backend has no test annotated "@trace FR-18"
-- **test-trace**: FR-19: owner backend has no test annotated "@trace FR-19"
-- **test-trace**: FR-20: owner backend has no test annotated "@trace FR-20"
-- **test-trace**: FR-21: owner backend has no test annotated "@trace FR-21"
+None.
+
+## Warnings
+
+- **contract-pin**: backend: contract/ is pinned to 4c87d677, docs HEAD is b6dd69a0 — bump the pin when the contract change is meant to land there
+- **contract-pin**: frontend: contract/ is pinned to 4c87d677, docs HEAD is b6dd69a0 — bump the pin when the contract change is meant to land there
 - **test-trace**: FR-22: owner backend has no test annotated "@trace FR-22"
 - **test-trace**: FR-22: owner frontend has no test annotated "@trace FR-22"
-- **test-trace**: FR-23: owner backend has no test annotated "@trace FR-23"
 - **test-trace**: FR-24: owner backend has no test annotated "@trace FR-24"
 - **test-trace**: FR-24: owner frontend has no test annotated "@trace FR-24"
 - **test-trace**: FR-25: owner backend has no test annotated "@trace FR-25"
@@ -154,15 +123,9 @@ Result: FAIL (77 failures)
 - **test-trace**: FR-38: owner frontend has no test annotated "@trace FR-38"
 - **test-trace**: FR-39: owner backend has no test annotated "@trace FR-39"
 - **test-trace**: FR-39: owner frontend has no test annotated "@trace FR-39"
-- **test-trace**: FR-58: owner frontend has no test annotated "@trace FR-58"
 - **test-trace**: FR-40: owner backend has no test annotated "@trace FR-40"
 - **test-trace**: FR-40: owner frontend has no test annotated "@trace FR-40"
 - **test-trace**: FR-41: owner backend has no test annotated "@trace FR-41"
 - **test-trace**: FR-41: owner frontend has no test annotated "@trace FR-41"
 - **test-trace**: FR-42: owner backend has no test annotated "@trace FR-42"
-- **test-trace**: FR-43: owner backend has no test annotated "@trace FR-43"
 - **test-trace**: FR-44: owner backend has no test annotated "@trace FR-44"
-
-## Warnings
-
-None.
