@@ -5,7 +5,7 @@ contract (requirements + plan ownership) with every member repo's committed
 evidence (trace/trace.json, factory.config.json acceptanceMethods).
 
 Scope: 64 MVP requirement(s).
-Result: PASS, 18 warning(s)
+Result: PASS, 6 warning(s)
 
 ## Members
 
@@ -44,7 +44,7 @@ Result: PASS, 18 warning(s)
 | FR-21 | backend | local-verifiable -> backend | backend: 2 |
 | FR-22 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 3, frontend: 3 |
 | FR-23 | backend | local-verifiable -> backend | backend: 7 |
-| FR-24 | backend, frontend | e2e -> frontend | backend: 2, frontend: 3 |
+| FR-24 | backend, frontend | e2e -> frontend | backend: 1, frontend: 3 |
 | FR-25 | backend, frontend | e2e -> frontend | backend: 8, frontend: 3 |
 | FR-26 | backend, frontend | e2e -> frontend | backend: 6, frontend: 3 |
 | FR-27 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 9, frontend: 3 |
@@ -52,14 +52,14 @@ Result: PASS, 18 warning(s)
 | FR-29 | backend, frontend | e2e -> frontend | backend: 2, frontend: 2 |
 | FR-30 | backend, frontend | e2e -> frontend | backend: 4, frontend: 2 |
 | FR-31 | backend, frontend | e2e -> frontend | backend: 3, frontend: 3 |
-| FR-32 | backend, frontend | e2e -> frontend; recording -> frontend | backend: **0**, frontend: **0** |
-| FR-33 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-34 | backend | local-verifiable -> backend | backend: **0** |
-| FR-35 | backend | local-verifiable -> backend | backend: **0** |
-| FR-36 | backend, frontend | local-verifiable -> backend+frontend; vision-verify -> frontend | backend: **0**, frontend: **0** |
-| FR-37 | backend, frontend | e2e -> frontend; vision-verify -> frontend | backend: **0**, frontend: **0** |
-| FR-38 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
-| FR-39 | backend, frontend | local-verifiable -> backend+frontend | backend: **0**, frontend: **0** |
+| FR-32 | backend, frontend | e2e -> frontend; recording -> frontend | backend: 8, frontend: 3 |
+| FR-33 | backend, frontend | local-verifiable -> backend+frontend | backend: 2, frontend: 4 |
+| FR-34 | backend | local-verifiable -> backend | backend: 21 |
+| FR-35 | backend | local-verifiable -> backend | backend: 22 |
+| FR-36 | backend, frontend | local-verifiable -> backend+frontend; vision-verify -> frontend | backend: 20, frontend: 7 |
+| FR-37 | backend, frontend | e2e -> frontend; vision-verify -> frontend | backend: 4, frontend: 3 |
+| FR-38 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 3 |
+| FR-39 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 1 |
 | FR-58 | frontend | a11y -> frontend; e2e -> frontend | frontend: 2 |
 | FR-40 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
 | FR-41 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
@@ -89,20 +89,8 @@ None.
 
 ## Warnings
 
-- **test-trace**: FR-32: owner backend has no test annotated "@trace FR-32"
-- **test-trace**: FR-32: owner frontend has no test annotated "@trace FR-32"
-- **test-trace**: FR-33: owner backend has no test annotated "@trace FR-33"
-- **test-trace**: FR-33: owner frontend has no test annotated "@trace FR-33"
-- **test-trace**: FR-34: owner backend has no test annotated "@trace FR-34"
-- **test-trace**: FR-35: owner backend has no test annotated "@trace FR-35"
-- **test-trace**: FR-36: owner backend has no test annotated "@trace FR-36"
-- **test-trace**: FR-36: owner frontend has no test annotated "@trace FR-36"
-- **test-trace**: FR-37: owner backend has no test annotated "@trace FR-37"
-- **test-trace**: FR-37: owner frontend has no test annotated "@trace FR-37"
-- **test-trace**: FR-38: owner backend has no test annotated "@trace FR-38"
-- **test-trace**: FR-38: owner frontend has no test annotated "@trace FR-38"
-- **test-trace**: FR-39: owner backend has no test annotated "@trace FR-39"
-- **test-trace**: FR-39: owner frontend has no test annotated "@trace FR-39"
+- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is 4a632dcd — bump the pin when the contract change is meant to land there
+- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is 4a632dcd — bump the pin when the contract change is meant to land there
 - **test-trace**: FR-40: owner backend has no test annotated "@trace FR-40"
 - **test-trace**: FR-40: owner frontend has no test annotated "@trace FR-40"
 - **test-trace**: FR-41: owner backend has no test annotated "@trace FR-41"
