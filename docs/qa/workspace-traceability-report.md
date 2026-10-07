@@ -5,7 +5,7 @@ contract (requirements + plan ownership) with every member repo's committed
 evidence (trace/trace.json, factory.config.json acceptanceMethods).
 
 Scope: 64 MVP requirement(s).
-Result: PASS, 6 warning(s)
+Result: PASS, 2 warning(s)
 
 ## Members
 
@@ -61,8 +61,8 @@ Result: PASS, 6 warning(s)
 | FR-38 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 3 |
 | FR-39 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 1 |
 | FR-58 | frontend | a11y -> frontend; e2e -> frontend | frontend: 2 |
-| FR-40 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
-| FR-41 | backend, frontend | e2e -> frontend | backend: **0**, frontend: **0** |
+| FR-40 | backend, frontend | e2e -> frontend | backend: 42, frontend: 4 |
+| FR-41 | backend, frontend | e2e -> frontend | backend: 41, frontend: 3 |
 | FR-42 | backend | local-verifiable -> backend | backend: 1 |
 | FR-43 | backend | local-verifiable -> backend | backend: 52 |
 | FR-44 | backend | local-verifiable -> backend | backend: 10 |
@@ -89,9 +89,5 @@ None.
 
 ## Warnings
 
-- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is 4a632dcd — bump the pin when the contract change is meant to land there
-- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is 4a632dcd — bump the pin when the contract change is meant to land there
-- **test-trace**: FR-40: owner backend has no test annotated "@trace FR-40"
-- **test-trace**: FR-40: owner frontend has no test annotated "@trace FR-40"
-- **test-trace**: FR-41: owner backend has no test annotated "@trace FR-41"
-- **test-trace**: FR-41: owner frontend has no test annotated "@trace FR-41"
+- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there
+- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there

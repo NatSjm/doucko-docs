@@ -700,8 +700,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 42,
+        "frontend": 4
       }
     },
     {
@@ -716,8 +716,8 @@
         ]
       },
       "tests": {
-        "backend": 0,
-        "frontend": 0
+        "backend": 41,
+        "frontend": 3
       }
     },
     {
@@ -974,27 +974,11 @@
   "warnings": [
     {
       "check": "contract-pin",
-      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is 4a632dcd — bump the pin when the contract change is meant to land there"
+      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there"
     },
     {
       "check": "contract-pin",
-      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is 4a632dcd — bump the pin when the contract change is meant to land there"
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-40: owner backend has no test annotated \"@trace FR-40\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-40: owner frontend has no test annotated \"@trace FR-40\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-41: owner backend has no test annotated \"@trace FR-41\""
-    },
-    {
-      "check": "test-trace",
-      "msg": "FR-41: owner frontend has no test annotated \"@trace FR-41\""
+      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there"
     }
   ]
 }
