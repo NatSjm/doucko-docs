@@ -974,11 +974,11 @@
   "warnings": [
     {
       "check": "contract-pin",
-      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there"
+      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there"
     },
     {
       "check": "contract-pin",
-      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there"
+      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there"
     }
   ]
 }

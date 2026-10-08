@@ -89,5 +89,5 @@ None.
 
 ## Warnings
 
-- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there
-- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there
+- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there
+- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there

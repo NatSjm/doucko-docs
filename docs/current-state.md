@@ -6,9 +6,27 @@
 
 ## Last Updated
 
-- **Date and time:** 2026-10-03 (Europe/Prague)
-- **Current phase:** Phase 4
+- **Date and time:** 2026-10-08 (Europe/Prague)
+- **Current phase:** Phase 6
 - **Last completed gate:** G3
+- **Phase 6 (docs part) written, 2026-10-08:** the QA pack is in `docs/qa/`:
+  `requirements-traceability-matrix.md`, `mvp-acceptance-report.md`,
+  `risk-register.md`, `manual-test-plan.md` (not yet executed) and `demo-script.md`.
+  - Pins: backend `26648ee`, frontend `a8aeb06`.
+  - `check-workspace`: PASS, 64 MVP requirements, 2 contract-pin warnings
+    (`docs/qa/workspace-traceability-report.md`).
+  - All 64 rows read PASS deterministically (`docs/qa/requirements-traceability-matrix.md`).
+- **G6 is not earned yet:**
+  - Frontend G6 is SKIP-planned: no MVP requirement uses `eval` (only Future FR-45..49 and FR-51 do).
+  - G1 and G3 need owner sign-off in every repo's `gate:status`. Docs G4, G6 and G7 are SKIP-pending.
+  - The frontend summary is FAIL because COR-1 (the slice-1 waiver correction) has no disposition. Owner action.
+  - The 11 `phase6-admin-theme` clips have no current vision verdict; vision-verify needs a re-run.
+  - The CI `e2e-stack` job has never run, because nothing has been pushed since 2026-10-04.
+  - No MVP row is `deploy-gated`. NFR-2, NFR-5, NFR-6 and NFR-10 are proved locally only.
+  - Details and the Scope NOT delivered section: `docs/qa/mvp-acceptance-report.md`.
+- **Next task:** the owner's items in `docs/qa/mvp-acceptance-report.md` §6 (G1/G3 sign-off, COR-1,
+  vision re-run, push + CI), then Phase 7 (G7).
+- **Earlier (Phase 3 close, kept for reference):**
 - **Active change:** none in the store (`improve-PD-2..5` remain open retro items). Docs work is on `main` (`phase2-specs` fast-forwarded into it).
 - **Phase 3 closed (G3), 2026-10-03:**
   - Plan approved at checkpoint 2 as drafted, with every §7 recommendation
@@ -34,7 +52,7 @@
     expected: product scaffold exists and no slice evidence does yet.
   - Pins lag docs HEAD only by docs-only commits (this file, generated
     reports). Bump them when the contract or plan changes.
-- **Next task:** Phase 4, slice 1 `platform-foundation` (plan §4.1).
+- **Next task (at the time):** Phase 4, slice 1 `platform-foundation` (plan §4.1).
   `implement-platform-foundation-api` (backend) and
   `implement-platform-foundation-ui` (frontend), following PLAYBOOK
   Phase 4 a–h.
@@ -90,7 +108,7 @@
 
 ## Open items
 
-- Remotes: none yet. When created, add `remote:` to
+- Remotes: `origin` exists on GitHub for all three repos, but nothing has been pushed since 2026-10-04 (see `docs/qa/mvp-acceptance-report.md` §5). Add `remote:` to
   `.openspec-store/store.yaml`. The `contract/` pins already use the relative
   URL `../docs`, so they resolve if the three remotes sit side by side
   (same host and owner, repos named `docs`, `backend`, `frontend`).
