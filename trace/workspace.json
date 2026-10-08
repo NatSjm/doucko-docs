@@ -18,7 +18,7 @@
       },
       "tests": {
         "backend": 17,
-        "frontend": 2
+        "frontend": 3
       }
     },
     {
@@ -49,8 +49,8 @@
         ]
       },
       "tests": {
-        "backend": 23,
-        "frontend": 3
+        "backend": 24,
+        "frontend": 4
       }
     },
     {
@@ -147,7 +147,7 @@
       },
       "tests": {
         "backend": 21,
-        "frontend": 5
+        "frontend": 6
       }
     },
     {
@@ -225,7 +225,7 @@
       },
       "tests": {
         "backend": 3,
-        "frontend": 7
+        "frontend": 8
       }
     },
     {
@@ -415,7 +415,7 @@
       },
       "tests": {
         "backend": 1,
-        "frontend": 3
+        "frontend": 5
       }
     },
     {
@@ -431,7 +431,7 @@
       },
       "tests": {
         "backend": 8,
-        "frontend": 3
+        "frontend": 5
       }
     },
     {
@@ -447,7 +447,7 @@
       },
       "tests": {
         "backend": 6,
-        "frontend": 3
+        "frontend": 6
       }
     },
     {
@@ -467,7 +467,7 @@
       },
       "tests": {
         "backend": 9,
-        "frontend": 3
+        "frontend": 5
       }
     },
     {
@@ -483,7 +483,7 @@
       },
       "tests": {
         "backend": 3,
-        "frontend": 2
+        "frontend": 3
       }
     },
     {
@@ -515,7 +515,7 @@
       },
       "tests": {
         "backend": 4,
-        "frontend": 2
+        "frontend": 3
       }
     },
     {
@@ -550,7 +550,7 @@
       },
       "tests": {
         "backend": 8,
-        "frontend": 3
+        "frontend": 4
       }
     },
     {
@@ -634,7 +634,7 @@
       },
       "tests": {
         "backend": 4,
-        "frontend": 3
+        "frontend": 5
       }
     },
     {
@@ -701,7 +701,7 @@
       },
       "tests": {
         "backend": 42,
-        "frontend": 4
+        "frontend": 5
       }
     },
     {
@@ -716,8 +716,8 @@
         ]
       },
       "tests": {
-        "backend": 41,
-        "frontend": 3
+        "backend": 42,
+        "frontend": 4
       }
     },
     {
@@ -974,11 +974,11 @@
   "warnings": [
     {
       "check": "contract-pin",
-      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there"
+      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there"
     },
     {
       "check": "contract-pin",
-      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there"
+      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there"
     }
   ]
 }

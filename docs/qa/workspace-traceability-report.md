@@ -18,20 +18,20 @@ Result: PASS, 2 warning(s)
 
 | Req | Owner repo(s) | Methods -> proving repo(s) | @trace tests per owner |
 |---|---|---|---|
-| FR-1 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 17, frontend: 2 |
+| FR-1 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 17, frontend: 3 |
 | FR-2 | backend, frontend | e2e -> frontend | backend: 1, frontend: 7 |
-| FR-3 | backend, frontend | e2e -> frontend | backend: 23, frontend: 3 |
+| FR-3 | backend, frontend | e2e -> frontend | backend: 24, frontend: 4 |
 | FR-4 | backend, frontend | e2e -> frontend | backend: 4, frontend: 3 |
 | FR-5 | backend | local-verifiable -> backend | backend: 3 |
 | FR-6 | backend, frontend | local-verifiable -> backend+frontend | backend: 33, frontend: 2 |
 | FR-7 | backend, frontend | local-verifiable -> backend+frontend | backend: 3, frontend: 4 |
 | FR-8 | backend, frontend | local-verifiable -> backend+frontend | backend: 7, frontend: 5 |
-| FR-9 | backend, frontend | e2e -> frontend | backend: 21, frontend: 5 |
+| FR-9 | backend, frontend | e2e -> frontend | backend: 21, frontend: 6 |
 | FR-10 | backend, frontend | e2e -> frontend | backend: 5, frontend: 3 |
 | FR-11 | backend, frontend | e2e -> frontend | backend: 6, frontend: 2 |
 | FR-12 | backend | local-verifiable -> backend | backend: 6 |
 | FR-13 | backend, frontend | e2e -> frontend | backend: 3, frontend: 3 |
-| FR-55 | backend, frontend | e2e -> frontend | backend: 3, frontend: 7 |
+| FR-55 | backend, frontend | e2e -> frontend | backend: 3, frontend: 8 |
 | FR-56 | backend | local-verifiable -> backend | backend: 14 |
 | FR-57 | backend | local-verifiable -> backend | backend: 22 |
 | FR-14 | backend | local-verifiable -> backend | backend: 9 |
@@ -44,25 +44,25 @@ Result: PASS, 2 warning(s)
 | FR-21 | backend | local-verifiable -> backend | backend: 2 |
 | FR-22 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 3, frontend: 3 |
 | FR-23 | backend | local-verifiable -> backend | backend: 7 |
-| FR-24 | backend, frontend | e2e -> frontend | backend: 1, frontend: 3 |
-| FR-25 | backend, frontend | e2e -> frontend | backend: 8, frontend: 3 |
-| FR-26 | backend, frontend | e2e -> frontend | backend: 6, frontend: 3 |
-| FR-27 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 9, frontend: 3 |
-| FR-28 | backend, frontend | e2e -> frontend | backend: 3, frontend: 2 |
+| FR-24 | backend, frontend | e2e -> frontend | backend: 1, frontend: 5 |
+| FR-25 | backend, frontend | e2e -> frontend | backend: 8, frontend: 5 |
+| FR-26 | backend, frontend | e2e -> frontend | backend: 6, frontend: 6 |
+| FR-27 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 9, frontend: 5 |
+| FR-28 | backend, frontend | e2e -> frontend | backend: 3, frontend: 3 |
 | FR-29 | backend, frontend | e2e -> frontend | backend: 2, frontend: 2 |
-| FR-30 | backend, frontend | e2e -> frontend | backend: 4, frontend: 2 |
+| FR-30 | backend, frontend | e2e -> frontend | backend: 4, frontend: 3 |
 | FR-31 | backend, frontend | e2e -> frontend | backend: 3, frontend: 3 |
-| FR-32 | backend, frontend | e2e -> frontend; recording -> frontend | backend: 8, frontend: 3 |
+| FR-32 | backend, frontend | e2e -> frontend; recording -> frontend | backend: 8, frontend: 4 |
 | FR-33 | backend, frontend | local-verifiable -> backend+frontend | backend: 2, frontend: 4 |
 | FR-34 | backend | local-verifiable -> backend | backend: 21 |
 | FR-35 | backend | local-verifiable -> backend | backend: 22 |
 | FR-36 | backend, frontend | local-verifiable -> backend+frontend; vision-verify -> frontend | backend: 20, frontend: 7 |
-| FR-37 | backend, frontend | e2e -> frontend; vision-verify -> frontend | backend: 4, frontend: 3 |
+| FR-37 | backend, frontend | e2e -> frontend; vision-verify -> frontend | backend: 4, frontend: 5 |
 | FR-38 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 3 |
 | FR-39 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 1 |
 | FR-58 | frontend | a11y -> frontend; e2e -> frontend | frontend: 2 |
-| FR-40 | backend, frontend | e2e -> frontend | backend: 42, frontend: 4 |
-| FR-41 | backend, frontend | e2e -> frontend | backend: 41, frontend: 3 |
+| FR-40 | backend, frontend | e2e -> frontend | backend: 42, frontend: 5 |
+| FR-41 | backend, frontend | e2e -> frontend | backend: 42, frontend: 4 |
 | FR-42 | backend | local-verifiable -> backend | backend: 1 |
 | FR-43 | backend | local-verifiable -> backend | backend: 52 |
 | FR-44 | backend | local-verifiable -> backend | backend: 10 |
@@ -89,5 +89,5 @@ None.
 
 ## Warnings
 
-- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there
-- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is 1eced498 — bump the pin when the contract change is meant to land there
+- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there
+- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is f04f4814 — bump the pin when the contract change is meant to land there
