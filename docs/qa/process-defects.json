@@ -557,6 +557,41 @@
       "status": "proposed",
       "correctionIds": [],
       "note": "Bar chosen by the product owner in chat on 2026-10-04 (option: major bar + dispositions). Entry written by the orchestrator (maker)."
+    },
+    {
+      "id": "PD-16",
+      "class": "declared-method-without-mechanism",
+      "severity": "P1",
+      "evidence": [
+        {
+          "pointer": "factory/scripts/gate-status.mjs (pre-fix)",
+          "quote": "{ g: \"G5\", desc: \"hardening (coverage)\", keys: [\"coverage\"] }",
+          "note": "G5 could render PASS on coverage alone; the real-stack Playwright verdict was read by nothing."
+        },
+        {
+          "pointer": "factory/ci/frontend.yml (pre-fix)",
+          "quote": "E2E runs against the compose stack (backend image + Postgres) once Phase 5 wires it",
+          "note": "Stale promise; the battery member browser-e2e-tests is the mocked suite."
+        },
+        {
+          "pointer": "frontend openspec/changes/harden-phase5-ui/review-findings.json F12 (critical)",
+          "quote": "G5 has no mechanism for the real-stack Playwright verdict",
+          "note": "Blocks archiving harden-phase5-ui (PD-15: criticals are never waived)."
+        }
+      ],
+      "metric": {
+        "name": "G5 checks that consume real-stack E2E evidence (frontend)",
+        "current": "0",
+        "expectedMovement": "0 -> 1 (e2eStack), plus battery member e2e-stack-evidence and CI job e2e-stack"
+      },
+      "proposedFix": {
+        "targetFile": "factory/scripts/check-e2e-stack.mjs (new), gate-status.mjs, install.mjs, templates/config/frontend.factory.config.json, ci/frontend.yml, GATES.md, PLAYBOOK.md, RULES-CHANGELOG.md",
+        "sketch": "check-e2e-stack reads docs/qa/e2e-stack-latest.md: PASS only on full-run Result: PASS with n>0 passed and 0 failed/flaky/skipped at a clean frontend commit equal to HEAD or whose diff to HEAD touches only docs/qa/ and trace/; missing = SKIP-pending before product code, NOT-EARNED after. Used by gate-status (G5 key e2eStack, roles [frontend]) and the battery member e2e-stack-evidence.",
+        "proposalDir": "openspec/changes/archive/2026-10-08-improve-PD-16"
+      },
+      "status": "proposed",
+      "correctionIds": [],
+      "note": "Requested by the coordinator from frontend review F12 / scratch/phase5-frontend-blockers.md (2026-10-08). Proof: docs/qa/evidence/pd-16-e2e-stack-gate-proof.md. Entry written by the implementing agent (maker)."
     }
   ]
 }

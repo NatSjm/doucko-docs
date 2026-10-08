@@ -142,9 +142,18 @@ migrations serialize.
 
 Backend: Testcontainers integration across modules, module-boundary verify,
 coverage baseline (`node scripts/check-coverage-ratchet.mjs --update` after
-`mvnw verify`). Frontend: Playwright suites against `docker compose up`
-(Postgres + backend + nginx frontend), coverage baseline. Seeds are
-idempotent, self-authored, PII-free.
+`mvnw verify`). Frontend: the real-stack Playwright suite `e2e/stack/` via
+`npm run test:e2e:stack` (isolated compose project `doucko-e2e`: Postgres +
+backend + nginx frontend, no route mocks; `DOUCKO_BACKEND_DIR` points at the
+backend checkout), which writes `docs/qa/e2e-stack-latest.md`; commit it.
+G5 reads that evidence through `check-e2e-stack` (PD-16): PASS only for a
+full run with `Result: PASS`, n > 0 passed and 0 failed/flaky/skipped,
+recorded at a clean frontend commit whose diff to HEAD touches only
+`docs/qa/` and `trace/`. Any later change elsewhere makes it NOT-EARNED until
+the suite is re-run; the qa-verify member `e2e-stack-evidence` runs the same
+check without Docker, and the CI job `e2e-stack` re-runs the suite itself.
+Coverage baseline as for the backend. Seeds are idempotent, self-authored,
+PII-free.
 
 ## Phase 6 — QA proof (G6) — frontend + docs
 

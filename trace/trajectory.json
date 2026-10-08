@@ -29,6 +29,13 @@
       "trailerCommits": 1,
       "libDomains": [],
       "processComplete": false
+    },
+    {
+      "slice": "2026-10-08-improve-PD-16",
+      "reviewEvidence": "missing",
+      "trailerCommits": 0,
+      "libDomains": [],
+      "processComplete": false
     }
   ],
   "overlaps": [],
@@ -57,6 +64,18 @@
     {
       "check": "process",
       "msg": "2026-10-03-fix-contract-flow-descriptions: archived change is missing design.md and/or tasks.md"
+    },
+    {
+      "check": "review-evidence",
+      "msg": "2026-10-08-improve-PD-16: review-findings.json is missing (review must have run, and its findings be dispositioned, before archive)"
+    },
+    {
+      "check": "process",
+      "msg": "2026-10-08-improve-PD-16: archived change is missing design.md and/or tasks.md"
+    },
+    {
+      "check": "trailer",
+      "msg": "2026-10-08-improve-PD-16: no commit carries a \"Slice: improve-PD-16\" trailer"
     }
   ]
 }

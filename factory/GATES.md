@@ -18,7 +18,7 @@ for a gate whose every check is excluded by that repo's role
 |---|---|
 | docs | traceability (product chain + plan ownership), acceptance **existence**, **workspace join**, harness drift, OpenSpec strict |
 | backend | traceability (owned FRs), acceptance artifacts (`local-verifiable`), **`mvnw -B verify`** (compile, ktlint, unit, IT, modulith, JaCoCo), coverage ratchet, OpenSpec strict |
-| frontend | traceability (owned FRs), recordings, acceptance artifacts (`e2e`, `recording`, `vision-verify`, `a11y`, `eval`, `local-verifiable`), lint, typecheck, unit + coverage + ratchet, Playwright, eval ratchet, build, OpenSpec strict |
+| frontend | traceability (owned FRs), recordings, acceptance artifacts (`e2e`, `recording`, `vision-verify`, `a11y`, `eval`, `local-verifiable`), lint, typecheck, unit + coverage + ratchet, Playwright (mocked) + real-stack E2E evidence (G5), eval ratchet, build, OpenSpec strict |
 
 ## G0 — Loop installed (each repo)
 
@@ -80,8 +80,18 @@ node scripts/check-workspace.mjs
 node scripts/mvnw.mjs -B verify && node scripts/check-coverage-ratchet.mjs --update
 # frontend
 npm run test:coverage && node scripts/check-coverage-ratchet.mjs --update
-npm run test:e2e                        # against docker compose
+DOUCKO_BACKEND_DIR=../backend npm run test:e2e:stack   # Docker: real stack -> docs/qa/e2e-stack-latest.md (commit it)
+node scripts/check-e2e-stack.mjs        # that evidence is fresh for HEAD (no Docker)
 ```
+
+- Frontend G5 = `coverage` + `e2eStack` (PD-16). `check-e2e-stack` passes only
+  on full-run evidence with `Result: PASS` and `Tests: n passed, 0 failed,
+  0 flaky, 0 skipped` (n > 0), recorded at a clean frontend commit equal to
+  HEAD or whose diff to HEAD touches only `docs/qa/` and `trace/`. Missing
+  evidence is SKIP-pending before product code and NOT-EARNED after; stale,
+  narrowed or dirty-tree evidence is NOT-EARNED; a recorded FAIL is FAIL. The
+  battery member `e2e-stack-evidence` runs the same script (`browser-e2e-tests`
+  stays the mocked suite). Backend and docs render the key `n/a (<repo> role)`.
 
 ## G6 — QA proof (frontend + docs)
 

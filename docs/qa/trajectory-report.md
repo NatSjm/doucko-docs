@@ -5,14 +5,15 @@ archived slice took: review evidence, `Slice:` trailers, and module scope.
 It does NOT verify test-first ordering or test integrity (not derivable from
 one-commit-per-slice history) — those are graded by the trajectory-eval workflow.
 
-Scope: 3 archived slice(s).
-Result: PASS, 6 warning(s)
+Scope: 4 archived slice(s).
+Result: PASS, 9 warning(s)
 
 | Slice | Review evidence | Trailer commits | design+tasks | lib domains touched |
 |---|---|---|---|---|
 | 2026-09-28-improve-PD-1 | **missing** | **0** | **no** | - |
 | 2026-10-03-add-api-contract-v0 | **unclean** | 9 | **no** | admin-access, answer-checking, child-profile, content-authoring, gamification, practice-flow, progress-stats |
 | 2026-10-03-fix-contract-flow-descriptions | clean | 1 | **no** | - |
+| 2026-10-08-improve-PD-16 | **missing** | **0** | **no** | - |
 
 ## Cross-slice module overlap
 
@@ -30,3 +31,6 @@ None.
 - **review-evidence**: 2026-10-03-add-api-contract-v0: review-findings.json is unclean — no findings list to disposition (review must have run, and its findings be dispositioned, before archive)
 - **process**: 2026-10-03-add-api-contract-v0: archived change is missing design.md and/or tasks.md
 - **process**: 2026-10-03-fix-contract-flow-descriptions: archived change is missing design.md and/or tasks.md
+- **review-evidence**: 2026-10-08-improve-PD-16: review-findings.json is missing (review must have run, and its findings be dispositioned, before archive)
+- **process**: 2026-10-08-improve-PD-16: archived change is missing design.md and/or tasks.md
+- **trailer**: 2026-10-08-improve-PD-16: no commit carries a "Slice: improve-PD-16" trailer
