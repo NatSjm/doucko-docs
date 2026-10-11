@@ -5,14 +5,14 @@ contract (requirements + plan ownership) with every member repo's committed
 evidence (trace/trace.json, factory.config.json acceptanceMethods).
 
 Scope: 64 MVP requirement(s).
-Result: PASS, 2 warning(s)
+Result: PASS
 
 ## Members
 
 | Repo | Path | Present | Proves methods | Contract pin |
 |---|---|---|---|---|
-| backend | ../backend | yes | local-verifiable | 0168ebab |
-| frontend | ../frontend | yes | local-verifiable, e2e, recording, vision-verify, a11y, eval | 0168ebab |
+| backend | ../backend | yes | local-verifiable | 89086695 |
+| frontend | ../frontend | yes | local-verifiable, e2e, recording, vision-verify, a11y, eval | 89086695 |
 
 ## Requirements
 
@@ -20,7 +20,7 @@ Result: PASS, 2 warning(s)
 |---|---|---|---|
 | FR-1 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 17, frontend: 3 |
 | FR-2 | backend, frontend | e2e -> frontend | backend: 1, frontend: 7 |
-| FR-3 | backend, frontend | e2e -> frontend | backend: 24, frontend: 4 |
+| FR-3 | backend, frontend | e2e -> frontend | backend: 25, frontend: 4 |
 | FR-4 | backend, frontend | e2e -> frontend | backend: 4, frontend: 3 |
 | FR-5 | backend | local-verifiable -> backend | backend: 3 |
 | FR-6 | backend, frontend | local-verifiable -> backend+frontend | backend: 33, frontend: 2 |
@@ -46,7 +46,7 @@ Result: PASS, 2 warning(s)
 | FR-23 | backend | local-verifiable -> backend | backend: 7 |
 | FR-24 | backend, frontend | e2e -> frontend | backend: 1, frontend: 5 |
 | FR-25 | backend, frontend | e2e -> frontend | backend: 8, frontend: 5 |
-| FR-26 | backend, frontend | e2e -> frontend | backend: 6, frontend: 6 |
+| FR-26 | backend, frontend | e2e -> frontend | backend: 7, frontend: 6 |
 | FR-27 | backend, frontend | e2e -> frontend; local-verifiable -> backend+frontend | backend: 9, frontend: 5 |
 | FR-28 | backend, frontend | e2e -> frontend | backend: 3, frontend: 3 |
 | FR-29 | backend, frontend | e2e -> frontend | backend: 2, frontend: 2 |
@@ -62,7 +62,7 @@ Result: PASS, 2 warning(s)
 | FR-39 | backend, frontend | local-verifiable -> backend+frontend | backend: 6, frontend: 1 |
 | FR-58 | frontend | a11y -> frontend; e2e -> frontend | frontend: 2 |
 | FR-40 | backend, frontend | e2e -> frontend | backend: 42, frontend: 5 |
-| FR-41 | backend, frontend | e2e -> frontend | backend: 42, frontend: 4 |
+| FR-41 | backend, frontend | e2e -> frontend | backend: 43, frontend: 4 |
 | FR-42 | backend | local-verifiable -> backend | backend: 1 |
 | FR-43 | backend | local-verifiable -> backend | backend: 52 |
 | FR-44 | backend | local-verifiable -> backend | backend: 10 |
@@ -89,5 +89,4 @@ None.
 
 ## Warnings
 
-- **contract-pin**: backend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there
-- **contract-pin**: frontend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there
+None.

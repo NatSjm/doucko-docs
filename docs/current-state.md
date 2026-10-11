@@ -7,7 +7,7 @@
 ## Last Updated
 
 - **Date and time:** 2026-10-08 (Europe/Prague)
-- **Current phase:** Phase 6
+- **Current phase:** Phase 7
 - **Last completed gate:** G3
 - **Phase 6 (docs part) written, 2026-10-08:** the QA pack is in `docs/qa/`:
   `requirements-traceability-matrix.md`, `mvp-acceptance-report.md`,

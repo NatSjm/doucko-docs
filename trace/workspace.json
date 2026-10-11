@@ -49,7 +49,7 @@
         ]
       },
       "tests": {
-        "backend": 24,
+        "backend": 25,
         "frontend": 4
       }
     },
@@ -446,7 +446,7 @@
         ]
       },
       "tests": {
-        "backend": 6,
+        "backend": 7,
         "frontend": 6
       }
     },
@@ -716,7 +716,7 @@
         ]
       },
       "tests": {
-        "backend": 42,
+        "backend": 43,
         "frontend": 4
       }
     },
@@ -971,14 +971,5 @@
     }
   ],
   "failures": [],
-  "warnings": [
-    {
-      "check": "contract-pin",
-      "msg": "backend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there"
-    },
-    {
-      "check": "contract-pin",
-      "msg": "frontend: contract/ is pinned to 0168ebab, docs HEAD is b920bea9 — bump the pin when the contract change is meant to land there"
-    }
-  ]
+  "warnings": []
 }
