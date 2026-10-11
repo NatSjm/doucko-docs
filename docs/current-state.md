@@ -6,26 +6,33 @@
 
 ## Last Updated
 
-- **Date and time:** 2026-10-08 (Europe/Prague)
-- **Current phase:** Phase 7
+- **Date and time:** 2026-10-11 (Europe/Prague)
+- **Current phase:** Phase 8
 - **Last completed gate:** G3
-- **Phase 6 (docs part) written, 2026-10-08:** the QA pack is in `docs/qa/`:
-  `requirements-traceability-matrix.md`, `mvp-acceptance-report.md`,
-  `risk-register.md`, `manual-test-plan.md` (not yet executed) and `demo-script.md`.
-  - Pins: backend `26648ee`, frontend `a8aeb06`.
-  - `check-workspace`: PASS, 64 MVP requirements, 2 contract-pin warnings
-    (`docs/qa/workspace-traceability-report.md`).
-  - All 64 rows read PASS deterministically (`docs/qa/requirements-traceability-matrix.md`).
-- **G6 is not earned yet:**
-  - Frontend G6 is SKIP-planned: no MVP requirement uses `eval` (only Future FR-45..49 and FR-51 do).
-  - G1 and G3 need owner sign-off in every repo's `gate:status`. Docs G4, G6 and G7 are SKIP-pending.
-  - The frontend summary is FAIL because COR-1 (the slice-1 waiver correction) has no disposition. Owner action.
-  - The 11 `phase6-admin-theme` clips have no current vision verdict; vision-verify needs a re-run.
-  - The CI `e2e-stack` job has never run, because nothing has been pushed since 2026-10-04.
-  - No MVP row is `deploy-gated`. NFR-2, NFR-5, NFR-6 and NFR-10 are proved locally only.
-  - Details and the Scope NOT delivered section: `docs/qa/mvp-acceptance-report.md`.
-- **Next task:** the owner's items in `docs/qa/mvp-acceptance-report.md` §6 (G1/G3 sign-off, COR-1,
-  vision re-run, push + CI), then Phase 7 (G7).
+- **MVP delivered.** All 9 plan slices are implemented, reviewed, archived and merged to `main`
+  in backend and frontend, each with a real-stack smoke after its merge. Phases 5 (isolated
+  `doucko-e2e` stack, real-stack Playwright suite, PD-16), 6 (QA proof pack in `docs/qa/`) and
+  7 (whole-history release review in both code repos) are done.
+  - Pins: backend `5530605`, frontend `7484f59`; both code repos pin docs `8908669` (API 0.5.1).
+  - Phase 7 release check, 2026-10-11: `check-workspace --release --strict-tests` PASS,
+    64 MVP requirements, 0 warnings — evidence: `docs/qa/workspace-traceability-report.md` (`4b621b0`).
+  - `gate:status` summary PASS in all three repos. G1/G3 still read "needs sign-off" in
+    gate-status although the sign-offs exist (`docs/qa/checkpoint-*-signoff.md`), so the header stays at G3.
+  - All three repos are pushed to GitHub (`NatSjm/doucko-docs`, `-backend`, `-frontend`);
+    `contract/` submodules point at `../doucko-docs.git`.
+- **Phase 8 (UAT) started, 2026-10-11:** round 1 intake in `docs/qa/uat/uat-round-1.md`.
+  UAT-1 (publish action hard to find on task and mission editors) is `new`, not yet triaged with
+  the `uat-triage` workflow. The disabled-until-saved Publish came from slice 6 frontend review finding F01.
+- **Still open (owner or later work):**
+  - Contract API 0.5.x has no clean independent review; `contract-review` was not re-run before G7.
+  - NFR-10 covers the Postgres backup and restore only; the `doucko-storage` volume (PDFs, images) is not backed up.
+  - Frontend G6 is SKIP-planned (no MVP requirement uses `eval`); eval-ratchet stays PLANNED.
+  - The 11 `phase6-admin-theme` clips have no current vision verdict; parts of the frontend release
+    review and trajectory-eval were cut by the budget cap.
+  - NFR-2, NFR-5, NFR-6 and NFR-10 are proved locally only, not on the owner's laptop deploy.
+  - `docs/qa/mvp-acceptance-report.md` is not signed; `improve-PD-2..5` remain open retro items.
+  - CI: the `e2e-stack` job needs the `DOUCKO_BACKEND_REPO` repository variable; its first run is unverified.
+- **Next task:** triage UAT round 1 (`uat-triage`), then fix UAT-1 as its own OpenSpec change.
 - **Earlier (Phase 3 close, kept for reference):**
 - **Active change:** none in the store (`improve-PD-2..5` remain open retro items). Docs work is on `main` (`phase2-specs` fast-forwarded into it).
 - **Phase 3 closed (G3), 2026-10-03:**
@@ -108,13 +115,11 @@
 
 ## Open items
 
-- Remotes: `origin` exists on GitHub for all three repos, but nothing has been pushed since 2026-10-04 (see `docs/qa/mvp-acceptance-report.md` §5). Add `remote:` to
-  `.openspec-store/store.yaml`. The `contract/` pins already use the relative
-  URL `../docs`, so they resolve if the three remotes sit side by side
-  (same host and owner, repos named `docs`, `backend`, `frontend`).
+- Remotes: all three repos are on GitHub under `NatSjm` (`doucko-docs`, `doucko-backend`,
+  `doucko-frontend`). Add `remote:` to `.openspec-store/store.yaml`.
 - Contract review: API 0.5.x has no clean independent review
   (`openspec/changes/archive/2026-10-03-add-api-contract-v0/review-findings.json`).
-  Re-run `contract-review` before G7.
+  It was not re-run before G7; still open.
 - PRD §11.1: the docs repo was meant to be a fork of the course capstone
   repo; here it is a standalone store. If it must become that fork, the
   store can live at the fork root (see factory/README.md).
